@@ -11,11 +11,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import SearchContainer from '../Components/SearchContainer';
 import CustomText from '../Components/CustomText';
-import { useNavigation } from '@react-navigation/native';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+import {useNavigation} from '@react-navigation/native';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 const SearchScreen = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const [searchData, setSearchData] = useState('');
   const Data = [
     {
@@ -57,12 +57,12 @@ const SearchScreen = () => {
   ];
   const homePlace = {
     description: 'Home',
-    geometry: { location: { lat: 48.8152937, lng: 2.4597668 } },
+    geometry: {location: {lat: 48.8152937, lng: 2.4597668}},
   };
   const workPlace = {
     description: 'Work',
-    geometry: { location: { lat: 48.8496818, lng: 2.2940881 } },
-  }; 
+    geometry: {location: {lat: 48.8496818, lng: 2.2940881}},
+  };
 
   return (
     <View style={styles.main}>
@@ -91,24 +91,25 @@ const SearchScreen = () => {
           setData={setSearchData}
           rightIcon
         /> */}
-              <GooglePlacesAutocomplete
-      placeholder='Search'
-      onPress={(data, details = null) => {
-        // 'details' is provided when fetchDetails = true
-        console.log(data, details);
-      }}
-      query={{
-        key: 'AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8',
-        language: 'en',
-      }}
-      predefinedPlaces={[homePlace, workPlace]}
-    />
+        <GooglePlacesAutocomplete
+          placeholder="Search"
+          onPress={(data, details = null) => {
+            // 'details' is provided when fetchDetails = true
+            console.log(data, details);
+          }}
+          query={{
+            // key: 'AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8',---OLD KEY---
+            key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
+            language: 'en',
+          }}
+          // predefinedPlaces={[homePlace, workPlace]}
+        />
 
         <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}>
           <Icon
-          onPress={()=>{
-            navigation.toggleDrawer()
-          }}
+            onPress={() => {
+              navigation.toggleDrawer();
+            }}
             name="menu"
             as={Ionicons}
             size={moderateScale(20)}
@@ -166,11 +167,11 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(30, 0.3),
     backgroundColor: '#FBB824',
     alignItems: 'center',
-    justifyContent: 'center',   
+    justifyContent: 'center',
   },
 
   txt1: {
-    fontSize:moderateScale(12,0.6),
-    color:Color.black
+    fontSize: moderateScale(12, 0.6),
+    color: Color.black,
   },
 });
