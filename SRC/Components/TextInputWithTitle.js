@@ -72,7 +72,7 @@ elevation: 9,
         props.viewHeight && {
           height: windowHeight * props.viewHeight,
         },
-
+      
         props.marginTop >= 0 && {
           marginTop: props.marginTop,
         },
@@ -172,6 +172,7 @@ elevation: 9,
           </TouchableOpacity>
         </>
       ) : (
+        // <CustomText>fsdfsd</CustomText>
         <TouchableOpacity activeOpacity={1} onPress={props.onPressLeft}>
 
         <TextInput
@@ -189,6 +190,9 @@ elevation: 9,
             props.inputHeight && {
               height: windowHeight * props.inputHeight,
             },
+            props.lineHeight && {
+              lineHeight : props.lineHeight,
+            },
             props.disable && {
               color: Color.gray,
             },
@@ -200,7 +204,8 @@ elevation: 9,
             props.color && {
               color: Color.black,
             },
-
+           
+            
           ]}
 
           onChangeText={text => props.setText(text)}
@@ -231,14 +236,14 @@ const styles = ScaledSheet.create({
     backgroundColor: Color.white,
     borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     borderColor: Color.lightGrey,
     flexDirection: 'row',
     placeholderTextColor: Color.white,
     // textTransform: 'capitalize',
   },
   inputBox: {
-    paddingLeft: moderateScale(35, 0.6),
+    // paddingLeft: moderateScale(35, 0.6),
     borderRadius: 8,
     fontSize: moderateScale(13, 0.3),
     // fontWeight:'bold',

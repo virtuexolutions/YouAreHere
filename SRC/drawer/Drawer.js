@@ -19,7 +19,7 @@ import { setUserLogOut } from '../Store/slices/common';
 
 const Drawer = () => {
 const user = useSelector(state => state.commonReducer.userData)
-  console.log("🚀 ~ file: Drawer.js:22 ~ Drawer ~ user:", user)
+  // console.log("🚀 ~ file: Drawer.js:22 ~ Drawer ~ user:", user)
   const navigation = useNavigation();
   const dispatch = useDispatch()
 
@@ -42,7 +42,7 @@ const user = useSelector(state => state.commonReducer.userData)
       iconType: MaterialIcons,
     },
     {
-      name: 'Preferences',
+      name: 'Interests',
       onPress: () => {
         navigation.navigate('AssetScreen',{
           fromDrawer : true 

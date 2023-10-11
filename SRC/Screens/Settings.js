@@ -10,11 +10,12 @@ import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import CustomButton from '../Components/CustomButton';
-import {setUserToken} from '../Store/slices/auth';
+import {setUserLogoutAuth, setUserToken} from '../Store/slices/auth';
 import ImageView from 'react-native-image-viewing';
 // import RNInstalledApplication from 'react-native-installed-application';
 import moment from 'moment/moment';
 import navigationService from '../navigationService';
+import { setUserLogOut } from '../Store/slices/common';
 
 const Settings = () => {
   const userRole = useSelector(state => state.commonReducer.selectedRole);
@@ -204,7 +205,8 @@ const Settings = () => {
             height={windowHeight * 0.07}
             marginTop={moderateScale(10, 0.3)}
             onPress={() => {
-              dispatch(setUserToken());
+              dispatch(setUserLogoutAuth());
+              dispatch(setUserLogOut())
             }}
             bgColor={Color.white}
             // isGradient

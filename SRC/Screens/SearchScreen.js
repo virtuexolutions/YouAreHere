@@ -12,6 +12,7 @@ import TextInputWithTitle from '../Components/TextInputWithTitle';
 import SearchContainer from '../Components/SearchContainer';
 import CustomText from '../Components/CustomText';
 import { useNavigation } from '@react-navigation/native';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 
 const SearchScreen = () => {
   const navigation = useNavigation()
@@ -54,6 +55,14 @@ const SearchScreen = () => {
       desc: 'Lorem Ispum Dolor Sit Amet',
     },
   ];
+  const homePlace = {
+    description: 'Home',
+    geometry: { location: { lat: 48.8152937, lng: 2.4597668 } },
+  };
+  const workPlace = {
+    description: 'Work',
+    geometry: { location: { lat: 48.8496818, lng: 2.2940881 } },
+  }; 
 
   return (
     <View style={styles.main}>
@@ -64,14 +73,15 @@ const SearchScreen = () => {
           alignItems: 'center',
           padding: moderateScale(7, 0.6),
         }}>
-        <SearchContainer
+        {/* <SearchContainer
           width={windowWidth * 0.82}
-          input
+          // input
+          places
           inputStyle={{
             height: windowHeight * 0.05,
           }}
           style={{
-            height: windowHeight * 0.06,
+            height: windowHeight * 0.07,
             marginRight: moderateScale(5, 0.3),
             borderRadius: moderateScale(25, 0.3),
             alignSelf: 'center',
@@ -80,7 +90,19 @@ const SearchScreen = () => {
           placeHolder={'Enter your address'}
           setData={setSearchData}
           rightIcon
-        />
+        /> */}
+              <GooglePlacesAutocomplete
+      placeholder='Search'
+      onPress={(data, details = null) => {
+        // 'details' is provided when fetchDetails = true
+        console.log(data, details);
+      }}
+      query={{
+        key: 'AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8',
+        language: 'en',
+      }}
+      predefinedPlaces={[homePlace, workPlace]}
+    />
 
         <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}>
           <Icon
@@ -95,7 +117,7 @@ const SearchScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView
+      {/* <ScrollView
         showsVerticalScrollIndicator={true}
         contentContainerStyle={{
           marginTop:moderateScale(15,0.3)
@@ -112,7 +134,7 @@ const SearchScreen = () => {
             <CustomText style={styles.txt1}>{item.desc}</CustomText>
           </View>
         ))}
-      </ScrollView>
+      </ScrollView> */}
     </View>
   );
 };

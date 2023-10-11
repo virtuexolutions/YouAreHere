@@ -188,7 +188,7 @@ const AssetScreen = props => {
             Welcome
           </CustomText>
           <CustomText isBold style={styles.txt2}>
-            Please Select Your Preferences
+            Please Select Your INTERESTS
           </CustomText>
           <CustomText style={styles.txt3}>
             Select yout interests area and you will be shown near by places

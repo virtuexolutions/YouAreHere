@@ -32,7 +32,6 @@ import LoginScreen from './Screens/LoginScreen';
 
 const AppNavigator = () => {
   // const isLogin = false;
-  const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
   const preferencesSet = useSelector(state => state.authReducer.preferencesSet);
   console.log("🚀 ~ file: appNavigation.js:37 ~ AppNavigator ~ preferencesSet:", preferencesSet)
   const walkThrough = useSelector(state => state.authReducer.userWalkThrough);

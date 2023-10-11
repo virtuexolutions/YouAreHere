@@ -28,6 +28,7 @@ const AuthSlice = createSlice({
     setUserLogoutAuth(state, action) {
       state.token = null;
       state.fcmToken = null;
+      state.preferencesSet = false
     },
     setWalkThrough(state, action) {
       state.userWalkThrough = action.payload;

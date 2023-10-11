@@ -11,6 +11,7 @@ import {Icon} from 'native-base';
 import {GestureHandlerRootView, TextInput} from 'react-native-gesture-handler';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomImage from './CustomImage';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 // import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 const SearchContainer = ({
@@ -58,7 +59,7 @@ const SearchContainer = ({
               />
             </>
           )}
-          {/* {places && (
+          {places && (
           <GooglePlacesAutocomplete
             placeholder="Enter location"
             fetchDetails={true}
@@ -70,11 +71,13 @@ const SearchContainer = ({
               setData({ latitute: lat, longitute: lng });
             }}
             query={{
-              key: "AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8",
+              // key: "AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8",
+              key : 'AIzaSyAsJQ2w7vW2D7_d92Mg3TI1yojbJC64wso',
               language: "en",
             }}
+
             />
-            )} */}
+            )}
 
           {input && (
             <>
