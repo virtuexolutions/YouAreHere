@@ -216,7 +216,7 @@ const AssetScreen = props => {
             position: 'absolute',
             zIndex: 1,
             right: 0,
-            bottom: 35,
+            bottom: 70,
             left: 0,
             justifyContent: 'center',
             alignItems: 'center',

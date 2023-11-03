@@ -187,6 +187,30 @@ const Signup = () => {
           borderRadius={moderateScale(5, 0.3)}
           isGradient
         />
+         <CustomText
+          style={{
+            color: Color.white,
+            fontSize: moderateScale(12, 0.6),
+            width: windowWidth * 0.7,
+            textAlign: 'center',
+            paddingVertical: moderateScale(10, 0.6),
+          }}>
+          Already have an account?{' '}
+          {
+            <CustomText
+              isBold
+              style={{
+                color: Color.black,
+                fontSize: moderateScale(12, 0.7),
+              }}
+              onPress={() => {
+                navigationService.navigate('LoginScreen');
+              }}>
+              {' '}
+              Login Now
+            </CustomText>
+          }
+        </CustomText>
       </LinearGradient>
       </ScrollView>
     </ScreenBoiler>
