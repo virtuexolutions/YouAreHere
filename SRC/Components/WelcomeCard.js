@@ -46,11 +46,11 @@ export default WelcomeCard
 const styles = StyleSheet.create({
     cardImg: {
         height: windowHeight * 0.15,
-        width: windowWidth * 0.15,
-        backgroundColor: 'transparent',
+        width: windowWidth * 0.34,
+        // backgroundColor: 'red',
         position: 'absolute',
-        right: 25,
-        bottom: 10,
+        right: 1,
+        bottom: 1,
         paddingVertical: moderateScale(20, 0.6),
       },
       heading: {

@@ -51,14 +51,14 @@ const user = useSelector(state => state.commonReducer.userData)
       iconName: 'room-preferences',
       iconType: MaterialIcons,
     },
-    {
-      name: 'Search',
-      onPress: () => {
-        navigation.navigate('SearchScreen');
-      },
-      iconName: 'search',
-      iconType: Feather,
-    },
+    // {
+    //   name: 'Search',
+    //   onPress: () => {
+    //     navigation.navigate('SearchScreen');
+    //   },
+    //   iconName: 'search',
+    //   iconType: Feather,
+    // },
     {
       name: 'Saved Notes',
       onPress: () => {
@@ -132,10 +132,10 @@ const user = useSelector(state => state.commonReducer.userData)
             <CustomText
               style={{
                 width: windowWidth * 0.4,
-                fontSize: moderateScale(8, 0.6),
+                fontSize: moderateScale(9, 0.6),
                 color: Color.black,
               }}>
-              Lorem Ispum simply dummy text of the printing and typesetting
+            Discover the World Just Around the Corner
             </CustomText>
           </View>
         </View>

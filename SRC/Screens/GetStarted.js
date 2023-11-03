@@ -21,7 +21,7 @@ const GetStarted = () => {
         style={{
           width: windowWidth,
           alignItems: 'center',
-        //   justifyContent: 'center',
+          //   justifyContent: 'center',
           height: windowHeight,
         }}
         start={{x: 0, y: 0}}
@@ -35,14 +35,17 @@ const GetStarted = () => {
             width: windowWidth * 0.9,
             // marginTop:moderateScale(30,.3),
             // marginBottom:moderateScale(20,.3),
-            paddingVertical:moderateScale(20,.6),
+            paddingVertical: moderateScale(20, 0.6),
             // backgroundColor:'black'
-            
           }}>
           <CustomImage
-          resizeMode="contain"
+            resizeMode="contain"
             source={require('../Assets/Images/location.png')}
-            style={{width: '100%', height: '100%',marginTop:moderateScale(25,.3)}}
+            style={{
+              width: '100%',
+              height: '100%',
+              marginTop: moderateScale(25, 0.3),
+            }}
           />
         </View>
         <CustomText
@@ -56,7 +59,6 @@ const GetStarted = () => {
           numberOfLines={2}
           isBold>
           One place to track all your locations
-          
         </CustomText>
         <CustomText
           style={{
@@ -67,8 +69,7 @@ const GetStarted = () => {
             paddingVertical: moderateScale(5, 0.6),
           }}
           numberOfLines={2}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry.
+          Stay Close, Go Far: Your Nearby Adventures Await
         </CustomText>
         <CustomButton
           text={
@@ -79,10 +80,12 @@ const GetStarted = () => {
             )
           }
           textColor={Color.white}
-          width={windowWidth * 0.80}
+          width={windowWidth * 0.8}
           height={windowHeight * 0.06}
           marginTop={moderateScale(20, 0.3)}
-          onPress={() => {navigationService.navigate('Signup')}}
+          onPress={() => {
+            navigationService.navigate('Signup');
+          }}
           bgColor={'#FFB000'}
           borderColor={Color.white}
           borderWidth={1}
@@ -105,7 +108,7 @@ const GetStarted = () => {
                 fontSize: moderateScale(12, 0.7),
               }}
               onPress={() => {
-              navigationService.navigate('LoginScreen')
+                navigationService.navigate('LoginScreen');
               }}>
               {' '}
               Login Now
@@ -116,19 +119,18 @@ const GetStarted = () => {
           style={{
             color: Color.white,
             fontSize: moderateScale(8, 0.7),
-            bottom:40,
-            position:'absolute',
-            width:windowWidth*0.9,
+            bottom: 40,
+            position: 'absolute',
+            width: windowWidth * 0.9,
             lineHeight: 18,
 
-            textAlign:'center',
+            textAlign: 'center',
           }}
-          onPress={() => {
-           
-          }}>
+          onPress={() => {}}>
           {' '}
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. printing and type setting industry printing and type setting industry.
+          Discover the extraordinary in the ordinary. Our Nearby Places app
+          brings the world closer by helping you explore hidden gems, local
+          culture, and exciting experiences, all right in your neighborhood
         </CustomText>
 
         {/* <Animatable.View

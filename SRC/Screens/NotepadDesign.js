@@ -299,7 +299,7 @@ const Stories = [
 
 const NotepadDesign = props => {
   let Notedata = props?.route?.params;
-  const user = useSelector(state => state.commonReducer.userData)
+  const user = useSelector(state => state.commonReducer.userData);
   // console.log("🚀 ~ file: HomeScreen.js:24 ~ HomeScreen ~ user:", user)
   // console.log("🚀 ~ file: NotepadDesign.js:302 ~ NotepadDesign ~ Notedata:", Notedata)
   const token = useSelector(state => state.authReducer.token);
@@ -308,8 +308,7 @@ const NotepadDesign = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [trips, setTrips] = useState([]);
   const [tripNotes, setTripNotes] = useState([]);
-  const [image, setImage] = useState({},
-  );
+  const [image, setImage] = useState({});
   const [selectedNote, setSelectedNote] = useState({});
   const [tripLoading, setTripLoading] = useState(false);
   const [notesLoading, setNotesLoading] = useState(false);
@@ -320,97 +319,93 @@ const NotepadDesign = props => {
   const [noteModalVisible, setNoteModalVisible] = useState(false);
   const [selectedStory, setSelectedStory] = useState({});
   // console.log("🚀 ~ file: NotepadDesign.js:322 ~ NotepadDesign ~ selectedStory:", selectedStory)
- 
+
   // const [notes, setNotes] = useState(
   //   stories?.find(item => {
   //     return item?.id == selectedStory?.id;
   //   })?.Notes,
   // );
-  
-  const [country, setCountry] = useState('',
-  );
+
+  const [country, setCountry] = useState('');
   const [imagePicker, setImagePicker] = useState(false);
 
   const dispatch = useDispatch();
- 
 
   const saveTripFromDetails = async () => {
     //  return console.log('here from details')
     const url = 'auth/trip';
- 
-  var imageForServer = null ;
-  try {
-    const response = await fetch(image?.uri);
 
-    const blob = await response.blob();
-    const reader = new FileReader();
-    reader.onload = async() => {
-      imageForServer = reader.result;
-      console.log('Base64 image:', imageForServer);
-    const body = {
-      image: imageForServer,
-      title: country,
-      user_id : user?.id
-    };
-    setIsLoading(true);
-    if (!(Object.keys(image).length > 0)) {
-      return Platform.OS == 'android'
-        ? ToastAndroid.show('Please add an image', ToastAndroid.SHORT)
-        : Alert.alert('Please add an image');
-    } else if (country == '') {
-      return Platform.OS == 'android'
-        ? ToastAndroid.show('Please add country name', ToastAndroid.SHORT)
-        : Alert.alert('Please add country name');
+    var imageForServer = null;
+    try {
+      const response = await fetch(image?.uri);
+
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.onload = async () => {
+        imageForServer = reader.result;
+        console.log('Base64 image:', imageForServer);
+        const body = {
+          image: imageForServer,
+          title: country,
+          user_id: user?.id,
+        };
+        setIsLoading(true);
+        if (!(Object.keys(image).length > 0)) {
+          return Platform.OS == 'android'
+            ? ToastAndroid.show('Please add an image', ToastAndroid.SHORT)
+            : Alert.alert('Please add an image');
+        } else if (country == '') {
+          return Platform.OS == 'android'
+            ? ToastAndroid.show('Please add country name', ToastAndroid.SHORT)
+            : Alert.alert('Please add country name');
+        }
+
+        const responseData = await Post(url, body, apiHeader(token));
+        setIsLoading(false);
+        if (responseData != undefined) {
+          console.log(
+            '🚀 ~ file: NotepadDesign.js:373 ~ saveTrip ~ responseData:',
+            responseData?.data,
+          );
+          setTripModalVisibe(false);
+          setImage({});
+          setCountry('');
+          Platform.OS == 'android'
+            ? ToastAndroid.show('Place Added Successfully', ToastAndroid.SHORT)
+            : alert('Place Added Successfully');
+          navigation.goBack();
+          // getTrips();
+          // Notedata = null ;
+        }
+      };
+
+      reader.readAsDataURL(blob);
+      // return base64Image ;
+    } catch (error) {
+      console.error('Error fetching or converting image:', error);
     }
-
-    const responseData = await Post(url, body, apiHeader(token));
-    setIsLoading(false);
-    if (responseData != undefined) {
-      console.log(
-        '🚀 ~ file: NotepadDesign.js:373 ~ saveTrip ~ responseData:',
-        responseData?.data,
-      );
-      setTripModalVisibe(false);
-      setImage({});
-      setCountry('');
-      Platform.OS == 'android' ? 
-      ToastAndroid.show('Place Added Successfully' , ToastAndroid.SHORT) : alert('Place Added Successfully')
-        navigation.goBack()
-      // getTrips();
-      // Notedata = null ;
-    }
-    };
-
-    reader.readAsDataURL(blob);
-    // return base64Image ;
-  } catch (error) {
-    console.error('Error fetching or converting image:', error);
-  }
-    
 
     // dispatch(setNotePadData({...body, Notes: []}));
   };
   const saveTrip = async () => {
     // return console.log('here')
     const url = 'auth/trip';
-  
- 
-      // console.log('Base64 image:', imageForServer);
-      // return console.log("🚀 ~ file: NotepadDesign.js:361 ~ saveTrip ~ imageForServer:" , `data:application/octet-stream;base64,${imageForServer}`)
+
+    // console.log('Base64 image:', imageForServer);
+    // return console.log("🚀 ~ file: NotepadDesign.js:361 ~ saveTrip ~ imageForServer:" , `data:application/octet-stream;base64,${imageForServer}`)
     const body = {
-   
       title: country,
-      user_id : user?.id
+      user_id: user?.id,
     };
     // return console.log('🚀 ~ file: NotepadDesign.js:297 ~ saveTrip ~ body:', body);
     setIsLoading(true);
-    if ((Object.keys(image).length > 0)) {
+    if (Object.keys(image).length > 0) {
       const imageForServer = await RNFetchBlob.fs.readFile(
-        image?.uri ,
-          'base64'
-        );
-    
-      body.image = `data:application/octet-stream;base64,${imageForServer}`
+        image?.uri,
+        'base64',
+      );
+
+      body.image = `data:application/octet-stream;base64,${imageForServer}`;
     }
     if (country == '') {
       return Platform.OS == 'android'
@@ -418,7 +413,6 @@ const NotepadDesign = props => {
         : Alert.alert('Please add country name');
     }
 
-  
     setIsLoading(true);
     const responseData = await Post(url, body, apiHeader(token));
     setIsLoading(false);
@@ -431,18 +425,16 @@ const NotepadDesign = props => {
       setImage({});
       setCountry('');
       getTrips();
-      Platform.OS == 'android' ? 
-      ToastAndroid.show('Place Added Successfully' , ToastAndroid.SHORT) : alert('Place Added Successfully')
+      Platform.OS == 'android'
+        ? ToastAndroid.show('Place Added Successfully', ToastAndroid.SHORT)
+        : alert('Place Added Successfully');
     }
-    };
-  
-
-  
+  };
 
   const getTrips = async () => {
-    console.log('fasdasd asd ad asd d asd d  sdasd')
+    console.log('fasdasd asd ad asd d asd d  sdasd');
     const url = `auth/trip/index/${user?.id}`;
-  // return  console.log("🚀 ~ file: NotepadDesign.js:437 ~ getTrips ~ url:", url)
+    // return  console.log("🚀 ~ file: NotepadDesign.js:437 ~ getTrips ~ url:", url)
     setTripLoading(true);
     const response = await Get(url, token);
     setTripLoading(false);
@@ -473,7 +465,7 @@ const NotepadDesign = props => {
       // image: image,
       place_id: selectedStory?.id,
     };
- 
+
     for (let key in body) {
       if (body[key] == '') {
         return Platform.OS == 'android'
@@ -485,13 +477,13 @@ const NotepadDesign = props => {
     for (let key in body) {
       formData.append(key, body[key]);
     }
-    if ((Object.keys(image).length > 0)) {
-      formData.append('image' , image)
+    if (Object.keys(image).length > 0) {
+      formData.append('image', image);
     }
 
-  //  return console.log(
-  //     `🚀 ~ file: TripDetailsScreen.js ~ line 157 ~ saveTripNote ~ ${JSON.stringify(formData,null ,2)}`,
-  //   );
+    //  return console.log(
+    //     `🚀 ~ file: TripDetailsScreen.js ~ line 157 ~ saveTripNote ~ ${JSON.stringify(formData,null ,2)}`,
+    //   );
     setIsLoading(true);
     const response = await Post(url, formData, apiHeader(token));
     setIsLoading(false);
@@ -520,12 +512,9 @@ const NotepadDesign = props => {
     // );
   };
 
-  
   useEffect(() => {
     getTrips();
-    if(Object.keys(selectedStory).length > 0){
-
-      
+    if (Object.keys(selectedStory).length > 0) {
       getTripNotes();
     }
     if (isFocused) {
@@ -537,22 +526,16 @@ const NotepadDesign = props => {
       setImage('');
       setCountry('');
       setTripModalVisibe(false);
-      Notedata = null
+      Notedata = null;
       // Notedata= null
     };
   }, [isFocused]);
 
   useEffect(() => {
-   
-    if(Object.keys(selectedStory).length > 0){
-
-      
+    if (Object.keys(selectedStory).length > 0) {
       getTripNotes();
     }
-
   }, [selectedStory]);
-
-
 
   return (
     <ScreenBoiler
@@ -593,16 +576,15 @@ const NotepadDesign = props => {
             </CustomText>
 
             <CustomText
+              isBold
               style={{
                 width: windowWidth * 0.4,
                 fontSize: moderateScale(17, 0.6),
                 color: Color.black,
               }}>
-              ID. DUDLEY
+              Dear {user?.name},
             </CustomText>
           </View>
-
-       
         </View>
 
         <CustomButton
@@ -637,6 +619,35 @@ const NotepadDesign = props => {
             contentContainerStyle={{
               // marginTop: moderateScale(25, 0.3),
               marginBottom: moderateScale(10, 0.3),
+            }}
+            ListEmptyComponent={() => {
+              return (
+                <View
+                  style={{
+                    // backgroundColor: 'red',
+                    width: windowWidth,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <View
+                    style={{
+                      width: windowWidth * 0.3,
+                      height: windowHeight * 0.13,
+                      // alignSelf: 'center',
+                      // marginTop: moderateScale(130, 0.3),
+                      // backgroundColor: 'green',
+                      // position: 'absolute',
+                      // left:0,
+                    }}>
+                    <CustomImage
+                      style={{width: '100%', height: '100%'}}
+                      source={require('../Assets/Images/no-data.png')}
+                      resizeMode={'cover'}
+                    />
+                  </View>
+                  <CustomText style={{color:'black', fontSize:moderateScale(12,.6)}} isBold>Data Not Found</CustomText>
+                </View>
+              );
             }}
             renderItem={({item, index}) => {
               return (
@@ -685,7 +696,7 @@ const NotepadDesign = props => {
               right: 5,
             }}
 
-            // right={moderateScale(5,0.3)}
+            
           />
 
           {notesLoading ? (
@@ -708,6 +719,36 @@ const NotepadDesign = props => {
                 paddingBottom: moderateScale(50, 0.6),
                 paddingTop: moderateScale(50, 0.6),
               }}
+              ListEmptyComponent={() => {
+                return (
+                  <View
+                    style={{
+                      // backgroundColor: 'red',
+                      width: windowWidth,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height:windowHeight*0.5
+                    }}>
+                    <View
+                      style={{
+                        width: windowWidth * 0.5,
+                        height: windowHeight * 0.25,
+                        // alignSelf: 'center',
+                        // marginTop: moderateScale(130, 0.3),
+                        // backgroundColor: 'green',
+                        // position: 'absolute',
+                        // left:0,
+                      }}>
+                      <CustomImage
+                        style={{width: '100%', height: '100%'}}
+                        source={require('../Assets/Images/no-data.png')}
+                        resizeMode={'cover'}
+                      />
+                    </View>
+                    <CustomText style={{color:'black', fontSize:moderateScale(15,.6)}} isBold>Data Not Found</CustomText>
+                  </View>
+                );
+              }}
               renderItem={({item, index}) => {
                 // console.log('Notes item==========>', item);
                 return (
@@ -726,7 +767,7 @@ const NotepadDesign = props => {
             onBackdropPress={() => {
               setTripModalVisibe(false);
               setImage({});
-              Notedata?.fromDetails && navigation.goBack()
+              Notedata?.fromDetails && navigation.goBack();
             }}>
             <View
               style={{
@@ -776,8 +817,7 @@ const NotepadDesign = props => {
                 </View>
                 {/* { !Notedata?.fromDetails && Object.keys(image).length > 0 && */}
 
-                  
-                  <TouchableOpacity
+                <TouchableOpacity
                   activeOpacity={0.6}
                   style={styles.edit}
                   onPress={() => {
@@ -792,9 +832,9 @@ const NotepadDesign = props => {
                     onPress={() => {
                       setImagePicker(true);
                     }}
-                    />
+                  />
                 </TouchableOpacity>
-            {/* } */}
+                {/* } */}
               </View>
 
               <TextInputWithTitle
@@ -831,7 +871,7 @@ const NotepadDesign = props => {
                 // alignSelf={'flex-end'}
                 marginTop={moderateScale(20, 0.3)}
                 onPress={() => {
-                  Notedata?.fromDetails ? saveTripFromDetails() : saveTrip() 
+                  Notedata?.fromDetails ? saveTripFromDetails() : saveTrip();
                 }}
               />
             </View>

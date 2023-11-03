@@ -33,7 +33,7 @@ import {saveToWishList} from '../Store/slices/common';
 import {Alert} from 'react-native';
 import navigationService from '../navigationService';
 
-const PlacesCard = ({item , fromWishList}) => {
+const PlacesCard = ({item, fromWishList}) => {
   const token = useSelector(state => state.authReducer.token);
 
   const WhishList = useSelector(state => state.commonReducer.WishList);
@@ -142,16 +142,18 @@ const PlacesCard = ({item , fromWishList}) => {
         </View>
         <View style={{width: windowWidth * 0.45}}>
           <CustomText
-            style={{fontSize: moderateScale(12, 0.6), color: Color.black}}
+            style={{fontSize: moderateScale(13, 0.6), color: Color.black}}
             numberOfLines={1}
             isBold>
             {item?.name}
           </CustomText>
           <CustomText
-            style={{fontSize: moderateScale(10, 0.6), color: Color.black}}
-            numberOfLines={1}
-            isBold>
-            {item?.distance}
+            style={{
+              fontSize: moderateScale(10, 0.6),
+              color: Color.veryLightGray,
+            }}
+            numberOfLines={1}>
+            {item?.address}
           </CustomText>
         </View>
 
@@ -178,12 +180,13 @@ const PlacesCard = ({item , fromWishList}) => {
             }}
           />
         </TouchableOpacity>
-        
 
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-          fromWishList ? ToastAndroid.show('Already added', ToastAndroid.SHORT) : saveCard();
+            fromWishList
+              ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+              : saveCard();
             // WhishList.some((item1, index) => item1.id == item.id)
             //   ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
             //   :
@@ -205,7 +208,9 @@ const PlacesCard = ({item , fromWishList}) => {
             size={moderateScale(18, 0.3)}
             color={Color.white}
             onPress={() => {
-              fromWishList ? ToastAndroid.show('Already added', ToastAndroid.SHORT) : saveCard();
+              fromWishList
+                ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                : saveCard();
               // WhishList.some((item1, index) => item1.id == item.id)
               //   ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
               //   :
@@ -241,7 +246,7 @@ const PlacesCard = ({item , fromWishList}) => {
               justifyContent: 'center',
               zIndex: -1,
               marginTop: moderateScale(-25, 0.3),
-              backgroundColor: 'red',
+              // backgroundColor: 'red',
             }}>
             <CustomImage
               source={
@@ -377,19 +382,9 @@ const PlacesCard = ({item , fromWishList}) => {
             }}>
             <CustomText
               style={{
-                fontSize: moderateScale(13, 0.6),
-                color: Color.black,
+                color: item?.openNow.toLowerCase() == 'yes' ? 'green' : 'red',
               }}>
-              Status :{' '}
-              {
-                <CustomText
-                  style={{
-                    color:
-                      item?.openNow.toLowerCase() == 'yes' ? 'green' : 'red',
-                  }}>
-                  {item?.openNow}
-                </CustomText>
-              }
+              {item?.openNow.toLowerCase() == 'yes' ? 'Open Now' : 'Closed'}
             </CustomText>
 
             <TouchableOpacity
@@ -421,7 +416,9 @@ const PlacesCard = ({item , fromWishList}) => {
 
             <TouchableOpacity
               onPress={() => {
-                fromWishList ? ToastAndroid.show('Already added', ToastAndroid.SHORT) : saveCard();
+                fromWishList
+                  ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                  : saveCard();
               }}
               activeOpacity={0.5}
               style={{
@@ -438,7 +435,9 @@ const PlacesCard = ({item , fromWishList}) => {
                 size={moderateScale(20)}
                 color={Color.white}
                 onPress={() => {
-                  fromWishList ? ToastAndroid.show('Already added', ToastAndroid.SHORT) : saveCard();
+                  fromWishList
+                    ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                    : saveCard();
                 }}
               />
             </TouchableOpacity>
@@ -553,11 +552,13 @@ const PlacesCard = ({item , fromWishList}) => {
           }}>
           <View
             style={{
-              height: windowHeight * 0.8,
+              height: windowHeight * 0.85,
               width: windowWidth * 0.95,
               backgroundColor: '#eee',
               borderTopLeftRadius: moderateScale(20, 0.3),
               borderBottomRightRadius: moderateScale(20, 0.3),
+              borderWidth: 4,
+              borderColor: Color.themeColor,
             }}>
             <CustomText
               style={{
@@ -626,9 +627,9 @@ const styles = StyleSheet.create({
   image: {
     height: windowHeight * 0.1,
     width: windowWidth * 0.19,
-    borderRadius: moderateScale(10, 0.6),
+    borderRadius: moderateScale(15, 0.6),
     backgroundColor: 'white',
-    marginLeft: moderateScale(10, 0.3),
+    // marginLeft: moderateScale(10, 0.3),
     overflow: 'hidden',
   },
   listImg: {

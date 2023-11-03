@@ -13,48 +13,16 @@ import SearchContainer from '../Components/SearchContainer';
 import CustomText from '../Components/CustomText';
 import {useNavigation} from '@react-navigation/native';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import CustomButton from '../Components/CustomButton';
+import { setCustomLocation } from '../Store/slices/common';
+import { useDispatch } from 'react-redux';
 
 const SearchScreen = () => {
+  const dispatch = useDispatch()
   const navigation = useNavigation();
   const [searchData, setSearchData] = useState('');
-  const Data = [
-    {
-      id: 1,
-      desc: 'Lorem Ispum Dolor Sit Amet',
-    },
-    {
-      id: 2,
-      desc: 'Lorem Ispum Dolor Sit Amet',
-    },
-    {
-      id: 3,
-      desc: 'Lorem Ispum Dolor Sit Amet',
-    },
-    {
-      id: 4,
-      desc: 'Lorem Ispum Dolor Sit Amet',
-    },
-    {
-      id: 5,
-      desc: 'Lorem Ispum Dolor Sit Amet',
-    },
-    {
-      id: 6,
-      desc: 'Lorem Ispum Dolor Sit Amet',
-    },
-    {
-      id: 7,
-      desc: 'Lorem Ispum Dolor Sit Amet',
-    },
-    {
-      id: 8,
-      desc: 'Lorem Ispum Dolor Sit Amet',
-    },
-    {
-      id: 9,
-      desc: 'Lorem Ispum Dolor Sit Amet',
-    },
-  ];
+  console.log("🚀 ~ file: SearchScreen.js:21 ~ SearchScreen ~ searchData:", searchData)
+ 
   const homePlace = {
     description: 'Home',
     geometry: {location: {lat: 48.8152937, lng: 2.4597668}},
@@ -70,73 +38,102 @@ const SearchScreen = () => {
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          // alignItems: 'center',
           padding: moderateScale(7, 0.6),
         }}>
-        {/* <SearchContainer
-          width={windowWidth * 0.82}
-          // input
-          places
-          inputStyle={{
-            height: windowHeight * 0.05,
-          }}
-          style={{
-            height: windowHeight * 0.07,
-            marginRight: moderateScale(5, 0.3),
-            borderRadius: moderateScale(25, 0.3),
-            alignSelf: 'center',
-          }}
-          data={searchData}
-          placeHolder={'Enter your address'}
-          setData={setSearchData}
-          rightIcon
-        /> */}
-        <GooglePlacesAutocomplete
+        <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}>
+          <Icon
+            onPress={() => {
+              navigation.goBack();
+            }}
+            name="chevron-back-sharp"
+            as={Ionicons}
+            size={moderateScale(30)}
+            color={Color.black}
+          />
+        </TouchableOpacity>
+       
+         <GooglePlacesAutocomplete
           placeholder="Search"
+          textInputProps={{
+            placeholderTextColor: '#5d5d5d',
+            // returnKeyType: "search"
+          }}
           onPress={(data, details = null) => {
-            // 'details' is provided when fetchDetails = true
-            console.log(data, details);
+            console.log({ name : data?.description ,  location : details?.geometry?.location});
+            setSearchData( { name : data?.description ,  location : details?.geometry?.location})
           }}
           query={{
             // key: 'AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8',---OLD KEY---
             key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
             language: 'en',
           }}
+          isRowScrollable={true}
+          fetchDetails={true}
+          // enablePoweredByContainer={false}
+          styles={{
+           
+            textInputContainer: {
+              width : windowWidth * 0.8,
+              marginLeft : moderateScale(5,0.6)
+            },
+            textInput: {
+              height: windowHeight * 0.06,
+              color: '#5d5d5d',
+              fontSize: 16,
+              borderWidth : 2,
+              borderColor : Color.lightGrey,
+              borderRadius : moderateScale(20,0.6),
+              
+            },
+            listView : {
+              width : windowWidth * 0.8,
+              marginLeft : moderateScale(5,0.6),
+              borderColor : Color.veryLightGray,
+              // color : 'red',
+              // backgroundColor : 'red'
+              
+            },
+          
+            description : {
+              color : '#5d5d5d',
+            }
+
+          }}
           // predefinedPlaces={[homePlace, workPlace]}
         />
-
-        <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}>
-          <Icon
-            onPress={() => {
-              navigation.toggleDrawer();
-            }}
-            name="menu"
-            as={Ionicons}
-            size={moderateScale(20)}
-            color={Color.black}
-          />
-        </TouchableOpacity>
       </View>
 
-      {/* <ScrollView
-        showsVerticalScrollIndicator={true}
-        contentContainerStyle={{
-          marginTop:moderateScale(15,0.3)
-        }}>
-        {Data.map((item, index) => (
-          <View
-            style={{
-              width: windowWidth * 0.9,
-              borderBottomWidth: 1,
-              borderColor: Color.lightGrey,
-              alignSelf: 'center',
-              margin: moderateScale(7, 0.3),
-            }}>
-            <CustomText style={styles.txt1}>{item.desc}</CustomText>
-          </View>
-        ))}
-      </ScrollView> */}
-    </View>
+{
+  Object.keys(searchData).length > 0 &&
+  <View style={{
+    alignSelf : 'center',
+    position :'absolute',
+    bottom : 50 ,
+  }}>
+
+      <CustomButton
+          text={
+          'Proceed'
+            
+          }
+          textColor={Color.white}
+          width={windowWidth * 0.80}
+          height={windowHeight * 0.06}
+          marginTop={moderateScale(20, 0.3)}
+          onPress={() => {
+            dispatch(setCustomLocation(searchData))
+            navigation.goBack()
+          }}
+          bgColor={'#FFB000'}
+          borderColor={Color.white}
+          borderWidth={1}
+          borderRadius={moderateScale(30, 0.3)}
+         
+        />
+        </View>
+        }
+        </View>
   );
 };
 
@@ -146,7 +143,8 @@ const styles = StyleSheet.create({
   main: {
     width: windowWidth,
     height: windowHeight,
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
+    // alignItems : 'flex-end'
   },
 
   SearchContainer: {
@@ -168,6 +166,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FBB824',
     alignItems: 'center',
     justifyContent: 'center',
+    // position : 'absolute',
+    // left : 5,
   },
 
   txt1: {

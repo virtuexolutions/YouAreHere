@@ -1,14 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import * as Animatable from 'react-native-animatable';
 import Color from '../Assets/Utilities/Color';
-import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {
+  requestLocationPermission,
+  windowHeight,
+  windowWidth,
+} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
-import {View, ActivityIndicator, TouchableOpacity} from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import CustomText from '../Components/CustomText';
-import CustomButton from '../Components/CustomButton';
 import SearchContainer from '../Components/SearchContainer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {FlatList, Icon, ScrollView} from 'native-base';
@@ -17,11 +23,22 @@ import WelcomeCard from '../Components/WelcomeCard';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import {useSelector} from 'react-redux';
+import navigationService from '../navigationService';
+import GetLocation from 'react-native-get-location';
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 
 const HomeScreen = () => {
+  const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ file: HomeScreen.js:24 ~ HomeScreen ~ user:', user);
+  const customLocation = useSelector(
+    state => state.commonReducer.customLocation,
+  );
+  console.log(
+    '🚀 ~ file: HomeScreen.js:26 ~ HomeScreen ~ customLocation:',
+    customLocation,
+  );
+  // console.log('🚀 ~ file: HomeScreen.js:24 ~ HomeScreen ~ user:', user);
 
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
@@ -30,65 +47,107 @@ const HomeScreen = () => {
   const [preferences, setPreferences] = useState([]);
   // const places = ['Shopping', 'Restaurant'];
   // const places = useSelector(state => state.commonReducer.prefrences )
-  const [places, setPlaces] = useState([]
-  
-  );
+  const [places, setPlaces] = useState([]);
 
   console.log('🚀 ~ file: HomeScreen.js:30 ~ HomeScreen ~ places:', places);
+  const [refreshing, setRefreshing] = React.useState(false);
 
-  const isFocused = useIsFocused();
   const cardData = [
     {
-      heading: 'Welcome',
-      title: 'Lorem Ipsum Dolor',
-      description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s`,
+      heading: 'Jet-Set to New Horizons',
+      title: 'Ready for Takeoff?',
+      description: `Explore the world with ease. Book your next adventure with our airline partner and soar to new horizons. Your journey begins here.`,
       color: ['#4B9CD3', '#4682B4', '#4F97A3'],
-      image: require('../Assets/Images/location.png'),
+      image: require('../Assets/Images/airline.png'),
     },
     {
-      heading: 'Lorem Ipsum',
-      title: 'Lorem Ipsum Dolor',
-      description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s`,
+      heading: 'Relax and Recharge',
+      title: 'Escape to Paradise Resorts',
+      description: `Indulge in luxury at top-rated resorts. Find your perfect getaway spot, where relaxation meets adventure. Unwind and rejuvenate today.`,
       color: ['#ED9121', '#f8de7e', '#f4c430'],
-      image: require('../Assets/Images/location.png'),
+      image: require('../Assets/Images/resort.png'),
     },
   ];
 
-  const getData = async () => {
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      handleEnableLocation();
+    }, 2000);
+  };
+  const getData = async location => {
+    setplacesData([]);
     var url2 = '';
     preferences.map((item, index) => {
-      // if(index == 0 ){
-      //   url2 += `place[]=${item}`
-      // }else{
       url2 += `&place[]=${item}`;
-      // }
     });
-    // const url = `location?place[]=${'bank'}&place[]=${'school'}&place[]=${'park'}`;
-    const url = `location?latitude=${21.314421}&longitude=${-158.038055}${url2}`;
 
-    console.log('Here is final url', url);
+    const url = `location?latitude=${
+      Object.keys(customLocation).length > 0
+        ? customLocation?.location?.lat
+        : location?.lat
+    }&longitude=${
+      Object.keys(customLocation).length > 0
+        ? customLocation?.location?.lng
+        : location?.lng
+    }${url2}`;
+
+    // return console.log('🚀 ~ file: HomeScreen.js:78 ~ getData ~ url:', url);
     setIsLoading(true);
     const response = await Get(url, token);
     setIsLoading(false);
-
-    // console.log('Response Data===========>>>>>>>>', response);
     if (response != undefined) {
       setplacesData(response?.data?.places);
     }
   };
 
+  const handleEnableLocation = () => {
+    RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+      interval: 10000,
+      fastInterval: 5000,
+    })
+      .then(data => {
+        console.log('data ================= =  = = =  = = = = >', data);
+        setIsLoading(true);
+        getLocation();
+      })
+      .catch(err => {
+        setIsLoading(false);
+        console.log(err);
+      });
+  };
+
+  const getLocation = async () => {
+    const url = 'locationstore';
+    await requestLocationPermission();
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 60000,
+    })
+
+      .then(async location => {
+        console.log({lat: location?.latitude, lng: location?.longitude});
+        getData({lat: location?.latitude, lng: location?.longitude});
+      })
+      .catch(error => {
+        setIsLoading(false);
+        const {code, message} = error;
+        console.warn(code, message);
+      });
+  };
+
   useEffect(() => {
-    getData();
-  
-  }, [preferences]);
-  useEffect(()=>{
+    // getData(customLocation?.location);
+    handleEnableLocation();
+  }, [preferences, isFocused, customLocation]);
+  useEffect(() => {
     setPlaces(
       user?.preferences?.length > 0
-      ? user?.preferences?.map(item => item?.preferences)
-      : [],
-
-    )
-  },[isFocused])
+        ? user?.preferences?.map(item => item?.preferences)
+        : [],
+    );
+  }, [isFocused]);
 
   return (
     <ScreenBoiler
@@ -105,7 +164,10 @@ const HomeScreen = () => {
         colors={Color.themeBgColor}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{minHeight: windowHeight * 0.9}}>
+          style={{minHeight: windowHeight * 0.9}}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.placesContainer}>
               {places?.map(item => {
@@ -135,20 +197,30 @@ const HomeScreen = () => {
           </ScrollView>
           <View style={styles.search}>
             <SearchContainer
-              width={windowWidth * 0.82}
-              input
-              inputStyle={{
-                height: windowHeight * 0.05,
+              onPress={() => {
+                navigationService.navigate('SearchScreen');
               }}
+              width={windowWidth * 0.82}
+              // input
+              text
+              // inputStyle={{
+              //   height: windowHeight * 0.05,
+              // }}
               style={{
-                height: windowHeight * 0.06,
+                // height: windowHeight * 0.06,
                 //   marginTop: moderateScale(13, 0.3),
                 marginRight: moderateScale(5, 0.3),
                 borderRadius: moderateScale(25, 0.3),
                 alignSelf: 'center',
+                justifyContent: 'space-between',
+              }}
+              textStyle={{
+                width: windowWidth * 0.6,
+                fontSize: moderateScale(10, 0.6),
+                // backgroundColor :'red'
               }}
               data={searchData}
-              placeHolder={'Enter your Location'}
+              placeHolder={customLocation?.name}
               setData={setSearchData}
               rightIcon
             />
@@ -192,11 +264,18 @@ const HomeScreen = () => {
               isBold>
               Places
             </CustomText>
-            <CustomText
-              onPress={() => {}}
-              style={{fontSize: moderateScale(10, 0.6), color: Color.black}}>
-              View All
-            </CustomText>
+            {!isLoading && (
+              <CustomText
+                isBold
+                onPress={() => {}}
+                style={{
+                  fontSize: moderateScale(13, 0.6),
+                  color: Color.white,
+                  textTransform: 'uppercase',
+                }}>
+                Searched count : {placesData?.length}
+              </CustomText>
+            )}
           </View>
           {isLoading ? (
             <View
@@ -247,8 +326,11 @@ const styles = ScaledSheet.create({
   },
   text: {
     borderRadius: moderateScale(20, 0.6),
-    padding: moderateScale(10, 0.6),
-    margin: moderateScale(2, 0.3),
+    paddingHorizontal: moderateScale(10, 0.6),
+    paddingHorizontal: moderateScale(10, 0.6),
+    paddingVertical: moderateScale(7, 0.6),
+
+    margin: moderateScale(3, 0.3),
     backgroundColor: Color.white,
     fontSize: moderateScale(12, 0.6),
     color: Color.black,

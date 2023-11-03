@@ -6,12 +6,16 @@ import CustomText from './CustomText';
 import Color from '../Assets/Utilities/Color';
 import TextInputWithTitle from './TextInputWithTitle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Icon} from 'native-base';
 import {GestureHandlerRootView, TextInput} from 'react-native-gesture-handler';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomImage from './CustomImage';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCustomLocation } from '../Store/slices/common';
 // import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 const SearchContainer = ({
@@ -23,10 +27,13 @@ const SearchContainer = ({
   setData,
   style,
   places,
+  textStyle,
   inputStyle,
   placeHolder,
   rightIcon,
 }) => {
+  const dispatch = useDispatch()
+  const customLocation = useSelector(state=>state.commonReducer.customLocation)
   return (
     <GestureHandlerRootView>
       <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
@@ -39,29 +46,63 @@ const SearchContainer = ({
           ]}>
           {text && (
             <>
+            {
+               !['' , null , undefined].includes(placeHolder) ?
+               <CustomText
+               style={[{
+                 fontSize: moderateScale(8, 0.6),
+                 color: Color.veryLightGray,
+                 // lineHeight: moderateScale(20, 0.3),
+               },textStyle && textStyle]}>{placeHolder} </CustomText>
+               :
+            
               <CustomText
-                style={{
+                style={[{
                   fontSize: moderateScale(12, 0.6),
                   color: Color.black,
-                  lineHeight: moderateScale(20, 0.3),
-                }}>
+                  // lineHeight: moderateScale(20, 0.3),
+                },textStyle && textStyle]}>
                 {'Where to? \n'}
-                <CustomText style={{fontSize: moderateScale(10, 0.6)}}>
+                <CustomText style={{fontSize: moderateScale(10, 0.6) , color : Color.veryLightGray}}>
                   Anytime anyWhere
                 </CustomText>
               </CustomText>
+}
+              <View
+                style={{
+                  height: windowWidth * 0.09,
+                  width: windowWidth * 0.09,
+                  overflow: 'hidden',
+                  borderRadius: (windowWidth * 0.09) / 2,
+                  // borderRadius:moderateScale(20,.6),
+                  backgroundColor: '#fff',
+                  padding: moderateScale(5, 0.6),
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 4,
+                  },
+                  shadowOpacity: 0.32,
+                  shadowRadius: 5.46,
+                  
+                  elevation: 9
+                }}>
               <Icon
-                name="search"
-                as={FontAwesome}
-                size={moderateScale(20)}
+                name={Object.keys(customLocation).length > 0 ? 'close' : "search"}
+                as={Object.keys(customLocation).length > 0 ? AntDesign:FontAwesome}
+                size={moderateScale(22)}
                 style={{alignSelf: 'center'}}
-                color={Color.themeColor}
+                color={'#fbb824'}
+                onPress={()=>{
+                  Object.keys(customLocation).length > 0 ? dispatch(setCustomLocation({})) : onPress()
+                }}
               />
+              </View>
             </>
           )}
           {places && (
           <GooglePlacesAutocomplete
-            placeholder="Enter location"
+            placeholder={placeHolder ? placeHolder :"Enter location"}
             fetchDetails={true}
             onPress={(data, details = null) => {
               // 'details' is provided when fetchDetails = true
@@ -71,10 +112,14 @@ const SearchContainer = ({
               setData({ latitute: lat, longitute: lng });
             }}
             query={{
-              // key: "AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8",
-              key : 'AIzaSyAsJQ2w7vW2D7_d92Mg3TI1yojbJC64wso',
+              
+              key: "AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc",
+              // key : 'AIzaSyAsJQ2w7vW2D7_d92Mg3TI1yojbJC64wso',
               language: "en",
             }}
+            // styles={{
+            //   height :20,
+            // }}
 
             />
             )}

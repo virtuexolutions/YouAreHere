@@ -43,7 +43,7 @@ const AppNavigator = () => {
 
   const isVerified = useSelector(state => state.authReducer.isVerified);
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ file: appNavigation.js:33 ~ AppNavigator ~ token:', token);
+  
 
   const RootNav = createNativeStackNavigator();
   const RootNavLogged = createNativeStackNavigator();
@@ -69,19 +69,17 @@ const AppNavigator = () => {
             component={WalkThroughScreen}
           />
           <RootNav.Screen name="LoginScreen" component={LoginScreen} />
-          {/* <RootNav.Screen name="HomeScreen" component={HomeScreen} /> */}
           <RootNav.Screen name="GetStarted" component={GetStarted} />
           <RootNav.Screen name="EnterPhone" component={EnterPhone} />
           <RootNav.Screen name="VerifyNumber" component={VerifyNumber} />
           <RootNav.Screen name="ResetPassword" component={ResetPassword} />
           <RootNav.Screen name="Signup" component={Signup} />
-          {/* <RootNav.Screen name="ChangePassword" component={ChangePassword} /> */}
+          <RootNav.Screen name="SearchScreen" component={SearchScreen} />
           <RootNav.Screen name="Support" component={Support} />
           <RootNav.Screen name="MyDrawer" component={MyDrawer} />
           <RootNav.Screen name="Files" component={Files} />
           <RootNav.Screen name="NotePad" component={NotePad} />
           <RootNav.Screen name="AssetScreen" component={AssetScreen} />
-          {/* <RootNav.Screen name="WhishListScreen" component={WhishListScreen} /> */}
 
 
         </RootNav.Navigator>
@@ -109,7 +107,7 @@ export const MyDrawer = () => {
       />
 
       {/* <DrawerNavigation.Screen name="AssetScreen" component={AssetScreen} /> */}
-      <DrawerNavigation.Screen name="SearchScreen" component={SearchScreen} />
+    
       <DrawerNavigation.Screen name="HighLights" component={HighLights} />
       <DrawerNavigation.Screen name="ChangePassword" component={ChangePassword} />
       <DrawerNavigation.Screen

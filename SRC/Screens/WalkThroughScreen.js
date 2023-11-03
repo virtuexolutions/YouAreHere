@@ -28,36 +28,21 @@ const WalkThroughScreen = props => {
     {
       key: '1',
       logo: require('../Assets/Images/MobileLocation.png'),
-      title: 'Lorem Ipsum Dolor Sit Amet, Consecte',
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the`,
+      title: 'Capture Moments, Preserve Your Journeys',
+      text: `Experience the essence of our app's magic with a simple, yet powerful feature – note-taking. With 'Capture Moments, Preserve Your Journeys,' you can chronicle your travel adventures effortlessly. Every destination becomes a memory, and every note an entry in your travel diary. Whether it's the flavors of a street market, \n\n the view from a hidden viewpoint, or the warmth of a local cafe, your notes will be the heart and soul of your travels. Say goodbye to forgetting the small details and embrace a world of memories at your fingertips. So, explore the world, and with every visit, capture the essence of your journey.`,
     },
     {
       key: '2',
       logo: require('../Assets/Images/searchLocation.png'),
-      title: 'Lorem Ipsum Dolor Sit Amet, Consecte',
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the.`,
-    },
+      title: 'Navigate, Discover, Dine, Your Way',
+      text: `Navigate your world effortlessly with our cutting-edge location feature. Your journey becomes a seamless adventure as we provide you with real-time, personalized recommendations based on your preferences. Whether you're searching for the finest dining experiences, hidden gems, or exciting attractions, we've got you covered. \n\n See the world through the eyes of local experts as you access Google details, reviews, and ratings, ensuring every choice is the right one. 'Navigate, Discover, Dine, Your Way' brings the power of discovery to your fingertips, guaranteeing you find the best, wherever you are, and wherever you want to go.`},
     {
       key: '3',
       logo: require('../Assets/Images/EarthLocation.png'),
-      title: 'Lorem Ipsum Dolor Sit Amet, Consecte',
-      text: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the.`,
-    },
+      title: 'Define Your Destination, Unlock Endless Adventures',
+      text: `Customize your adventure with our location customization feature and unlock boundless possibilities. 'Define Your Destination, Unlock Endless Adventures' empowers you to set your own course and preferences, just like a local explorer. Whether you crave exquisite dining, unique attractions, or hidden gems, it's all within your grasp. \n\n Discover what's important to you, while retaining access to Google details, reviews, and ratings, making informed choices the standard. Tailor your journey to your desires, and experience the world on your terms. Wherever you are, whatever you seek, your adventure starts here with location customization.`},
   ];
-  //   const slides = [
-  //     {
-  //       key: '1',
-  //       title: 'Buy or Sell Residential',
-  //       text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the ',
-  //       logo: require('../Assets/Images/walkthrough1.png'),
-  //     },
-  //     {
-  //       key: '2',
-  //       title: 'Buy or Sell Residential',
-  //       text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the ',
-  //       logo: require('../Assets/Images/walkthrough2.png'),
-  //     },
-  //   ];
+  // 
 
   const RenderSlider = ({item}) => {
     return (
@@ -106,21 +91,11 @@ const WalkThroughScreen = props => {
                 textAlign: 'center',
                 paddingVertical: moderateScale(5, 0.6),
               }}
-              numberOfLines={5}>
+              // numberOfLines={5}
+              >
               {item?.text}
             </CustomText>
-            <CustomText
-              style={{
-                color: Color.black,
-                fontSize: moderateScale(10, 0.6),
-                width: windowWidth * 0.8,
-                textAlign: 'center',
-                paddingVertical: moderateScale(5, 0.6),
-              }}
-              numberOfLines={5}>
-              {item?.text}
-            </CustomText>
-            
+           
           </View>
           {/* <View
             style={{

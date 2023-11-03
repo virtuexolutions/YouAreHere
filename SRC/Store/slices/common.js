@@ -108,6 +108,7 @@ const initialState = {
   WishList:[],
   id: 0,
   prefrences: [],
+  customLocation : {},
 
 
  
@@ -155,6 +156,9 @@ const CommonSlice = createSlice({
 
         state.prefrences.push(action.payload)
       }
+    },
+    setCustomLocation(state , action){
+      state.customLocation = action.payload
     },
 
     setNotePadData(state, action) {
@@ -225,6 +229,7 @@ export const {
   setFiles,
   saveToWishList,
   setPrefrences,
+  setCustomLocation
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;
