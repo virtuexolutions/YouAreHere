@@ -7,31 +7,31 @@ import {
   ToastAndroid,
   Alert,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import LinearGradient from 'react-native-linear-gradient';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import Color from '../Assets/Utilities/Color';
-import {windowWidth, windowHeight, apiHeader} from '../Utillity/utils';
-import {moderateScale} from 'react-native-size-matters';
+import { windowWidth, windowHeight, apiHeader } from '../Utillity/utils';
+import { moderateScale } from 'react-native-size-matters';
 import StoriesComponent from '../Components/StoriesComponent';
-import {FlatList, Icon} from 'native-base';
+import { FlatList, Icon } from 'native-base';
 import NotesComponent from '../Components/NotesComponent';
 import CustomButton from '../Components/CustomButton';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {useDispatch, useSelector} from 'react-redux';
-import {setFiles, setNotePadData} from '../Store/slices/common';
-import {ActivityIndicator} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFiles, setNotePadData } from '../Store/slices/common';
+import { ActivityIndicator } from 'react-native';
 import moment from 'moment';
 import Modal from 'react-native-modal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import ImagePickerModal from '../Components/ImagePickerModal';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import RNFetchBlob from 'rn-fetch-blob';
 import axios from 'axios';
 
@@ -301,9 +301,11 @@ const NotepadDesign = props => {
   let Notedata = props?.route?.params;
   const user = useSelector(state => state.commonReducer.userData);
   // console.log("🚀 ~ file: HomeScreen.js:24 ~ HomeScreen ~ user:", user)
-  // console.log("🚀 ~ file: NotepadDesign.js:302 ~ NotepadDesign ~ Notedata:", Notedata)
+  console.log("🚀 ~ file: NotepadDesign.js:302 ~ NotepadDesign ~ Notedata:", Notedata)
   const token = useSelector(state => state.authReducer.token);
   const isFocused = useIsFocused();
+
+  console.log('Is focused======>>>>',isFocused)
   // const stories = useSelector(state => state.commonReducer.notePadData);
   const [isLoading, setIsLoading] = useState(false);
   const [trips, setTrips] = useState([]);
@@ -317,14 +319,10 @@ const NotepadDesign = props => {
   const [noteName, setNoteName] = useState('');
   const [tripModalVisibe, setTripModalVisibe] = useState(false);
   const [noteModalVisible, setNoteModalVisible] = useState(false);
-  const [selectedStory, setSelectedStory] = useState({});
-  // console.log("🚀 ~ file: NotepadDesign.js:322 ~ NotepadDesign ~ selectedStory:", selectedStory)
+  console.log('trip modal visible====>>>', tripModalVisibe)
+  console.log('Note modal visible====>>>', noteModalVisible)
 
-  // const [notes, setNotes] = useState(
-  //   stories?.find(item => {
-  //     return item?.id == selectedStory?.id;
-  //   })?.Notes,
-  // );
+  const [selectedStory, setSelectedStory] = useState({});
 
   const [country, setCountry] = useState('');
   const [imagePicker, setImagePicker] = useState(false);
@@ -372,7 +370,7 @@ const NotepadDesign = props => {
           setCountry('');
           Platform.OS == 'android'
             ? ToastAndroid.show('Place Added Successfully', ToastAndroid.SHORT)
-            : alert('Place Added Successfully');
+            : Alert.alert('Place Added Successfully');
           navigation.goBack();
           // getTrips();
           // Notedata = null ;
@@ -546,12 +544,16 @@ const NotepadDesign = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         colors={Color.themeBgColor}>
-        <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}>
+        <TouchableOpacity activeOpacity={0.8} style={styles.Rounded} onPress={() => {
+          console.log('Toggle drawer')
+          navigation.toggleDrawer();
+        }}>
           <Icon
             onPress={() => {
+              console.log('Toggle drawer')
               navigation.toggleDrawer();
             }}
             name="menu"
@@ -568,9 +570,9 @@ const NotepadDesign = props => {
             alignItems: 'center',
             paddingHorizontal: moderateScale(10, 0.6),
           }}>
-          <View style={{marginLeft: moderateScale(10, 0.3)}}>
+          <View style={{ marginLeft: moderateScale(10, 0.3) }}>
             <CustomText
-              style={{fontSize: moderateScale(9, 0.6), color: Color.black}}
+              style={{ fontSize: moderateScale(9, 0.6), color: Color.black }}
               isBold>
               Good Morning
             </CustomText>
@@ -604,11 +606,11 @@ const NotepadDesign = props => {
           onPress={() => {
             setTripModalVisibe(true);
           }}
-          // right={moderateScale(5,0.3)}
+        // right={moderateScale(5,0.3)}
         />
 
         {tripLoading ? (
-          <View style={{paddingVertical: moderateScale(40, 0.6)}}>
+          <View style={{ paddingVertical: moderateScale(40, 0.6) }}>
             <ActivityIndicator size={moderateScale(40, 0.6)} color={'white'} />
           </View>
         ) : (
@@ -640,16 +642,16 @@ const NotepadDesign = props => {
                       // left:0,
                     }}>
                     <CustomImage
-                      style={{width: '100%', height: '100%'}}
+                      style={{ width: '100%', height: '100%' }}
                       source={require('../Assets/Images/no-data.png')}
                       resizeMode={'cover'}
                     />
                   </View>
-                  <CustomText style={{color:'black', fontSize:moderateScale(12,.6)}} isBold>Data Not Found</CustomText>
+                  <CustomText style={{ color: 'black', fontSize: moderateScale(12, .6) }} isBold>Data Not Found</CustomText>
                 </View>
               );
             }}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <StoriesComponent
                   item={item}
@@ -696,7 +698,7 @@ const NotepadDesign = props => {
               right: 5,
             }}
 
-            
+
           />
 
           {notesLoading ? (
@@ -727,7 +729,7 @@ const NotepadDesign = props => {
                       width: windowWidth,
                       justifyContent: 'center',
                       alignItems: 'center',
-                      height:windowHeight*0.5
+                      height: windowHeight * 0.5
                     }}>
                     <View
                       style={{
@@ -740,16 +742,16 @@ const NotepadDesign = props => {
                         // left:0,
                       }}>
                       <CustomImage
-                        style={{width: '100%', height: '100%'}}
+                        style={{ width: '100%', height: '100%' }}
                         source={require('../Assets/Images/no-data.png')}
                         resizeMode={'cover'}
                       />
                     </View>
-                    <CustomText style={{color:'black', fontSize:moderateScale(15,.6)}} isBold>Data Not Found</CustomText>
+                    <CustomText style={{ color: 'black', fontSize: moderateScale(15, .6) }} isBold>Data Not Found</CustomText>
                   </View>
                 );
               }}
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 // console.log('Notes item==========>', item);
                 return (
                   <NotesComponent
@@ -762,120 +764,10 @@ const NotepadDesign = props => {
               }}
             />
           )}
-          <Modal
-            isVisible={tripModalVisibe}
-            onBackdropPress={() => {
-              setTripModalVisibe(false);
-              setImage({});
-              Notedata?.fromDetails && navigation.goBack();
-            }}>
-            <View
-              style={{
-                width: windowWidth * 0.8,
-                height: windowHeight * 0.4,
-                backgroundColor: '#fff',
-                alignSelf: 'center',
-                alignItems: 'center',
-                borderRadius: moderateScale(10, 0.3),
-                shadowColor: '#000',
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-
-                elevation: 5,
-              }}>
-              <View>
-                <View
-                  style={[
-                    styles.Profile1,
-                    !(Object.keys(image).length > 0) && {
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    },
-                  ]}>
-                  <CustomImage
-                    resizeMode={'cover'}
-                    source={
-                      Object.keys(image).length > 0
-                        ? {uri: image?.uri}
-                        : require('../Assets/Images/profileimage.png')
-                    }
-                    style={{
-                      width:
-                        Object.keys(image).length > 0
-                          ? '100%'
-                          : moderateScale(70, 0.6),
-                      height:
-                        Object.keys(image).length > 0
-                          ? '100%'
-                          : moderateScale(70, 0.6),
-                    }}
-                  />
-                </View>
-                {/* { !Notedata?.fromDetails && Object.keys(image).length > 0 && */}
-
-                <TouchableOpacity
-                  activeOpacity={0.6}
-                  style={styles.edit}
-                  onPress={() => {
-                    setImagePicker(true);
-                  }}>
-                  <Icon
-                    name="pencil"
-                    as={FontAwesome}
-                    style={styles.icon2}
-                    color={Color.white}
-                    size={moderateScale(16, 0.3)}
-                    onPress={() => {
-                      setImagePicker(true);
-                    }}
-                  />
-                </TouchableOpacity>
-                {/* } */}
-              </View>
-
-              <TextInputWithTitle
-                title={'Place Name'}
-                titleText={'Enter Place Name'}
-                placeholder={'Enter Place Name'}
-                setText={setCountry}
-                value={country}
-                viewHeight={0.06}
-                viewWidth={0.7}
-                inputWidth={0.7}
-                borderBottom={1}
-                borderColor={Color.black}
-                // marginTop={moderateScale(15, 0.3)}
-                color={Color.black}
-                placeholderColor={Color.veryLightGray}
-              />
-
-              <CustomButton
-                text={
-                  isLoading ? (
-                    <ActivityIndicator size={'small'} color={'white'} />
-                  ) : (
-                    'Save'
-                  )
-                }
-                isBold
-                textColor={Color.white}
-                width={windowWidth * 0.3}
-                height={windowHeight * 0.05}
-                bgColor={Color.themeColor}
-                fontSize={moderateScale(11, 0.6)}
-                borderRadius={moderateScale(5, 0.3)}
-                // alignSelf={'flex-end'}
-                marginTop={moderateScale(20, 0.3)}
-                onPress={() => {
-                  Notedata?.fromDetails ? saveTripFromDetails() : saveTrip();
-                }}
-              />
-            </View>
-          </Modal>
+         
+        </View>
+      </LinearGradient>
+      
           <Modal
             isVisible={noteModalVisible}
             onBackdropPress={() => {
@@ -914,7 +806,7 @@ const NotepadDesign = props => {
                     resizeMode={'cover'}
                     source={
                       image?.uri
-                        ? {uri: image?.uri}
+                        ? { uri: image?.uri }
                         : require('../Assets/Images/profileimage.png')
                     }
                     style={{
@@ -1003,8 +895,120 @@ const NotepadDesign = props => {
               />
             </View>
           </Modal>
-        </View>
-      </LinearGradient>
+          <Modal
+            isVisible={tripModalVisibe}
+            onBackdropPress={() => {
+              setTripModalVisibe(false);
+              setImage({});
+              Notedata?.fromDetails && navigation.goBack();
+            }}>
+            <View
+              style={{
+                width: windowWidth * 0.8,
+                height: windowHeight * 0.4,
+                backgroundColor: '#fff',
+                alignSelf: 'center',
+                alignItems: 'center',
+                borderRadius: moderateScale(10, 0.3),
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+
+                elevation: 5,
+              }}>
+              <View>
+                <View
+                  style={[
+                    styles.Profile1,
+                    !(Object.keys(image).length > 0) && {
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
+                  ]}>
+                  <CustomImage
+                    resizeMode={'cover'}
+                    source={
+                      Object.keys(image).length > 0
+                        ? { uri: image?.uri }
+                        : require('../Assets/Images/profileimage.png')
+                    }
+                    style={{
+                      width:
+                        Object.keys(image).length > 0
+                          ? '100%'
+                          : moderateScale(70, 0.6),
+                      height:
+                        Object.keys(image).length > 0
+                          ? '100%'
+                          : moderateScale(70, 0.6),
+                    }}
+                  />
+                </View>
+                {/* { !Notedata?.fromDetails && Object.keys(image).length > 0 && */}
+
+                <TouchableOpacity
+                  activeOpacity={0.6}
+                  style={styles.edit}
+                  onPress={() => {
+                    setImagePicker(true);
+                  }}>
+                  <Icon
+                    name="pencil"
+                    as={FontAwesome}
+                    style={styles.icon2}
+                    color={Color.white}
+                    size={moderateScale(16, 0.3)}
+                    onPress={() => {
+                      setImagePicker(true);
+                    }}
+                  />
+                </TouchableOpacity>
+                {/* } */}
+              </View>
+
+              <TextInputWithTitle
+                title={'Place Name'}
+                titleText={'Enter Place Name'}
+                placeholder={'Enter Place Name'}
+                setText={setCountry}
+                value={country}
+                viewHeight={0.06}
+                viewWidth={0.7}
+                inputWidth={0.7}
+                borderBottom={1}
+                borderColor={Color.black}
+                // marginTop={moderateScale(15, 0.3)}
+                color={Color.black}
+                placeholderColor={Color.veryLightGray}
+              />
+
+              <CustomButton
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={'white'} />
+                  ) : (
+                    'Save'
+                  )
+                }
+                isBold
+                textColor={Color.white}
+                width={windowWidth * 0.3}
+                height={windowHeight * 0.05}
+                bgColor={Color.themeColor}
+                fontSize={moderateScale(11, 0.6)}
+                borderRadius={moderateScale(5, 0.3)}
+                // alignSelf={'flex-end'}
+                marginTop={moderateScale(20, 0.3)}
+                onPress={() => {
+                  Notedata?.fromDetails ? saveTripFromDetails() : saveTrip();
+                }}
+              />
+            </View>
+          </Modal>
       <ImagePickerModal
         show={imagePicker}
         setShow={setImagePicker}
@@ -1046,6 +1050,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex:1,
     elevation: 5,
     position: 'absolute',
     top: 10,
