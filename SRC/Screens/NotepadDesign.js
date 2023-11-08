@@ -764,10 +764,120 @@ const NotepadDesign = props => {
               }}
             />
           )}
-         
-        </View>
-      </LinearGradient>
-      
+          <Modal
+            isVisible={tripModalVisibe}
+            onBackdropPress={() => {
+              setTripModalVisibe(false);
+              setImage({});
+              Notedata?.fromDetails && navigation.goBack();
+            }}>
+            <View
+              style={{
+                width: windowWidth * 0.8,
+                height: windowHeight * 0.4,
+                backgroundColor: '#fff',
+                alignSelf: 'center',
+                alignItems: 'center',
+                borderRadius: moderateScale(10, 0.3),
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+
+                elevation: 5,
+              }}>
+              <View>
+                <View
+                  style={[
+                    styles.Profile1,
+                    !(Object.keys(image).length > 0) && {
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
+                  ]}>
+                  <CustomImage
+                    resizeMode={'cover'}
+                    source={
+                      Object.keys(image).length > 0
+                        ? { uri: image?.uri }
+                        : require('../Assets/Images/profileimage.png')
+                    }
+                    style={{
+                      width:
+                        Object.keys(image).length > 0
+                          ? '100%'
+                          : moderateScale(70, 0.6),
+                      height:
+                        Object.keys(image).length > 0
+                          ? '100%'
+                          : moderateScale(70, 0.6),
+                    }}
+                  />
+                </View>
+                {/* { !Notedata?.fromDetails && Object.keys(image).length > 0 && */}
+
+                <TouchableOpacity
+                  activeOpacity={0.6}
+                  style={styles.edit}
+                  onPress={() => {
+                    setImagePicker(true);
+                  }}>
+                  <Icon
+                    name="pencil"
+                    as={FontAwesome}
+                    style={styles.icon2}
+                    color={Color.white}
+                    size={moderateScale(16, 0.3)}
+                    onPress={() => {
+                      setImagePicker(true);
+                    }}
+                  />
+                </TouchableOpacity>
+                {/* } */}
+              </View>
+
+              <TextInputWithTitle
+                title={'Place Name'}
+                titleText={'Enter Place Name'}
+                placeholder={'Enter Place Name'}
+                setText={setCountry}
+                value={country}
+                viewHeight={0.06}
+                viewWidth={0.7}
+                inputWidth={0.7}
+                borderBottom={1}
+                borderColor={Color.black}
+                // marginTop={moderateScale(15, 0.3)}
+                color={Color.black}
+                placeholderColor={Color.veryLightGray}
+              />
+
+              <CustomButton
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={'white'} />
+                  ) : (
+                    'Save'
+                  )
+                }
+                isBold
+                textColor={Color.white}
+                width={windowWidth * 0.3}
+                height={windowHeight * 0.05}
+                bgColor={Color.themeColor}
+                fontSize={moderateScale(11, 0.6)}
+                borderRadius={moderateScale(5, 0.3)}
+                // alignSelf={'flex-end'}
+                marginTop={moderateScale(20, 0.3)}
+                onPress={() => {
+                  Notedata?.fromDetails ? saveTripFromDetails() : saveTrip();
+                }}
+              />
+            </View>
+          </Modal>
           <Modal
             isVisible={noteModalVisible}
             onBackdropPress={() => {
@@ -895,120 +1005,8 @@ const NotepadDesign = props => {
               />
             </View>
           </Modal>
-          <Modal
-            isVisible={tripModalVisibe}
-            onBackdropPress={() => {
-              setTripModalVisibe(false);
-              setImage({});
-              Notedata?.fromDetails && navigation.goBack();
-            }}>
-            <View
-              style={{
-                width: windowWidth * 0.8,
-                height: windowHeight * 0.4,
-                backgroundColor: '#fff',
-                alignSelf: 'center',
-                alignItems: 'center',
-                borderRadius: moderateScale(10, 0.3),
-                shadowColor: '#000',
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-
-                elevation: 5,
-              }}>
-              <View>
-                <View
-                  style={[
-                    styles.Profile1,
-                    !(Object.keys(image).length > 0) && {
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    },
-                  ]}>
-                  <CustomImage
-                    resizeMode={'cover'}
-                    source={
-                      Object.keys(image).length > 0
-                        ? { uri: image?.uri }
-                        : require('../Assets/Images/profileimage.png')
-                    }
-                    style={{
-                      width:
-                        Object.keys(image).length > 0
-                          ? '100%'
-                          : moderateScale(70, 0.6),
-                      height:
-                        Object.keys(image).length > 0
-                          ? '100%'
-                          : moderateScale(70, 0.6),
-                    }}
-                  />
-                </View>
-                {/* { !Notedata?.fromDetails && Object.keys(image).length > 0 && */}
-
-                <TouchableOpacity
-                  activeOpacity={0.6}
-                  style={styles.edit}
-                  onPress={() => {
-                    setImagePicker(true);
-                  }}>
-                  <Icon
-                    name="pencil"
-                    as={FontAwesome}
-                    style={styles.icon2}
-                    color={Color.white}
-                    size={moderateScale(16, 0.3)}
-                    onPress={() => {
-                      setImagePicker(true);
-                    }}
-                  />
-                </TouchableOpacity>
-                {/* } */}
-              </View>
-
-              <TextInputWithTitle
-                title={'Place Name'}
-                titleText={'Enter Place Name'}
-                placeholder={'Enter Place Name'}
-                setText={setCountry}
-                value={country}
-                viewHeight={0.06}
-                viewWidth={0.7}
-                inputWidth={0.7}
-                borderBottom={1}
-                borderColor={Color.black}
-                // marginTop={moderateScale(15, 0.3)}
-                color={Color.black}
-                placeholderColor={Color.veryLightGray}
-              />
-
-              <CustomButton
-                text={
-                  isLoading ? (
-                    <ActivityIndicator size={'small'} color={'white'} />
-                  ) : (
-                    'Save'
-                  )
-                }
-                isBold
-                textColor={Color.white}
-                width={windowWidth * 0.3}
-                height={windowHeight * 0.05}
-                bgColor={Color.themeColor}
-                fontSize={moderateScale(11, 0.6)}
-                borderRadius={moderateScale(5, 0.3)}
-                // alignSelf={'flex-end'}
-                marginTop={moderateScale(20, 0.3)}
-                onPress={() => {
-                  Notedata?.fromDetails ? saveTripFromDetails() : saveTrip();
-                }}
-              />
-            </View>
-          </Modal>
+        </View>
+      </LinearGradient>
       <ImagePickerModal
         show={imagePicker}
         setShow={setImagePicker}
