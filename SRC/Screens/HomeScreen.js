@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import CustomText from '../Components/CustomText';
 import SearchContainer from '../Components/SearchContainer';
@@ -73,7 +74,7 @@ const HomeScreen = () => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      handleEnableLocation();
+      Platform.OS == 'android' ? handleEnableLocation() :  getLocation();
     }, 2000);
   };
   const getData = async location => {
@@ -120,7 +121,7 @@ const HomeScreen = () => {
 
   const getLocation = async () => {
     const url = 'locationstore';
-    await requestLocationPermission();
+   Platform.OS == 'android' && await requestLocationPermission();
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 60000,
@@ -139,7 +140,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     // getData(customLocation?.location);
-    handleEnableLocation();
+   Platform.OS == 'android' ? handleEnableLocation() :  getLocation();
   }, [preferences, isFocused, customLocation]);
   useEffect(() => {
     setPlaces(
@@ -151,12 +152,12 @@ const HomeScreen = () => {
 
   return (
     <ScreenBoiler
-      statusBarBackgroundColor={'#f8de7e'}
+      statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
       <LinearGradient
         style={{
           width: windowWidth,
-          height: windowHeight,
+          // height: windowHeight,
           //   justifyContent:'center'
         }}
         start={{x: 0, y: 0}}
@@ -325,10 +326,11 @@ const styles = ScaledSheet.create({
     width: windowWidth * 0.5,
   },
   text: {
-    borderRadius: moderateScale(20, 0.6),
-    paddingHorizontal: moderateScale(10, 0.6),
+    borderRadius: moderateScale(15, 0.6),
     paddingHorizontal: moderateScale(10, 0.6),
     paddingVertical: moderateScale(7, 0.6),
+    // backgroundColor:'green',
+    overflow:'hidden',
 
     margin: moderateScale(3, 0.3),
     backgroundColor: Color.white,

@@ -34,6 +34,7 @@ import {Alert} from 'react-native';
 import navigationService from '../navigationService';
 
 const PlacesCard = ({item, fromWishList}) => {
+//  console.log('Item======>>>', item)
   const token = useSelector(state => state.authReducer.token);
 
   const WhishList = useSelector(state => state.commonReducer.WishList);
@@ -255,7 +256,7 @@ const PlacesCard = ({item, fromWishList}) => {
                   ? require('../Assets/Images/errorimage.png')
                   : {uri: item?.image}
               }
-              style={{width: '100%', height: '100%', backgroundColor: 'red'}}
+              style={{width: '100%', height: '100%', backgroundColor: 'white'}}
               resizeMode={'stretch'}
             />
           </View>
@@ -353,7 +354,15 @@ const PlacesCard = ({item, fromWishList}) => {
                 backgroundColor: '#1a73e8',
                 alignItems: 'center',
                 justifyContent: 'center',
-              }}>
+              }}
+              onPress={() => {
+                ref.close();
+                navigationService.navigate('NotepadDesign', {
+                  item: {uri: item?.image, name: item?.name},
+                  fromDetails: true,
+                });
+              }}
+              >
               <Icon
                 onPress={() => {
                   ref.close();

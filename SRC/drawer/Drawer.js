@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Platform} from 'react-native';
 import React, {useState, useRef} from 'react';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
@@ -186,7 +186,7 @@ const user = useSelector(state => state.commonReducer.userData)
             borderRadius: (windowWidth * 0.14) / 1,
             backgroundColor: Color.white,
             position: 'absolute',
-            bottom: 40,
+            bottom: Platform.OS == 'android' ? moderateScale(40 , 0.6) : moderateScale(80 , 0.3),
             left: 20,
             elevation: 10,
           }}>
