@@ -101,7 +101,7 @@ const ChangePassword = props => {
         backgroundColor={Color.white}
         barStyle={'dark-content'}
       />
-      <ScrollView>
+      {/* <ScrollView> */}
         <LinearGradient
           style={{
             width: windowWidth,
@@ -155,7 +155,7 @@ const ChangePassword = props => {
                 value={currentPassword}
                 viewHeight={0.07}
                 viewWidth={0.75}
-                inputWidth={0.7}
+                inputWidth={0.65}
                 // border={1}
                 borderColor={'#ffffff'}
                 backgroundColor={'#FFFFFF'}
@@ -174,7 +174,7 @@ const ChangePassword = props => {
                 value={newPassword}
                 viewHeight={0.07}
                 viewWidth={0.75}
-                inputWidth={0.7}
+                inputWidth={0.65}
                 // border={1}
                 borderColor={'#ffffff'}
                 backgroundColor={'#FFFFFF'}
@@ -192,7 +192,7 @@ const ChangePassword = props => {
                 value={confirmNewPassword}
                 viewHeight={0.07}
                 viewWidth={0.75}
-                inputWidth={0.7}
+                inputWidth={0.65}
                 // border={1}
                 borderColor={'#ffffff'}
                 backgroundColor={'#FFFFFF'}
@@ -226,7 +226,7 @@ const ChangePassword = props => {
             </CardContainer>
           </KeyboardAwareScrollView>
         </LinearGradient>
-      </ScrollView>
+      {/* </ScrollView> */}
     </>
   );
 };

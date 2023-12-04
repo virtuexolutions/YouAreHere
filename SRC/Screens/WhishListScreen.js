@@ -43,7 +43,7 @@ const WhishListScreen = ({item}) => {
 
   return (
     <ScreenBoiler
-      statusBarBackgroundColor={'#f8de7e'}
+      statusBarBackgroundColor={'#ffffff'}
       statusBarContentStyle={'dark-content'}>
       <LinearGradient
         style={{

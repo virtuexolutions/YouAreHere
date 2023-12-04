@@ -11,6 +11,8 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  SafeAreaView,
+  Platform,
 } from 'react-native';
 import CustomText from '../Components/CustomText';
 import CustomButton from '../Components/CustomButton';
@@ -164,9 +166,10 @@ const AssetScreen = props => {
   ];
 
   return (
-    <ScreenBoiler
-      statusBarBackgroundColor={'white'}
-      statusBarContentStyle={'dark-content'}>
+    // <ScreenBoiler
+    //   statusBarBackgroundColor={'white'}
+    //   statusBarContentStyle={'dark-content'}>
+    <SafeAreaView>
       <LinearGradient
         style={{
           width: windowWidth,
@@ -248,7 +251,7 @@ const AssetScreen = props => {
 
         <FlatList
           contentContainerStyle={{
-            paddingBottom: moderateScale(90, 0.6),
+            paddingBottom: Platform.OS == 'android' ? moderateScale(90, 0.6) :moderateScale(130, 0.6) ,
           }}
           data={asset}
           renderItem={({item, index}) => {
@@ -263,7 +266,8 @@ const AssetScreen = props => {
           }}
         />
       </LinearGradient>
-    </ScreenBoiler>
+      </SafeAreaView>
+    // </ScreenBoiler>
   );
 };
 

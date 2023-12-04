@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, SafeAreaView} from 'react-native';
 import React, {useState} from 'react';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
@@ -33,7 +33,7 @@ const SearchScreen = () => {
   };
 
   return (
-    <View style={styles.main}>
+    <SafeAreaView style={styles.main}>
       <View
         style={{
           flexDirection: 'row',
@@ -133,7 +133,7 @@ const SearchScreen = () => {
         />
         </View>
         }
-        </View>
+        </SafeAreaView>
   );
 };
 

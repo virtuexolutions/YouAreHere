@@ -34,6 +34,7 @@ import {Alert} from 'react-native';
 import navigationService from '../navigationService';
 
 const PlacesCard = ({item, fromWishList}) => {
+//  console.log('Item======>>>', item)
   const token = useSelector(state => state.authReducer.token);
 
   const WhishList = useSelector(state => state.commonReducer.WishList);
@@ -88,7 +89,9 @@ const PlacesCard = ({item, fromWishList}) => {
     setIsLoading2(false);
     if (response?.data?.success) {
       console.log(response?.data);
-      ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT);
+      Platform.OS == 'android'
+        ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
+        : Alert.alert('Added to WishList');
     }
   };
 
@@ -185,13 +188,10 @@ const PlacesCard = ({item, fromWishList}) => {
           activeOpacity={0.8}
           onPress={() => {
             fromWishList
-              ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+              ? Platform.OS == 'android'
+                ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                : Alert.alert('Already added')
               : saveCard();
-            // WhishList.some((item1, index) => item1.id == item.id)
-            //   ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
-            //   :
-
-            //     dispatch(saveToWishList(item)),
           }}
           style={{
             height: windowWidth * 0.09,
@@ -209,7 +209,9 @@ const PlacesCard = ({item, fromWishList}) => {
             color={Color.white}
             onPress={() => {
               fromWishList
-                ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                ? Platform.OS == 'android'
+                  ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                  : Alert.alert('Already added')
                 : saveCard();
               // WhishList.some((item1, index) => item1.id == item.id)
               //   ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
@@ -254,7 +256,7 @@ const PlacesCard = ({item, fromWishList}) => {
                   ? require('../Assets/Images/errorimage.png')
                   : {uri: item?.image}
               }
-              style={{width: '100%', height: '100%', backgroundColor: 'red'}}
+              style={{width: '100%', height: '100%', backgroundColor: 'white'}}
               resizeMode={'stretch'}
             />
           </View>
@@ -352,7 +354,15 @@ const PlacesCard = ({item, fromWishList}) => {
                 backgroundColor: '#1a73e8',
                 alignItems: 'center',
                 justifyContent: 'center',
-              }}>
+              }}
+              onPress={() => {
+                ref.close();
+                navigationService.navigate('NotepadDesign', {
+                  item: {uri: item?.image, name: item?.name},
+                  fromDetails: true,
+                });
+              }}
+              >
               <Icon
                 onPress={() => {
                   ref.close();
@@ -417,7 +427,9 @@ const PlacesCard = ({item, fromWishList}) => {
             <TouchableOpacity
               onPress={() => {
                 fromWishList
-                  ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                  ? Platform.OS == 'android'
+                    ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                    : Alert.alert('ALready added')
                   : saveCard();
               }}
               activeOpacity={0.5}
@@ -436,7 +448,9 @@ const PlacesCard = ({item, fromWishList}) => {
                 color={Color.white}
                 onPress={() => {
                   fromWishList
-                    ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                    ? Platform.OS == 'android'
+                      ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                      : Alert.alert('Alraedy added')
                     : saveCard();
                 }}
               />

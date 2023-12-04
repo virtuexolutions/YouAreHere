@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ImageBackground,
   View,
@@ -9,16 +9,16 @@ import {
   TouchableOpacity,
   PixelRatio,
 } from 'react-native';
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Color from '../Assets/Utilities/Color';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale} from 'react-native-size-matters';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale } from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
 import CustomImage from '../Components/CustomImage';
-import {setWalkThrough} from '../Store/slices/auth';
+import { setWalkThrough } from '../Store/slices/auth';
 import LinearGradient from 'react-native-linear-gradient';
 
 const WalkThroughScreen = props => {
@@ -35,21 +35,23 @@ const WalkThroughScreen = props => {
       key: '2',
       logo: require('../Assets/Images/searchLocation.png'),
       title: 'Navigate, Discover, Dine, Your Way',
-      text: `Navigate your world effortlessly with our cutting-edge location feature. Your journey becomes a seamless adventure as we provide you with real-time, personalized recommendations based on your preferences. Whether you're searching for the finest dining experiences, hidden gems, or exciting attractions, we've got you covered. \n\n See the world through the eyes of local experts as you access Google details, reviews, and ratings, ensuring every choice is the right one. 'Navigate, Discover, Dine, Your Way' brings the power of discovery to your fingertips, guaranteeing you find the best, wherever you are, and wherever you want to go.`},
+      text: `Navigate your world effortlessly with our cutting-edge location feature. Your journey becomes a seamless adventure as we provide you with real-time, personalized recommendations based on your preferences. Whether you're searching for the finest dining experiences, hidden gems, or exciting attractions, we've got you covered. \n\n See the world through the eyes of local experts as you access Google details, reviews, and ratings, ensuring every choice is the right one. 'Navigate, Discover, Dine, Your Way' brings the power of discovery to your fingertips, guaranteeing you find the best, wherever you are, and wherever you want to go.`
+    },
     {
       key: '3',
       logo: require('../Assets/Images/EarthLocation.png'),
       title: 'Define Your Destination, Unlock Endless Adventures',
-      text: `Customize your adventure with our location customization feature and unlock boundless possibilities. 'Define Your Destination, Unlock Endless Adventures' empowers you to set your own course and preferences, just like a local explorer. Whether you crave exquisite dining, unique attractions, or hidden gems, it's all within your grasp. \n\n Discover what's important to you, while retaining access to Google details, reviews, and ratings, making informed choices the standard. Tailor your journey to your desires, and experience the world on your terms. Wherever you are, whatever you seek, your adventure starts here with location customization.`},
+      text: `Customize your adventure with our location customization feature and unlock boundless possibilities. 'Define Your Destination, Unlock Endless Adventures' empowers you to set your own course and preferences, just like a local explorer. Whether you crave exquisite dining, unique attractions, or hidden gems, it's all within your grasp. \n\n Discover what's important to you, while retaining access to Google details, reviews, and ratings, making informed choices the standard. Tailor your journey to your desires, and experience the world on your terms. Wherever you are, whatever you seek, your adventure starts here with location customization.`
+    },
   ];
   // 
 
-  const RenderSlider = ({item}) => {
+  const RenderSlider = ({ item }) => {
     return (
       <View style={styles.SliderContainer}>
         <LinearGradient
-          start={{x: 0.0, y: 0.25}}
-          end={{x: 0.5, y: 1.0}}
+          start={{ x: 0.0, y: 0.25 }}
+          end={{ x: 0.5, y: 1.0 }}
           colors={Color.themeBgColor}
           style={{
             width: windowWidth,
@@ -60,14 +62,14 @@ const WalkThroughScreen = props => {
           <Image
             source={item.logo}
             resizeMode={'contain'}
-            style={{height: windowHeight * 0.5}}
+            style={{ height: windowHeight * 0.5 }}
           />
           <View
             style={{
               width: windowWidth * 0.9,
               // height: windowHeight * 0.4,
               borderRadius: moderateScale(20, 0.6),
-              paddingVertical: moderateScale(26, 0.6),
+              paddingVertical: moderateScale(20, 0.6),
               backgroundColor: 'rgba(255,255,255,.7)',
               alignItems: 'center',
             }}>
@@ -91,11 +93,11 @@ const WalkThroughScreen = props => {
                 textAlign: 'center',
                 paddingVertical: moderateScale(5, 0.6),
               }}
-              // numberOfLines={5}
-              >
+            // numberOfLines={5}
+            >
               {item?.text}
             </CustomText>
-           
+
           </View>
           {/* <View
             style={{
@@ -150,7 +152,7 @@ const WalkThroughScreen = props => {
       showHeader={false}
       statusBarBackgroundColor={[Color.white, Color.white]}
       statusBarContentStyle={'dark-content'}>
-      <View style={styles.container}>
+      {/* <View style={styles.container}> */}
         {/* <CustomImage
           source={backgroundImage}
           resizeMode="contain"
@@ -161,18 +163,21 @@ const WalkThroughScreen = props => {
           data={slides}
           showSkipButton={true}
           showPrevButton={true}
-          activeDotStyle={{backgroundColor: Color.white}}
+          activeDotStyle={{ backgroundColor: Color.white, 
+            marginTop: moderateScale(30, .3), 
+          }}
           dotStyle={{
             backgroundColor: 'transparent',
             borderWidth: 1,
             borderColor: Color.white,
+            marginTop: moderateScale(30, .3),
           }}
           renderDoneButton={RenderDoneBtn}
           renderNextButton={RenderNextBtn}
           renderSkipButton={RenderSkipBtn}
           renderPrevButton={RenderBackBtn}
         />
-      </View>
+      {/* </View> */}
     </ScreenBoiler>
   );
 };
@@ -186,8 +191,9 @@ const styles = StyleSheet.create({
   },
   SliderContainer: {
     // flex: 1,
-    height: windowHeight,
-    width: windowWidth,
+    // height: windowHeight,
+    // width: windowWidth,
+    // marginBottom:moderateScale(30,.3),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Color.white,
@@ -217,6 +223,7 @@ const styles = StyleSheet.create({
   },
   generalBtn: {
     paddingVertical: moderateScale(15, 0.3),
+    marginTop: moderateScale(15, .3),
     textAlign: 'center',
     fontWeight: '400',
     fontSize: moderateScale(15, 0.3),
