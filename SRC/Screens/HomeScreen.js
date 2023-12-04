@@ -174,6 +174,7 @@ const HomeScreen = () => {
               {places?.map(item => {
                 return (
                   <CustomText
+                  numberOfLines={1}
                     onPress={() => {
                       if (preferences.includes(item)) {
                         setPreferences(preferences.filter(i => i !== item));
@@ -330,6 +331,8 @@ const styles = ScaledSheet.create({
     paddingHorizontal: moderateScale(10, 0.6),
     paddingVertical: moderateScale(7, 0.6),
     // backgroundColor:'green',
+    textAlign:'center',
+    alignSelf:'center',
     overflow:'hidden',
 
     margin: moderateScale(3, 0.3),

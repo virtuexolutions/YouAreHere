@@ -68,7 +68,7 @@ const WhishListScreen = ({item}) => {
           <CustomText
             style={{fontSize: moderateScale(18, 0.6), color: Color.black}}
             isBold>
-            WISHLIST
+            Trips
           </CustomText>
           <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}>
           <Icon
