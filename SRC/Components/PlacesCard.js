@@ -189,11 +189,6 @@ const PlacesCard = ({ item, fromWishList }) => {
               ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
               : Alert.alert('Already added')
               : saveCard();
-            // WhishList.some((item1, index) => item1.id == item.id)
-            //   ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
-            //   :
-
-            //     dispatch(saveToWishList(item)),
           }}
           style={{
             height: windowWidth * 0.09,

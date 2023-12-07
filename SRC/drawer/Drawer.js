@@ -68,7 +68,7 @@ const user = useSelector(state => state.commonReducer.userData)
       iconType: MaterialCommunityIcons,
     },
     {
-      name: 'WhishList',
+      name: 'Trips',
       onPress: () => {
         navigation.navigate('WhishListScreen');
       },
