@@ -15,7 +15,7 @@ import ImageView from 'react-native-image-viewing';
 // import RNInstalledApplication from 'react-native-installed-application';
 import moment from 'moment/moment';
 import navigationService from '../navigationService';
-import { setUserLogOut } from '../Store/slices/common';
+import { setCustomLocation, setUserLogOut } from '../Store/slices/common';
 
 const Settings = () => {
   const userRole = useSelector(state => state.commonReducer.selectedRole);
@@ -207,6 +207,7 @@ const Settings = () => {
             onPress={() => {
               dispatch(setUserLogoutAuth());
               dispatch(setUserLogOut())
+              dispatch(setCustomLocation(''))
             }}
             bgColor={Color.white}
             // isGradient

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {
   Image,
-  Dimensions,
+  Dimensions,Alert,
   ImageBackground,
   Platform,
   ToastAndroid,
@@ -42,7 +42,7 @@ const EnterPhone = props => {
     if (['', null, undefined].includes(phone)) {
       return Platform.OS == 'android'
         ? ToastAndroid.show('Phone number is required', ToastAndroid.SHORT)
-        : alert('Phone number is required');
+        : Alert.alert('Phone number is required');
     }
     setIsLoading(true);
     const response = await Post(url, {email: phone}, apiHeader());
@@ -51,7 +51,7 @@ const EnterPhone = props => {
       console.log('response data =>', response?.data);
       Platform.OS == 'android'
         ? ToastAndroid.show(`OTP sent to ${phone}`, ToastAndroid.SHORT)
-        : alert(`OTP sent to ${phone}`);
+        : Alert.alert(`OTP sent to ${phone}`);
       fromForgot
         ? navigationService.navigate('VerifyNumber', {
             fromForgot: fromForgot,

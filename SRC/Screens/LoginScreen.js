@@ -6,6 +6,8 @@ import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
+import LottieView from 'lottie-react-native';
+
 import {
   View,
   ToastAndroid,
@@ -98,13 +100,20 @@ const LoginScreen = () => {
           <View
             style={{
               width: windowWidth * 0.6,
-              height: windowHeight * 0.06,
+              height: windowHeight * 0.1,
               marginTop: moderateScale(130, 0.3),
             }}>
-            <CustomImage
+               <LottieView
+        resizeMode="cover"
+        source={require('../Assets/Images/animation2.json')}
+        // style={{height: '90%' }}
+        autoPlay
+        loop
+      />
+            {/* <CustomImage
               source={require('../Assets/Images/logo.png')}
               style={{width: '100%', height: '100%'}}
-            />
+            /> */}
           </View>
 
           <TextInputWithTitle

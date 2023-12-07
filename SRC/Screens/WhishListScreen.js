@@ -70,7 +70,9 @@ const WhishListScreen = ({item}) => {
             isBold>
             WISHLIST
           </CustomText>
-          <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.Rounded} onPress={()=>{
+            navigationN.toggleDrawer()
+           }}>
           <Icon
            onPress={()=>{
             navigationN.toggleDrawer()

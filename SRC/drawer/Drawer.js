@@ -15,7 +15,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {useNavigation} from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserLogoutAuth } from '../Store/slices/auth';
-import { setUserLogOut } from '../Store/slices/common';
+import { setCustomLocation, setUserLogOut } from '../Store/slices/common';
 
 const Drawer = () => {
 const user = useSelector(state => state.commonReducer.userData)
@@ -88,6 +88,7 @@ const user = useSelector(state => state.commonReducer.userData)
       onPress: () => {
         dispatch(setUserLogoutAuth());
         dispatch(setUserLogOut());
+        dispatch(setCustomLocation(''))
         
       },
       iconName: 'logout',

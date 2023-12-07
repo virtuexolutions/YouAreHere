@@ -155,7 +155,7 @@ const ChangePassword = props => {
                 value={currentPassword}
                 viewHeight={0.07}
                 viewWidth={0.75}
-                inputWidth={0.65}
+                inputWidth={0.6}
                 // border={1}
                 borderColor={'#ffffff'}
                 backgroundColor={'#FFFFFF'}

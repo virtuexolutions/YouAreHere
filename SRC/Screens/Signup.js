@@ -18,6 +18,7 @@ import navigationService from '../navigationService';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import {useDispatch, useSelector} from 'react-redux';
 import {validateEmail} from '../Config';
+import LottieView from 'lottie-react-native';
 import { setUserData } from '../Store/slices/common';
 import { setPreferencesSet, setUserToken } from '../Store/slices/auth';
 
@@ -91,13 +92,20 @@ const Signup = () => {
         <View
           style={{
             width: windowWidth * 0.6,
-            height: windowHeight * 0.06,
+            height: windowHeight * 0.1,
             marginTop: moderateScale(130, 0.3),
           }}>
-          <CustomImage
+             <LottieView
+        resizeMode="cover"
+        source={require('../Assets/Images/animation2.json')}
+        // style={{height: '90%' }}
+        autoPlay
+        loop
+      />
+          {/* <CustomImage
             source={require('../Assets/Images/logo.png')}
             style={{width: '100%', height: '100%'}}
-          />
+          /> */}
         </View>
 
         <TextInputWithTitle
@@ -188,6 +196,9 @@ const Signup = () => {
           isGradient
         />
          <CustomText
+         onPress={() => {
+          navigationService.navigate('LoginScreen');
+        }}
           style={{
             color: Color.white,
             fontSize: moderateScale(12, 0.6),
@@ -195,7 +206,7 @@ const Signup = () => {
             textAlign: 'center',
             paddingVertical: moderateScale(10, 0.6),
           }}>
-          Already have an account?{' '}
+          Already have an account? </CustomText >
           {
             <CustomText
               isBold
@@ -210,7 +221,7 @@ const Signup = () => {
               Login Now
             </CustomText>
           }
-        </CustomText>
+       
       </LinearGradient>
       </ScrollView>
     </ScreenBoiler>
