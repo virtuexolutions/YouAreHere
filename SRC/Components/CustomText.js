@@ -14,9 +14,9 @@ const CustomText = (props) => {
           color: Color.black,
         },
         style,
-        {   fontFamily: 'Oswald-Regular' },
+        // {   fontFamily: 'Oswald-Regular' },
         isBold && {
-          fontFamily: 'Oswald-Bold',
+          // fontFamily: 'Oswald-Bold',
           fontWeight: "bold",
         },
       ]}

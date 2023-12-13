@@ -196,7 +196,9 @@ const AssetScreen = props => {
           fromDrawer &&
         
 
-        <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}>
+        <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}  onPress={() => {
+          navigation.goBack();
+        }}>
           <Icon
             onPress={() => {
               navigation.goBack();

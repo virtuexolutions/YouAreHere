@@ -92,6 +92,7 @@ const GetStarted = () => {
           borderRadius={moderateScale(30, 0.3)}
         />
         <CustomText
+        
           style={{
             color: Color.white,
             fontSize: moderateScale(12, 0.6),
@@ -99,7 +100,7 @@ const GetStarted = () => {
             textAlign: 'center',
             paddingVertical: moderateScale(10, 0.6),
           }}>
-          Already have an account?{' '}
+          Already have an account?{' '}</CustomText>
           {
             <CustomText
               isBold
@@ -114,13 +115,14 @@ const GetStarted = () => {
               Login Now
             </CustomText>
           }
-        </CustomText>
+        
         <CustomText
           style={{
             color: Color.white,
             fontSize: moderateScale(8, 0.7),
-            bottom: 40,
-            position: 'absolute',
+            marginTop:moderateScale(10,.3),
+            // bottom: moderateScale(80,.6),
+            // position: 'absolute',
             width: windowWidth * 0.9,
             lineHeight: 18,
 

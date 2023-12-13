@@ -305,12 +305,13 @@ const NotepadDesign = props => {
   const token = useSelector(state => state.authReducer.token);
   const isFocused = useIsFocused();
 
-  console.log('Is focused======>>>>',isFocused)
+  console.log('Is focused======>>>>', isFocused)
   // const stories = useSelector(state => state.commonReducer.notePadData);
   const [isLoading, setIsLoading] = useState(false);
   const [trips, setTrips] = useState([]);
   const [tripNotes, setTripNotes] = useState([]);
   const [image, setImage] = useState({});
+  console.log('image=======>>>>', image?.uri)
   const [selectedNote, setSelectedNote] = useState({});
   const [tripLoading, setTripLoading] = useState(false);
   const [notesLoading, setNotesLoading] = useState(false);
@@ -319,8 +320,10 @@ const NotepadDesign = props => {
   const [noteName, setNoteName] = useState('');
   const [tripModalVisibe, setTripModalVisibe] = useState(false);
   const [noteModalVisible, setNoteModalVisible] = useState(false);
+  const [type, setType] = useState('trip')
   console.log('trip modal visible====>>>', tripModalVisibe)
   console.log('Note modal visible====>>>', noteModalVisible)
+  console.log('type value====>>>', type)
 
   const [selectedStory, setSelectedStory] = useState({});
 
@@ -395,13 +398,15 @@ const NotepadDesign = props => {
       title: country,
       user_id: user?.id,
     };
-    // return console.log('🚀 ~ file: NotepadDesign.js:297 ~ saveTrip ~ body:', body);
-    setIsLoading(true);
+    // return console.log('🚀 ~ file: NotepadDesign.js:297 ~ saveTrip ~ body:',  Platform.OS == 'ios' ? image?.uri : image?.uri.replace('file:///Users','/Users'),
+    // );
+    // setIsLoading(true);
     if (Object.keys(image).length > 0) {
       const imageForServer = await RNFetchBlob.fs.readFile(
-        image?.uri,
+        Platform.OS == 'android' ? image?.uri : image?.uri.replace('file://',''),
         'base64',
       );
+     console.log(imageForServer)
 
       body.image = `data:application/octet-stream;base64,${imageForServer}`;
     }
@@ -425,7 +430,7 @@ const NotepadDesign = props => {
       getTrips();
       Platform.OS == 'android'
         ? ToastAndroid.show('Place Added Successfully', ToastAndroid.SHORT)
-        : alert('Place Added Successfully');
+        : Alert.alert('Place Added Successfully');
     }
   };
 
@@ -518,7 +523,11 @@ const NotepadDesign = props => {
     if (isFocused) {
       Notedata?.fromDetails && setImage(Notedata?.item);
       Notedata?.fromDetails && setCountry(Notedata?.item?.name);
-      Notedata?.fromDetails && setTripModalVisibe(true);
+      Notedata?.fromDetails && 
+      setTimeout(() => {
+        
+        setTripModalVisibe(true);
+      }, 500);
     }
     return () => {
       setImage('');
@@ -604,6 +613,7 @@ const NotepadDesign = props => {
             marginRight: moderateScale(10, 0.3),
           }}
           onPress={() => {
+            setType('trip')
             setTripModalVisibe(true);
           }}
         // right={moderateScale(5,0.3)}
@@ -684,6 +694,7 @@ const NotepadDesign = props => {
             marginTop={moderateScale(30, 0.3)}
             onPress={() => {
               if (Object.keys(selectedStory).length > 0) {
+                setType('notes')
                 setNoteModalVisible(true);
               } else {
                 return Platform.OS == 'android'
@@ -823,7 +834,11 @@ const NotepadDesign = props => {
                   activeOpacity={0.6}
                   style={styles.edit}
                   onPress={() => {
-                    setImagePicker(true);
+                    setTripModalVisibe(false)
+                    setTimeout(() => {
+
+                      setImagePicker(true);
+                    }, 500);
                   }}>
                   <Icon
                     name="pencil"
@@ -832,7 +847,11 @@ const NotepadDesign = props => {
                     color={Color.white}
                     size={moderateScale(16, 0.3)}
                     onPress={() => {
-                      setImagePicker(true);
+                      setTripModalVisibe(false)
+                      setTimeout(() => {
+
+                        setImagePicker(true);
+                      }, 500);
                     }}
                   />
                 </TouchableOpacity>
@@ -936,7 +955,11 @@ const NotepadDesign = props => {
                   activeOpacity={0.6}
                   style={styles.edit}
                   onPress={() => {
-                    setImagePicker(true);
+                    setNoteModalVisible(false);
+                    setTimeout(() => {
+
+                      setImagePicker(true);
+                    }, 500);
                   }}>
                   <Icon
                     name="pencil"
@@ -945,7 +968,11 @@ const NotepadDesign = props => {
                     color={Color.white}
                     size={moderateScale(16, 0.3)}
                     onPress={() => {
-                      setImagePicker(true);
+                      setNoteModalVisible(false);
+                      setTimeout(() => {
+
+                        setImagePicker(true);
+                      }, 500);
                     }}
                   />
                 </TouchableOpacity>
@@ -1011,6 +1038,10 @@ const NotepadDesign = props => {
         show={imagePicker}
         setShow={setImagePicker}
         setFileObject={setImage}
+        setTripModalVisibe={
+          type == 'trip' ?
+            setTripModalVisibe : setNoteModalVisible}
+        // type={type}
       />
     </ScreenBoiler>
   );
@@ -1048,7 +1079,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex:1,
+    zIndex: 1,
     elevation: 5,
     position: 'absolute',
     top: 10,

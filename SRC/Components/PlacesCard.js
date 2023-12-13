@@ -9,13 +9,13 @@ import {
   ActivityIndicator,
   ToastAndroid,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import React, { useState, useRef, useEffect } from 'react';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import CustomText from './CustomText';
 import CustomImage from './CustomImage';
-import {moderateScale} from 'react-native-size-matters';
-import {Icon, Divider, Radio, Button} from 'native-base';
+import { moderateScale } from 'react-native-size-matters';
+import { Icon, Divider, Radio, Button } from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 
@@ -23,14 +23,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RatingComponent from './RatingComponent';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import Modal from 'react-native-modal';
 import CustomButton from './CustomButton';
 import ModalReview from './ModalReview';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {saveToWishList} from '../Store/slices/common';
-import {Alert} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveToWishList } from '../Store/slices/common';
+import { Alert } from 'react-native';
 import navigationService from '../navigationService';
 
 const PlacesCard = ({item, fromWishList}) => {
@@ -106,9 +106,7 @@ const PlacesCard = ({item, fromWishList}) => {
     setIsLoading2(false);
     if (response?.data?.success) {
       console.log(response?.data);
-      Platform.OS == 'android'
-        ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
-        : Alert.alert('Added to WishList');
+      Platform.OS == 'android' ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT) : alert('Added To Wishlist')
     }
   };
 
@@ -152,7 +150,7 @@ const PlacesCard = ({item, fromWishList}) => {
             source={
               ['', undefined, null].includes(item?.image)
                 ? require('../Assets/Images/errorimage.png')
-                : {uri: item?.image}
+                : { uri: item?.image }
             }
             style={{
               width: '100%',
@@ -162,9 +160,9 @@ const PlacesCard = ({item, fromWishList}) => {
             resizeMode={'cover'}
           />
         </View>
-        <View style={{width: windowWidth * 0.45}}>
+        <View style={{ width: windowWidth * 0.45 }}>
           <CustomText
-            style={{fontSize: moderateScale(13, 0.6), color: Color.black}}
+            style={{ fontSize: moderateScale(13, 0.6), color: Color.black }}
             numberOfLines={1}
             isBold>
             {item?.name}
@@ -206,7 +204,14 @@ const PlacesCard = ({item, fromWishList}) => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
+<<<<<<< HEAD
             fromWishList ? removeCard() : saveCard();
+=======
+            fromWishList ? Platform.OS == 'android'
+              ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+              : Alert.alert('Already added')
+              : saveCard();
+>>>>>>> origin/MAC
           }}
           style={{
             height: windowWidth * 0.09,
@@ -223,13 +228,20 @@ const PlacesCard = ({item, fromWishList}) => {
             size={moderateScale(18, 0.3)}
             color={Color.white}
             onPress={() => {
+<<<<<<< HEAD
               fromWishList ? removeCard() : saveCard();
+=======
+              fromWishList ? Platform.OS == 'android'
+                ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                : Alert.alert('Already added')
+                : saveCard();
+>>>>>>> origin/MAC
               // WhishList.some((item1, index) => item1.id == item.id)
               //   ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
               //   :
 
               //     dispatch(saveToWishList(item)),
-              //     ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
+              //    Platform.OS == 'android' ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT) :Alert.alert('Added to WishList')
             }}
           />
         </TouchableOpacity>
@@ -250,7 +262,7 @@ const PlacesCard = ({item, fromWishList}) => {
             overflow: 'hidden',
           },
         }}>
-        <View style={{height: windowHeight, width: windowWidth}}>
+        <View style={{ height: windowHeight, width: windowWidth }}>
           <View
             style={{
               height: windowHeight * 0.3,
@@ -265,9 +277,9 @@ const PlacesCard = ({item, fromWishList}) => {
               source={
                 ['', undefined, null].includes(item?.image)
                   ? require('../Assets/Images/errorimage.png')
-                  : {uri: item?.image}
+                  : { uri: item?.image }
               }
-              style={{width: '100%', height: '100%', backgroundColor: 'white'}}
+              style={{ width: '100%', height: '100%', backgroundColor: 'white' }}
               resizeMode={'stretch'}
             />
           </View>
@@ -325,8 +337,8 @@ const PlacesCard = ({item, fromWishList}) => {
                 marginTop: moderateScale(1, 0.3),
               }}
               starSize={moderateScale(11, 0.3)}
-              // ratingGiven={star}
-              // setRatingGiven={setStar}
+            // ratingGiven={star}
+            // setRatingGiven={setStar}
             />
             <CustomText
               style={{
@@ -369,15 +381,20 @@ const PlacesCard = ({item, fromWishList}) => {
               onPress={() => {
                 ref.close();
                 navigationService.navigate('NotepadDesign', {
-                  item: {uri: item?.image, name: item?.name},
+                  item: { uri: item?.image, name: item?.name },
                   fromDetails: true,
                 });
+<<<<<<< HEAD
               }}>
+=======
+              }}
+            >
+>>>>>>> origin/MAC
               <Icon
                 onPress={() => {
                   ref.close();
                   navigationService.navigate('NotepadDesign', {
-                    item: {uri: item?.image, name: item?.name},
+                    item: { uri: item?.image, name: item?.name },
                     fromDetails: true,
                   });
                 }}
@@ -389,7 +406,7 @@ const PlacesCard = ({item, fromWishList}) => {
             </TouchableOpacity>
           </View>
 
-          <Divider my="2" _light={{bg: 'muted.300'}} />
+          <Divider my="2" _light={{ bg: 'muted.300' }} />
 
           <View
             style={{
@@ -436,7 +453,13 @@ const PlacesCard = ({item, fromWishList}) => {
 
             <TouchableOpacity
               onPress={() => {
+<<<<<<< HEAD
                 fromWishList ? removeCard() : saveCard();
+=======
+                fromWishList ? Platform.OS == 'android'
+                  ? ToastAndroid.show('Already added', ToastAndroid.SHORT) : Alert.alert('Already added')
+                  : saveCard();
+>>>>>>> origin/MAC
               }}
               activeOpacity={0.5}
               style={{
@@ -453,7 +476,14 @@ const PlacesCard = ({item, fromWishList}) => {
                 size={moderateScale(20)}
                 color={Color.white}
                 onPress={() => {
+<<<<<<< HEAD
                   fromWishList ? removeCard() : saveCard();
+=======
+                  fromWishList ? Platform.OS == 'android'
+                    ? ToastAndroid.show('Already added', ToastAndroid.SHORT) :
+                    Alert.alert('Already added')
+                    : saveCard();
+>>>>>>> origin/MAC
                 }}
               />
             </TouchableOpacity>
@@ -480,7 +510,7 @@ const PlacesCard = ({item, fromWishList}) => {
             </TouchableOpacity>
           </View>
 
-          <Divider my="2" _light={{bg: 'muted.300'}} style={{marginTop: 20}} />
+          <Divider my="2" _light={{ bg: 'muted.300' }} style={{ marginTop: 20 }} />
 
           <View
             style={{
@@ -586,7 +616,7 @@ const PlacesCard = ({item, fromWishList}) => {
               Review
             </CustomText>
 
-            <Divider my="2" _light={{bg: 'muted.400'}} style={{marginTop: 5}} />
+            <Divider my="2" _light={{ bg: 'muted.400' }} style={{ marginTop: 5 }} />
             {isLoading ? (
               <View
                 style={{
@@ -611,7 +641,7 @@ const PlacesCard = ({item, fromWishList}) => {
                   paddingBottom: moderateScale(50, 0.6),
                 }}
                 data={reviewData}
-                renderItem={({item, index}) => {
+                renderItem={({ item, index }) => {
                   return <ModalReview item={item} />;
                 }}
               />

@@ -6,7 +6,7 @@ import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
-import {Platform, ToastAndroid, TouchableOpacity, View} from 'react-native';
+import {Platform, ToastAndroid, TouchableOpacity, View, Alert} from 'react-native';
 import CustomText from '../Components/CustomText';
 import CustomButton from '../Components/CustomButton';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
@@ -276,7 +276,7 @@ const HighLights = () => {
                             'Folder name is required',
                             ToastAndroid.SHORT,
                           )
-                        : Alert('Folder name is required');
+                        : Alert.alert('Folder name is required');
                     } else if (
                       notePad
                         ?.map(item => {
@@ -289,7 +289,7 @@ const HighLights = () => {
                             'This name Already exists',
                             ToastAndroid.SHORT,
                           )
-                        : Alert('This name Already exists');
+                        : Alert.alert('This name Already exists');
                     } else {
                       dispatch(
                         setNotePadData({

@@ -5,11 +5,11 @@ import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
-import {View, FlatList, TouchableOpacity} from 'react-native';
+import {View, FlatList, TouchableOpacity,Switch, ScrollView} from 'react-native';
 import CustomText from '../Components/CustomText';
 import CustomButton from '../Components/CustomButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Icon, ScrollView, Switch} from 'native-base';
+import {Icon, } from 'native-base';
 import {useNavigation} from '@react-navigation/native';
 
 const SubscriptionScreen = () => {
@@ -116,7 +116,9 @@ const SubscriptionScreen = () => {
             }}
           />
 
-          <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.Rounded} onPress={() => {
+                navigation.toggleDrawer();
+              }}>
             <Icon
               onPress={() => {
                 navigation.toggleDrawer();
@@ -150,10 +152,13 @@ const SubscriptionScreen = () => {
             </CustomText>
             <Switch
               size="lg"
-              onTrackColor={Color.themeColor}
+              tintColor={Color.themeColor}
+              trackColor={{true:Color.themeColor, false:Color.lightGrey}}
               onValueChange={() => {
                 setSelectedValue(prev => !prev);
               }}
+              value={selectedValue}
+              
             />
             <CustomText
               style={{fontSize: moderateScale(16, 0.6), color: Color.black}}>
