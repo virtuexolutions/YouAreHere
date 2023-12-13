@@ -34,16 +34,11 @@ import {Alert} from 'react-native';
 import navigationService from '../navigationService';
 
 const PlacesCard = ({item, fromWishList}) => {
-//  console.log('Item======>>>', item)
+  // console.log("🚀 ~ file: PlacesCard.js:37 ~ PlacesCard ~ item:", item)
   const token = useSelector(state => state.authReducer.token);
 
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
-
-  // console.log(
-  //   '🚀 ~ file: PlacesCard.js:27 ~ PlacesCard ~ WhishList:',
-  //   item,
-  // );
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -53,18 +48,41 @@ const PlacesCard = ({item, fromWishList}) => {
   const [reviewData, setReviewData] = useState([]);
   const [isLoading2, setIsLoading2] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // console.log('🚀 ~ file: PlacesCard.js:10 ~ PlacesCard ~ item:', item);
+  const [wishList, setWishList] = useState([])
+
   const getData = async () => {
     const url = `auth/review_detail/${item.id}`;
     setIsLoading(true);
     const response = await Get(url, token);
     setIsLoading(false);
 
-    // console.log('Response Data===========>>>>>>>>', response?.data)
     if (response != undefined) {
-      // setplacesData(response?.data?.places)
-      // console.log('review data ====== >>', response?.data);
       setReviewData(response?.data?.reviews);
+    }
+  };
+  const getWishListData = async () => {
+    const url = 'auth/wishlist/fetch';
+    setIsLoading(true);
+    const response = await Get(url, token);
+    setIsLoading(false);
+    if (response?.data?.success) {
+      setWishList(response?.data?.wish_list);
+    }
+  };
+
+  const removeCard = async () => {
+    const url = `wishlist/delete/${item?.id}`;
+    setIsLoading(true);
+    const response = await Get(url, token);
+    setIsLoading(false);
+    if (response != undefined) {
+      console.log(
+        '🚀 ~ file: PlacesCard.js:66 ~ removeCard ~ response:',
+        response,
+      );
+      Platform.OS == 'android'
+        ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
+        : Alert.alert('Added to WishList');
     }
   };
 
@@ -83,7 +101,6 @@ const PlacesCard = ({item, fromWishList}) => {
       latitude: item?.latitude,
       longitude: item?.longitude,
     };
-    //  return console.log("🚀 ~ file: PlacesCard.js:82 ~ saveCard ~ body:", body)
     setIsLoading2(true);
     const response = await Post(url, body, apiHeader(token));
     setIsLoading2(false);
@@ -96,10 +113,12 @@ const PlacesCard = ({item, fromWishList}) => {
   };
 
   useEffect(() => {
+    getWishListData();
+  }, []);
+
+  useEffect(() => {
     if (isModalVisible) getData();
   }, [isModalVisible]);
-
-  // console.log('🚀 ~ file: PlacesCard.js:10 ~ PlacesCard ~ item:', item);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -187,11 +206,7 @@ const PlacesCard = ({item, fromWishList}) => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            fromWishList
-              ? Platform.OS == 'android'
-                ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
-                : Alert.alert('Already added')
-              : saveCard();
+            fromWishList ? removeCard() : saveCard();
           }}
           style={{
             height: windowWidth * 0.09,
@@ -208,11 +223,7 @@ const PlacesCard = ({item, fromWishList}) => {
             size={moderateScale(18, 0.3)}
             color={Color.white}
             onPress={() => {
-              fromWishList
-                ? Platform.OS == 'android'
-                  ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
-                  : Alert.alert('Already added')
-                : saveCard();
+              fromWishList ? removeCard() : saveCard();
               // WhishList.some((item1, index) => item1.id == item.id)
               //   ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
               //   :
@@ -361,8 +372,7 @@ const PlacesCard = ({item, fromWishList}) => {
                   item: {uri: item?.image, name: item?.name},
                   fromDetails: true,
                 });
-              }}
-              >
+              }}>
               <Icon
                 onPress={() => {
                   ref.close();
@@ -426,11 +436,7 @@ const PlacesCard = ({item, fromWishList}) => {
 
             <TouchableOpacity
               onPress={() => {
-                fromWishList
-                  ? Platform.OS == 'android'
-                    ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
-                    : Alert.alert('ALready added')
-                  : saveCard();
+                fromWishList ? removeCard() : saveCard();
               }}
               activeOpacity={0.5}
               style={{
@@ -447,11 +453,7 @@ const PlacesCard = ({item, fromWishList}) => {
                 size={moderateScale(20)}
                 color={Color.white}
                 onPress={() => {
-                  fromWishList
-                    ? Platform.OS == 'android'
-                      ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
-                      : Alert.alert('Alraedy added')
-                    : saveCard();
+                  fromWishList ? removeCard() : saveCard();
                 }}
               />
             </TouchableOpacity>

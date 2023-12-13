@@ -51,14 +51,6 @@ const user = useSelector(state => state.commonReducer.userData)
       iconName: 'room-preferences',
       iconType: MaterialIcons,
     },
-    // {
-    //   name: 'Search',
-    //   onPress: () => {
-    //     navigation.navigate('SearchScreen');
-    //   },
-    //   iconName: 'search',
-    //   iconType: Feather,
-    // },
     {
       name: 'Saved Notes',
       onPress: () => {

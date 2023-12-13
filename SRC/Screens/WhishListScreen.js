@@ -31,7 +31,6 @@ const WhishListScreen = ({item}) => {
     const response = await Get(url , token)
     setIsLoading(false)
     if(response?.data?.success){
-      // return console.log(response?.data?.wish_list)
       setWishListData(response?.data?.wish_list)
     }
   }
@@ -57,10 +56,7 @@ const WhishListScreen = ({item}) => {
           style={{
             width: windowWidth,
             height: windowHeight * 0.07,
-            // flexDirection: 'row',
-            // justifyContent: 'space-between',
             alignItems: 'center',
-            // paddingHorizontal: moderateScale(10, 0.6),
             paddingVertical: moderateScale(10, 0.6),
 
           }}>
@@ -81,13 +77,6 @@ const WhishListScreen = ({item}) => {
             color={Color.black}
           />
         </TouchableOpacity>
-
-          {/* <Icon
-            name="shopping-bag"
-            as={Feather}
-            size={moderateScale(20, 0.6)}
-            color={Color.black}
-          /> */}
         </View>
         {
           isLoading ?

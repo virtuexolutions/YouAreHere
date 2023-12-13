@@ -32,25 +32,20 @@ const HomeScreen = () => {
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ file: HomeScreen.js:35 ~ HomeScreen ~ user:", user)
   const customLocation = useSelector(
     state => state.commonReducer.customLocation,
   );
-  console.log(
-    '🚀 ~ file: HomeScreen.js:26 ~ HomeScreen ~ customLocation:',
-    customLocation,
-  );
-  // console.log('🚀 ~ file: HomeScreen.js:24 ~ HomeScreen ~ user:', user);
 
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [searchData, setSearchData] = useState('');
   const [placesData, setplacesData] = useState([]);
   const [preferences, setPreferences] = useState([]);
-  // const places = ['Shopping', 'Restaurant'];
-  // const places = useSelector(state => state.commonReducer.prefrences )
   const [places, setPlaces] = useState([]);
+  const [wishList, setWishList] = useState([])
+  console.log("🚀 ~ file: HomeScreen.js:46 ~ HomeScreen ~ wishList:", wishList)
 
-  console.log('🚀 ~ file: HomeScreen.js:30 ~ HomeScreen ~ places:', places);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const cardData = [
@@ -69,6 +64,9 @@ const HomeScreen = () => {
       image: require('../Assets/Images/resort.png'),
     },
   ];
+
+
+
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -139,7 +137,6 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    // getData(customLocation?.location);
    Platform.OS == 'android' ? handleEnableLocation() :  getLocation();
   }, [preferences, isFocused, customLocation]);
   useEffect(() => {
