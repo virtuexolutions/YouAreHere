@@ -96,12 +96,12 @@ const AssetScreen = props => {
       name: 'Bank',
       Key: 3,
     },
-    // {
-    //   id: 4,
-    //   Image: require('../Assets/Images/park.png'),
-    //   name: 'Finance',
-    //   Key: 4,
-    // },
+    {
+      id: 4,
+      Image: require('../Assets/Images/park.png'),
+      name: 'Radio Station',
+      Key: 4,
+    },
     {
       id: 5,
       Image: require('../Assets/Images/cinema.png'),

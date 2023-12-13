@@ -32,7 +32,7 @@ const HomeScreen = () => {
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
-  console.log("🚀 ~ file: HomeScreen.js:35 ~ HomeScreen ~ user:", user)
+  console.log('🚀 ~ file: HomeScreen.js:35 ~ HomeScreen ~ user:', user);
   const customLocation = useSelector(
     state => state.commonReducer.customLocation,
   );
@@ -43,8 +43,8 @@ const HomeScreen = () => {
   const [placesData, setplacesData] = useState([]);
   const [preferences, setPreferences] = useState([]);
   const [places, setPlaces] = useState([]);
-  const [wishList, setWishList] = useState([])
-  console.log("🚀 ~ file: HomeScreen.js:46 ~ HomeScreen ~ wishList:", wishList)
+  const [wishList, setWishList] = useState([]);
+  console.log('🚀 ~ file: HomeScreen.js:46 ~ HomeScreen ~ wishList:', wishList);
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -65,14 +65,11 @@ const HomeScreen = () => {
     },
   ];
 
-
-
-
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      Platform.OS == 'android' ? handleEnableLocation() :  getLocation();
+      Platform.OS == 'android' ? handleEnableLocation() : getLocation();
     }, 2000);
   };
   const getData = async location => {
@@ -119,7 +116,7 @@ const HomeScreen = () => {
 
   const getLocation = async () => {
     const url = 'locationstore';
-   Platform.OS == 'android' && await requestLocationPermission();
+    Platform.OS == 'android' && (await requestLocationPermission());
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 60000,
@@ -137,7 +134,7 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-   Platform.OS == 'android' ? handleEnableLocation() :  getLocation();
+    Platform.OS == 'android' ? handleEnableLocation() : getLocation();
   }, [preferences, isFocused, customLocation]);
   useEffect(() => {
     setPlaces(
@@ -154,7 +151,7 @@ const HomeScreen = () => {
       <LinearGradient
         style={{
           width: windowWidth,
-          // height: windowHeight,
+          height: windowHeight,
           //   justifyContent:'center'
         }}
         start={{x: 0, y: 0}}
@@ -171,7 +168,7 @@ const HomeScreen = () => {
               {places?.map(item => {
                 return (
                   <CustomText
-                  numberOfLines={1}
+                    numberOfLines={1}
                     onPress={() => {
                       if (preferences.includes(item)) {
                         setPreferences(preferences.filter(i => i !== item));
@@ -328,9 +325,9 @@ const styles = ScaledSheet.create({
     paddingHorizontal: moderateScale(10, 0.6),
     paddingVertical: moderateScale(7, 0.6),
     // backgroundColor:'green',
-    textAlign:'center',
-    alignSelf:'center',
-    overflow:'hidden',
+    textAlign: 'center',
+    alignSelf: 'center',
+    overflow: 'hidden',
 
     margin: moderateScale(3, 0.3),
     backgroundColor: Color.white,
