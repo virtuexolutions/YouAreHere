@@ -74,10 +74,10 @@ const HomeScreen = () => {
   };
   const getData = async location => {
     setplacesData([]);
-    var url2 = '';
-    preferences.map((item, index) => {
-      url2 += `&place[]=${item}`;
-    });
+    var url2 = '&place[]=exchnage';
+    // preferences.map((item, index) => {
+    //   url2 += `&place[]=${item}`;
+    // });
 
     const url = `location?latitude=${
       Object.keys(customLocation).length > 0
@@ -88,6 +88,7 @@ const HomeScreen = () => {
         ? customLocation?.location?.lng
         : location?.lng
     }${url2}`;
+    // return console.log(url)
 
     // return console.log('🚀 ~ file: HomeScreen.js:78 ~ getData ~ url:', url);
     setIsLoading(true);

@@ -157,6 +157,12 @@ const AssetScreen = props => {
       name: 'lodging',
       Key: 14,
     },
+    {
+      id: 13,
+      Image: require('../Assets/Images/sports.png'),
+      name: 'ATM',
+      Key: 14,
+    },
   ];
 
   return (
