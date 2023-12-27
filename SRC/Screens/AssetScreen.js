@@ -136,14 +136,14 @@ const AssetScreen = props => {
     {
       id: 13,
       Image: require('../Assets/Images/sports.png'),
-      name: 'lodging',
+      name: 'Lodging',
       Key: 13,
     },
     {
       id: 14,
       Image: require('../Assets/Images/sports.png'),
       name: 'ATM',
-      Key: 17,
+      Key: 14,
     },
     {
       id: 15,
