@@ -33,18 +33,9 @@ import LoginScreen from './Screens/LoginScreen';
 const AppNavigator = () => {
   // const isLogin = false;
   const preferencesSet = useSelector(state => state.authReducer.preferencesSet);
-  console.log("🚀 ~ file: appNavigation.js:37 ~ AppNavigator ~ preferencesSet:", preferencesSet)
   const walkThrough = useSelector(state => state.authReducer.userWalkThrough);
-  console.log(
-    '🚀 ~ file: appNavigation.js:27 ~ AppNavigator ~ walkThrough:',
-    walkThrough,
-  );
-  
-
   const isVerified = useSelector(state => state.authReducer.isVerified);
   const token = useSelector(state => state.authReducer.token);
-  
-
   const RootNav = createNativeStackNavigator();
   const RootNavLogged = createNativeStackNavigator();
 

@@ -32,7 +32,6 @@ const HomeScreen = () => {
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ file: HomeScreen.js:35 ~ HomeScreen ~ user:', user);
   const customLocation = useSelector(
     state => state.commonReducer.customLocation,
   );
@@ -44,7 +43,6 @@ const HomeScreen = () => {
   const [preferences, setPreferences] = useState([]);
   const [places, setPlaces] = useState([]);
   const [wishList, setWishList] = useState([]);
-  console.log('🚀 ~ file: HomeScreen.js:46 ~ HomeScreen ~ wishList:', wishList);
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -74,10 +72,10 @@ const HomeScreen = () => {
   };
   const getData = async location => {
     setplacesData([]);
-    var url2 = '&place[]=exchnage';
-    // preferences.map((item, index) => {
-    //   url2 += `&place[]=${item}`;
-    // });
+    var url2 = '';
+    preferences.map((item, index) => {
+      url2 += `&place[]=${item}`;
+    });
 
     const url = `location?latitude=${
       Object.keys(customLocation).length > 0
@@ -88,9 +86,7 @@ const HomeScreen = () => {
         ? customLocation?.location?.lng
         : location?.lng
     }${url2}`;
-    // return console.log(url)
-
-    // return console.log('🚀 ~ file: HomeScreen.js:78 ~ getData ~ url:', url);
+   
     setIsLoading(true);
     const response = await Get(url, token);
     setIsLoading(false);
@@ -300,7 +296,7 @@ const HomeScreen = () => {
                 //   height: windowHeight * 0.25,
               }}
               renderItem={({item, index}) => {
-                return <PlacesCard item={item} />;
+                return <PlacesCard item={item}/>;
               }}
             />
           )}

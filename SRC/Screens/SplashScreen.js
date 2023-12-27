@@ -18,13 +18,13 @@ const SplashScreen = () => {
       height : windowHeight,
       width : windowWidth
     }}>
-      <LottieView
+      {/* <LottieView
         resizeMode="cover"
         source={require('../Assets/Images/animation.json')}
         // style={{height: '90%' }}
         autoPlay
         loop
-      />
+      /> */}
       </View>
     </SafeAreaView>
     // </View>

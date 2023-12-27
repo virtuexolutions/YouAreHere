@@ -27,30 +27,20 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import {setUserData} from '../Store/slices/common';
-import { setPreferencesSet } from '../Store/slices/auth';
+import {setPreferencesSet} from '../Store/slices/auth';
 
 const AssetScreen = props => {
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ file: AssetScreen.js:33 ~ AssetScreen ~ token:", token)
   const user = useSelector(state => state.commonReducer.userData);
   const fromDrawer = props?.route?.params?.fromDrawer;
-  console.log(
-    '🚀 ~ file: AssetScreen.js:29 ~ AssetScreen ~ fromDrawer:',
-    fromDrawer,
-  );
 
-  // console.log("🚀 ~ file: AssetScreen.js:28 ~ AssetScreen ~ user:", user)
   const [preferences, setPreferences] = useState(
     user?.preferences?.length > 0
       ? user?.preferences?.map(item => item?.preferences)
       : [],
   );
-  console.log(
-    '🚀 ~ file: AssetScreen.js:28 ~ AssetScreen ~ preferences:',
-    preferences,
-  );
-  // const preferences = useSelector(state=> state.commonReducer.prefrences)
+
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -64,31 +54,23 @@ const AssetScreen = props => {
     const response = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (response != undefined) {
-       console.log(
-        '🚀 ~ file: AssetScreen.js:40 ~ sendPrefrences ~ response:',
-        response?.data?.user,
-      );
       dispatch(setUserData(response?.data?.user));
-      fromDrawer
-        ? navigation.goBack()
-        : dispatch(
-            setPreferencesSet(true),
-          );
+      fromDrawer ? navigation.goBack() : dispatch(setPreferencesSet(true));
     }
   };
 
   const asset = [
     {
-      id: 2,
+      id: 1,
       Image: require('../Assets/Images/wine.png'),
       name: 'Food',
-      Key: 2,
+      Key: 1,
     },
     {
-      id: 14,
+      id: 2,
       Image: require('../Assets/Images/sports.png'),
       name: 'Hospital',
-      Key: 15,
+      Key: 2,
     },
     {
       id: 3,
@@ -118,7 +100,7 @@ const AssetScreen = props => {
     {
       id: 7,
       Image: require('../Assets/Images/mall.png'),
-      name: 'Shopping mall',
+      name: 'Shopping Mall',
       Key: 7,
     },
     {
@@ -155,20 +137,29 @@ const AssetScreen = props => {
       id: 13,
       Image: require('../Assets/Images/sports.png'),
       name: 'lodging',
-      Key: 14,
+      Key: 13,
     },
     {
-      id: 13,
+      id: 14,
       Image: require('../Assets/Images/sports.png'),
       name: 'ATM',
       Key: 14,
     },
+    {
+      id: 15,
+      Image: require('../Assets/Images/sports.png'),
+      name: 'Sports',
+      Key: 15,
+    },
+    {
+      id: 16,
+      Image: require('../Assets/Images/sports.png'),
+      name: 'Golf Courses',
+      Key: 16,
+    },
   ];
 
   return (
-    // <ScreenBoiler
-    //   statusBarBackgroundColor={'white'}
-    //   statusBarContentStyle={'dark-content'}>
     <SafeAreaView>
       <LinearGradient
         style={{
@@ -183,9 +174,7 @@ const AssetScreen = props => {
           style={{
             width: windowWidth * 0.96,
             height: windowHeight * 0.12,
-            // justifyContent: 'center',
             marginTop: moderateScale(30, 0.3),
-            // backgroundColor:'black',
           }}>
           <CustomText isBold style={styles.txt1}>
             Welcome
@@ -198,34 +187,33 @@ const AssetScreen = props => {
             acordingly
           </CustomText>
         </View>
-        {
-          fromDrawer &&
-        
-
-        <TouchableOpacity activeOpacity={0.8} style={styles.Rounded}  onPress={() => {
-          navigation.goBack();
-        }}>
-          <Icon
+        {fromDrawer && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.Rounded}
             onPress={() => {
               navigation.goBack();
-            }}
-            name="menu"
-            as={Ionicons}
-            size={moderateScale(25)}
-            color={Color.black}
-          />
-        </TouchableOpacity>
-}
+            }}>
+            <Icon
+              onPress={() => {
+                navigation.goBack();
+              }}
+              name="menu"
+              as={Ionicons}
+              size={moderateScale(25)}
+              color={Color.black}
+            />
+          </TouchableOpacity>
+        )}
         <View
           style={{
             position: 'absolute',
             zIndex: 1,
             right: 0,
-            bottom: 70,
+            bottom: 60,
             left: 0,
             justifyContent: 'center',
             alignItems: 'center',
-            // backgroundColor:'white'
           }}>
           <CustomButton
             onPress={() => {
@@ -244,16 +232,17 @@ const AssetScreen = props => {
             textColor={Color.white}
             width={windowWidth * 0.7}
             height={windowHeight * 0.07}
-            marginTop={moderateScale(50, 0.3)}
             bgColor={Color.themeColor}
             borderRadius={moderateScale(25, 0.3)}
-            // isGradient
           />
         </View>
 
         <FlatList
           contentContainerStyle={{
-            paddingBottom: Platform.OS == 'android' ? moderateScale(90, 0.6) :moderateScale(130, 0.6) ,
+            paddingBottom:
+              Platform.OS == 'android'
+                ? moderateScale(120, 0.6)
+                : moderateScale(130, 0.6),
           }}
           data={asset}
           renderItem={({item, index}) => {
@@ -268,8 +257,7 @@ const AssetScreen = props => {
           }}
         />
       </LinearGradient>
-      </SafeAreaView>
-    // </ScreenBoiler>
+    </SafeAreaView>
   );
 };
 
