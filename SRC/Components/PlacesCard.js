@@ -31,7 +31,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Alert} from 'react-native';
 import navigationService from '../navigationService';
 
-const PlacesCard = ({item, fromWishList, setIds, ids}) => {
+const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
@@ -118,16 +118,22 @@ const PlacesCard = ({item, fromWishList, setIds, ids}) => {
           },
         ]}
         onLongPress={() => {
-          !ids?.some(data => data == item?.id) &&
+          !fromHome &&
+            !ids?.some(data => data == item?.id) &&
             setIds(prev => [...prev, item?.id]);
         }}
         onPress={() => {
-          if (ids.length > 0) {
-            !ids?.some(data => data == item?.id)
-              ? setIds(prev => [...prev, item?.id])
-              : setIds(ids?.filter(data => data != item?.id));
-          } else {
+          if (!fromHome) {
+            if (ids.length > 0) {
+              !ids?.some(data => data == item?.id)
+                ? setIds(prev => [...prev, item?.id])
+                : setIds(ids?.filter(data => data != item?.id));
+            } else {
+              ref.open();
+            }
+          }else{
             ref.open();
+
           }
         }}>
         <View style={styles.image}>
@@ -420,7 +426,7 @@ const PlacesCard = ({item, fromWishList, setIds, ids}) => {
               style={{
                 height: windowWidth * 0.1,
                 width: windowWidth * 0.1,
-                borderRadius: (windowWidth * 0.1) / 2, 
+                borderRadius: (windowWidth * 0.1) / 2,
                 backgroundColor: '#1a73e8',
                 justifyContent: 'center',
                 alignItems: 'center',

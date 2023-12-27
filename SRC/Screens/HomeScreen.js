@@ -296,7 +296,7 @@ const HomeScreen = () => {
                 //   height: windowHeight * 0.25,
               }}
               renderItem={({item, index}) => {
-                return <PlacesCard item={item}/>;
+                return <PlacesCard item={item} fromHome={true}/>;
               }}
             />
           )}

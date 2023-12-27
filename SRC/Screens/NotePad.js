@@ -334,6 +334,7 @@ const NotePad = props => {
             marginTop={moderateScale(20, 0.3)}
             bgColor={Color.themeColor}
             borderRadius={moderateScale(25, 0.3)}
+            marginBottom={moderateScale(20,.3)}
             // isGradient
           />
         </View>

@@ -143,7 +143,7 @@ const AssetScreen = props => {
       id: 14,
       Image: require('../Assets/Images/sports.png'),
       name: 'ATM',
-      Key: 14,
+      Key: 17,
     },
     {
       id: 15,
@@ -208,10 +208,11 @@ const AssetScreen = props => {
         <View
           style={{
             position: 'absolute',
+            // backgroundColor:'red',
             zIndex: 1,
             right: 0,
-            bottom: 60,
-            left: 0,
+            bottom: 70,
+            left: 0, 
             justifyContent: 'center',
             alignItems: 'center',
           }}>
@@ -232,6 +233,7 @@ const AssetScreen = props => {
             textColor={Color.white}
             width={windowWidth * 0.7}
             height={windowHeight * 0.07}
+            // marginTop={moderateScale(50, 0.3)}
             bgColor={Color.themeColor}
             borderRadius={moderateScale(25, 0.3)}
           />
