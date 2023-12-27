@@ -74,10 +74,10 @@ const HomeScreen = () => {
   };
   const getData = async location => {
     setplacesData([]);
-    var url2 = '&place[]=exchnage';
-    // preferences.map((item, index) => {
-    //   url2 += `&place[]=${item}`;
-    // });
+    var url2 = '';
+    preferences.map((item, index) => {
+      url2 += `&place[]=${item}`;
+    });
 
     const url = `location?latitude=${
       Object.keys(customLocation).length > 0
@@ -300,7 +300,7 @@ const HomeScreen = () => {
                 //   height: windowHeight * 0.25,
               }}
               renderItem={({item, index}) => {
-                return <PlacesCard item={item} />;
+                return <PlacesCard item={item} fromHome={true}/>;
               }}
             />
           )}
