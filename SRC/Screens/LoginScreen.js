@@ -103,13 +103,13 @@ const LoginScreen = () => {
               height: windowHeight * 0.1,
               marginTop: moderateScale(130, 0.3),
             }}>
-            <LottieView
+            {/* <LottieView
               resizeMode="cover"
               source={require('../Assets/Images/animation2.json')}
               // style={{height: '90%' }}
               autoPlay
               loop
-            />
+            /> */}
             {/* <CustomImage
               source={require('../Assets/Images/logo.png')}
               style={{width: '100%', height: '100%'}}

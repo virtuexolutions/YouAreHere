@@ -66,23 +66,24 @@ const AssetScreen = props => {
       name: 'Food',
       Key: 1,
     },
+   
     {
       id: 2,
-      Image: require('../Assets/Images/sports.png'),
-      name: 'Hospital',
+      Image: require('../Assets/Images/coffee-cup.png'),
+      name: 'Bank',
       Key: 2,
     },
     {
       id: 3,
-      Image: require('../Assets/Images/coffee-cup.png'),
-      name: 'Bank',
+      Image: require('../Assets/Images/park.png'),
+      name: 'Radio Station',
       Key: 3,
     },
     {
       id: 4,
-      Image: require('../Assets/Images/park.png'),
-      name: 'Radio Station',
-      Key: 4,
+      Image: require('../Assets/Images/sports.png'),
+      name: 'Sports',
+      Key:4,
     },
     {
       id: 5,
@@ -142,20 +143,45 @@ const AssetScreen = props => {
     {
       id: 14,
       Image: require('../Assets/Images/sports.png'),
-      name: 'ATM',
+      name: 'Hospital',
       Key: 14,
     },
+    
     {
       id: 15,
       Image: require('../Assets/Images/sports.png'),
-      name: 'Sports',
+      name: 'MoneyExchange',
       Key: 15,
     },
     {
       id: 16,
       Image: require('../Assets/Images/sports.png'),
-      name: 'Golf Courses',
+      name: 'ATM',
       Key: 16,
+    },
+    {
+      id: 17,
+      Image: require('../Assets/Images/sports.png'),
+      name: 'Churches',
+      Key: 17,
+    },
+    {
+      id: 18,
+      Image: require('../Assets/Images/sports.png'),
+      name: 'Studios',
+      Key: 18,
+    },
+    {
+      id: 19,
+      Image: require('../Assets/Images/sports.png'),
+      name: 'Mosques',
+      Key:19,
+    },
+   {
+      id: 20,
+      Image: require('../Assets/Images/sports.png'),
+      name: 'Golf Courses',
+      Key:20,
     },
   ];
 
