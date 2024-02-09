@@ -23,7 +23,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const Header = props => {
   const dispatch = useDispatch();
   const notification = useSelector(state => state.commonReducer.notification);
-  const navigationN = useNavigation();
+  const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const {
     title,
@@ -81,14 +81,15 @@ const Header = props => {
             size={moderateScale(22, 0.3)}
             color={userRole == 'Qbid Member' ? Color.themeColor : Color.blue}
             onPress={() => {
-              navigationN.goBack();
+              navigation.goBack();
             }}
           />
         ): (
           <View></View>
         )}
       </View>
-      <CustomImage
+  { title ? <CustomText>{title}</CustomText> :   
+  <CustomImage
         resizeMode={'contain'}
         style={{
           width: windowWidth * 0.21,
@@ -100,7 +101,7 @@ const Header = props => {
             ? require('../Assets/Images/bedge1.png')
             : require('../Assets/Images/bedge1.png')
         }
-      /> 
+      /> }
      
       {/* <CustomText isBold style={{color : Color.white , fontSize : moderateScale(20,0.6)}} >Hola!!</CustomText> */}
       {!hideUser ? (

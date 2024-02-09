@@ -7,7 +7,6 @@ import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
-// import LottieView from 'lottie-react-native';
 import {SafeAreaView} from 'react-native';
 import LottieView from 'lottie-react-native';
 

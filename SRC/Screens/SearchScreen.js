@@ -64,8 +64,9 @@ const SearchScreen = () => {
             setSearchData( { name : data?.description ,  location : details?.geometry?.location})
           }}
           query={{
-            // key: 'AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8',---OLD KEY---
+            // key: 'AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8' --old api,
             key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
+            
             language: 'en',
           }}
           isRowScrollable={true}

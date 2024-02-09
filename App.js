@@ -21,6 +21,7 @@ import SplashScreen from './SRC/Screens/SplashScreen';
 import AppNavigator, {DrawerRoot} from './SRC/appNavigation';
 import GetStarted from './SRC/Screens/GetStarted';
 import { Platform } from 'react-native';
+import Filters from './SRC/Screens/Filters';
 
 
 const App = () => {

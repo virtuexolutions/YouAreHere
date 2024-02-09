@@ -24,6 +24,7 @@ import Drawer from './drawer/Drawer';
 import Color from './Assets/Utilities/Color';
 import NotePad from './Screens/NotePad';
 import Files from './Screens/Files';
+import Filters from './Screens/Filters';
 import HighLights from './Screens/HighLights';
 import WhishListScreen from './Screens/WhishListScreen';
 import NotepadDesign from './Screens/NotepadDesign';
@@ -41,11 +42,7 @@ const AppNavigator = () => {
 
   const AppNavigatorContainer = () => {
     const firstScreen =
-      token != null ?
-      preferencesSet == false?
-      'AssetScreen'
-      :
-         'MyDrawer'
+      token != null ?'MyDrawer'
         : walkThrough == true
         ? 'GetStarted'
         : 'WalkThroughScreen';
@@ -71,6 +68,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="Files" component={Files} />
           <RootNav.Screen name="NotePad" component={NotePad} />
           <RootNav.Screen name="AssetScreen" component={AssetScreen} />
+          <RootNav.Screen name="Filters" component={Filters} />
 
 
         </RootNav.Navigator>

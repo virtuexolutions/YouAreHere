@@ -41,16 +41,16 @@ const user = useSelector(state => state.commonReducer.userData)
       iconName: 'subscriptions',
       iconType: MaterialIcons,
     },
-    {
-      name: 'Interests',
-      onPress: () => {
-        navigation.navigate('AssetScreen',{
-          fromDrawer : true 
-        });
-      },
-      iconName: 'room-preferences',
-      iconType: MaterialIcons,
-    },
+    // {
+    //   name: 'Interests',
+    //   onPress: () => {
+    //     navigation.navigate('AssetScreen',{
+    //       fromDrawer : true 
+    //     });
+    //   },
+    //   iconName: 'room-preferences',
+    //   iconType: MaterialIcons,
+    // },
     {
       name: 'Saved Notes',
       onPress: () => {
