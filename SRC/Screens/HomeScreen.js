@@ -17,6 +17,11 @@ import {
 } from 'react-native';
 import CustomText from '../Components/CustomText';
 import SearchContainer from '../Components/SearchContainer';
+
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {FlatList, Icon, ScrollView} from 'native-base';
 import PlacesCard from '../Components/PlacesCard';
@@ -27,6 +32,7 @@ import {useSelector} from 'react-redux';
 import navigationService from '../navigationService';
 import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import FiltersModal from './FiltersModal';
 
 const HomeScreen = () => {
   const isFocused = useIsFocused();
@@ -40,11 +46,73 @@ const HomeScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchData, setSearchData] = useState('');
   const [placesData, setplacesData] = useState([]);
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [preferences, setPreferences] = useState([]);
-  const [places, setPlaces] = useState([]);
-  const [wishList, setWishList] = useState([]);
-
+  // console.log('🚀 ~ HomeScreen ~ preferences:', preferences);
+  const [selectedLocation, setSelectedLoacation] = useState();
   const [refreshing, setRefreshing] = React.useState(false);
+  // const [places, setPlaces] = useState([]);
+  const places = [
+    {
+      id: 'f1',
+      name: 'Restaurants',
+      icon: 'restaurant',
+      as: MaterialIcons,
+      // onPress: () => {},
+    },
+    {
+      id: 'h6',
+      name: 'Gas',
+      icon: 'local-gas-station',
+      as: MaterialIcons,
+      // onPress: () => {},
+    },
+    {
+      id: 't4',
+      name: 'Attractions',
+      icon: 'attractions',
+      as: MaterialIcons,
+      // onPress: () => {},
+    },
+    {
+      id: 'h1',
+      name: 'Hotels',
+      icon: 'local-hotel',
+      as: MaterialIcons,
+      // onPress: () => {},
+    },
+    {
+      id: 'f2',
+      name: 'Coffee',
+      icon: 'coffee-outline',
+      as: MaterialCommunityIcons,
+      // onPress: () => {},
+    },
+    {
+      id: 's1',
+      name: 'Groceries',
+      icon: 'local-grocery-store',
+      as: MaterialIcons,
+      // onPress: () => {},
+    },
+    {
+      id: 't1',
+      name: 'Parks',
+      icon: 'park',
+      as: MaterialIcons,
+      // onPress: () => {},
+    },
+    {
+      id: 8,
+      name: 'More',
+      icon: 'more-horiz',
+      as: MaterialIcons,
+      // onPress: () => {
+      //   // navigationService.navigate("filters")
+      // },
+    },
+  ];
+
 
   const cardData = [
     {
@@ -74,7 +142,7 @@ const HomeScreen = () => {
     setplacesData([]);
     var url2 = '';
     preferences.map((item, index) => {
-      url2 += `&place[]=${item}`;
+      url2 += `&place[]=${item?.name}`;
     });
 
     const url = `location?latitude=${
@@ -86,7 +154,7 @@ const HomeScreen = () => {
         ? customLocation?.location?.lng
         : location?.lng
     }${url2}`;
-   
+
     setIsLoading(true);
     const response = await Get(url, token);
     setIsLoading(false);
@@ -133,13 +201,13 @@ const HomeScreen = () => {
   useEffect(() => {
     Platform.OS == 'android' ? handleEnableLocation() : getLocation();
   }, [preferences, isFocused, customLocation]);
-  useEffect(() => {
-    setPlaces(
-      user?.preferences?.length > 0
-        ? user?.preferences?.map(item => item?.preferences)
-        : [],
-    );
-  }, [isFocused]);
+  // useEffect(() => {
+  //   setPlaces(
+  //     user?.preferences?.length > 0
+  //       ? user?.preferences?.map(item => item?.preferences)
+  //       : [],
+  //   );
+  // }, [isFocused]);
 
   return (
     <ScreenBoiler
@@ -162,28 +230,68 @@ const HomeScreen = () => {
           }>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.placesContainer}>
-              {places?.map(item => {
+              {places?.map((item, index) => {
                 return (
-                  <CustomText
-                    numberOfLines={1}
+                  <TouchableOpacity
+                  disabled={isLoading}
+                  activeOpacity={0.8}
                     onPress={() => {
-                      if (preferences.includes(item)) {
-                        setPreferences(preferences.filter(i => i !== item));
+                      if (item?.name == 'More') {
+                        setIsVisibleModal(true);
                       } else {
-                        setPreferences(prev => [...prev, item]);
+                        if (
+                          preferences?.some(
+                            (item1, index) => item1?.id == item?.id,
+                          )
+                        ) {
+                          setPreferences(
+                            preferences?.filter(
+                              (item2, index) => item2?.id != item?.id,
+                            ),
+                          );
+                        } else {
+                          setPreferences(prev => [...prev, item]);
+                        }
                       }
-                    }}
-                    style={[
-                      styles.text,
-                      preferences.includes(item) && {
-                        backgroundColor: Color.yellow,
-                        color: 'white',
-                        borderColor: 'white',
-                        borderWidth: 1,
-                      },
-                    ]}>
-                    {item}
-                  </CustomText>
+                    }}>
+                    <View
+                      key={item.id}
+                      style={[
+                        styles.sectionInnerItem,
+                        {
+                          backgroundColor: preferences?.some(
+                            (item1, index) => item1?.id == item?.id,
+                          )
+                            ? Color.yellow
+                            : Color.white,
+                        },
+                      ]}>
+                      <Icon
+                        as={item.as}
+                        name={item.icon}
+                        size={moderateScale(14, 0.1)}
+                        color={
+                          preferences?.some(
+                            (item1, index) => item1?.id == item?.id,
+                          )
+                            ? Color.white
+                            : Color.themeColor
+                        }
+                      />
+                      <CustomText
+                        isBold
+                        style={{
+                          color: preferences?.some(
+                            (item1, index) => item1?.id == item?.id,
+                          )
+                            ? Color.white
+                            : Color.themeColor,
+                          fontSize: moderateScale(12, 0.1),
+                        }}>
+                        {item.name}
+                      </CustomText>
+                    </View>
+                  </TouchableOpacity>
                 );
               })}
             </View>
@@ -296,10 +404,16 @@ const HomeScreen = () => {
                 //   height: windowHeight * 0.25,
               }}
               renderItem={({item, index}) => {
-                return <PlacesCard item={item} fromHome={true}/>;
+                return <PlacesCard item={item} fromHome={true} />;
               }}
             />
           )}
+          <FiltersModal
+            isVisibleModal={isVisibleModal}
+            setIsVisibleModal={setIsVisibleModal}
+            preferences={preferences}
+            setPreferences={setPreferences}
+          />
         </ScrollView>
       </LinearGradient>
     </ScreenBoiler>
@@ -316,6 +430,29 @@ const styles = ScaledSheet.create({
   },
   bottomImage: {
     width: windowWidth * 0.5,
+  },
+  sectionInnerItem: {
+    // width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: 4,
+    margin: moderateScale(6, 0.6),
+    padding: moderateScale(6, 0.5),
+    // borderWidth:0.5,
+    // borderColor: Color.red,
+    borderRadius: moderateScale(25, 0.2),
+    overflow: 'hidden',
+    paddingHorizontal: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+
+    elevation: 10,
   },
   text: {
     borderRadius: moderateScale(15, 0.6),
@@ -365,9 +502,11 @@ const styles = ScaledSheet.create({
     // backgroundColor:'white',
     // height:windowHeight*0.2,
     flexDirection: 'row',
+    gap: moderateScale(5, 0.25),
     marginTop: moderateScale(10, 0.3),
     justifyContent: 'flex-start',
     paddingHorizontal: moderateScale(10, 0.3),
+    // backgroundColor:'red',
   },
 });
 
