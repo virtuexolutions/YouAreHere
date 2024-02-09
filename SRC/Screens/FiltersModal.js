@@ -1,5 +1,6 @@
 import {
   FlatList,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -152,12 +153,13 @@ const FiltersModal = ({
           alignItems: 'center',
         }}>
         <View
-          style={{
+          style={[{
             backgroundColor: 'white',
             // borderRadius: moderateScale(20, 0.6),
             height: windowHeight,
             width: windowWidth,
-          }}>
+
+          },Platform.OS == 'ios' && {paddingTop : 50}]}>
           <View style={styles.header}>
             <Icon
               onPress={() => {
