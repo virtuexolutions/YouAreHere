@@ -33,6 +33,7 @@ import navigationService from '../navigationService';
 import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import FiltersModal from './FiltersModal';
+import axios from 'axios';
 
 const HomeScreen = () => {
   const isFocused = useIsFocused();
@@ -198,18 +199,40 @@ const HomeScreen = () => {
       });
   };
 
+
+  const findNearestMcDonalds = async() => {
+   
+  
+    const radius = 50000; // Search radius in meters (adjust as needed)
+    const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
+    const latitude = 24.871941;
+    const longitude = 66.988060;
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${latitude},${longitude}&radius=${radius}&keyword=chinese resturant`;
+
+  
+    console.log('apiStart')
+    try {
+    const response = await axios.get(url)
+    if(response != undefined){
+      console.log('result here' , JSON.stringify(response?.data?.results , null ,2))
+    }
+    }
+    catch(error){ console.error('Error fetching McDonald\'s locations:', error)};
+    
+     
+  };
+
   useEffect(() => {
     Platform.OS == 'android' ? handleEnableLocation() : getLocation();
   }, [preferences, isFocused, customLocation]);
-  // useEffect(() => {
-  //   setPlaces(
-  //     user?.preferences?.length > 0
-  //       ? user?.preferences?.map(item => item?.preferences)
-  //       : [],
-  //   );
-  // }, [isFocused]);
 
-  return (
+
+
+  // useEffect(() => {
+  //   findNearestMcDonalds()
+  // }, [])
+  
+  return  (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
@@ -228,7 +251,7 @@ const HomeScreen = () => {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.placesContainer}>
               {places?.map((item, index) => {
                 return (
@@ -295,7 +318,7 @@ const HomeScreen = () => {
                 );
               })}
             </View>
-          </ScrollView>
+          </ScrollView> */}
           <View style={styles.search}>
             <SearchContainer
               onPress={() => {

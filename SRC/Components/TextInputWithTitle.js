@@ -56,8 +56,12 @@ shadowRadius: 5.46,
 
 elevation: 9,
         },
+
         props.marginBottom &&{
           marginBottom : props.marginBottom
+        },
+        props.paddingHorizontal &&{
+          paddingHorizontal : props.paddingHorizontal
         },
             props.autoCapitalize &&{
               textTransform : props.autoCapitalize

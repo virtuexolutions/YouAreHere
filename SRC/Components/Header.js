@@ -31,6 +31,8 @@ const Header = props => {
     showList,
     headerColor,
     titleColor,
+    titleSize,
+    titleWeight,
     close,
     navigateTO,
     headerType,
@@ -88,7 +90,7 @@ const Header = props => {
           <View></View>
         )}
       </View>
-  { title ? <CustomText>{title}</CustomText> :   
+  { title ? <CustomText style={{color:titleColor, fontSize: titleSize, FontWeight:titleWeight}}>{title}</CustomText> :   
   <CustomImage
         resizeMode={'contain'}
         style={{
