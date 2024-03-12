@@ -8,6 +8,7 @@ import CustomText from "./CustomText";
 import { windowWidth } from "../Utillity/utils";
 
 function PreferenceModalListItem({isSelected, item, onToggle }){
+    // console.log("🚀 ~ PreferenceModalListItem ~ item=>:", item)
     return(
         <TouchableOpacity
         style={[styles.listComponent,  isSelected &&  {

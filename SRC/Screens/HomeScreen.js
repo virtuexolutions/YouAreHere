@@ -35,7 +35,8 @@ import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import FiltersModal from './FiltersModal';
 import axios from 'axios';
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
+  // const 
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
@@ -207,14 +208,22 @@ const HomeScreen = () => {
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
     const longitude = 66.988060;
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${latitude},${longitude}&radius=${radius}&keyword=chinese resturant`;
+    const keyword = 'rv_park'
+    // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${latitude},${longitude}&radius=${radius}&keyword=chinese resturant`;
+   
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${"36 markit ali hussain downlod wala"}&key=${apiKey}&keyword=${keyword}`
+    
 
-  
+
     console.log('apiStart')
     try {
     const response = await axios.get(url)
     if(response != undefined){
-      console.log('result here' , JSON.stringify(response?.data?.results , null ,2))
+      // console.log(JSON.stringify( response?.data?.predictions , null ,2))
+      const filteredPredictions = response?.data?.predictions.filter(prediction =>
+        prediction.types.includes(keyword)
+      );
+      console.log('result here' , JSON.stringify(filteredPredictions , null ,2))
     }
     }
     catch(error){ console.error('Error fetching McDonald\'s locations:', error)};
@@ -222,17 +231,18 @@ const HomeScreen = () => {
      
   };
 
-  useEffect(() => {
-    Platform.OS == 'android' ? handleEnableLocation() : getLocation();
-  }, [preferences, isFocused, customLocation]);
-
-
-
   // useEffect(() => {
-  //   findNearestMcDonalds()
-  // }, [])
+  //   Platform.OS == 'android' ? handleEnableLocation() : getLocation();
+  // }, [preferences, isFocused, customLocation]);
+
+
+
+  useEffect(() => {
+    findNearestMcDonalds()
+  }, [])
   
   return  (
+    
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
