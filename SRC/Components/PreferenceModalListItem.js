@@ -9,6 +9,7 @@ import { windowWidth } from "../Utillity/utils";
 
 function PreferenceModalListItem({isSelected, item, onToggle }){
     // console.log("🚀 ~ PreferenceModalListItem ~ item=>:", item)
+    // const photoUrl=`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${item?.photo}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc`;
     return(
         <TouchableOpacity
         style={[styles.listComponent,  isSelected &&  {
@@ -29,12 +30,15 @@ function PreferenceModalListItem({isSelected, item, onToggle }){
               >
             <CustomImage
             style={{width:'100%', height:"100%"}}
-            source={{uri:item.ímage}}
+            source={{uri: item.photo }}
             resizeMode={"cover"}
             />
             </View>
-            <View>
-            <CustomText>
+            <View
+            style={{width:windowWidth * 0.5}}
+            >
+            <CustomText
+            >
                 {item.name}
             </CustomText>
             </View>
@@ -56,6 +60,7 @@ const styles = StyleSheet.create({
     listComponent:{
         flexDirection:'row',
         alignItems:"center",
+        width:'100%',
         justifyContent:'space-between',
         gap:moderateScale(24,0.6),
         paddingHorizontal:moderateScale(18,0.9),

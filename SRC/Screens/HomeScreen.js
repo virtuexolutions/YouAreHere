@@ -208,10 +208,10 @@ const HomeScreen = (props) => {
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
     const longitude = 66.988060;
-    const keyword = 'rv_park'
+    const keyword = 'bus_stop'
     // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${latitude},${longitude}&radius=${radius}&keyword=chinese resturant`;
    
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${"36 markit ali hussain downlod wala"}&key=${apiKey}&keyword=${keyword}`
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${"Karachi Bus Terminal"}&key=${apiKey}&keyword=${keyword}`
     
 
 

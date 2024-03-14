@@ -26,6 +26,7 @@ const Filters = () => {
   const [selectedItem, setSelectedItem] = useState([]);
   const [selectedType, setSelectedType] = useState({
     name: '',
+    keyword:'',
     parentIndex: 0,
     childIndex: 0,
   });
@@ -39,6 +40,7 @@ const Filters = () => {
         {
           id: 'f1',
           name: 'restaurant',
+          label: 'Restaurant',
           icon: 'coffee-outline',
           as: MaterialCommunityIcons,
           preferences: [],
@@ -46,28 +48,32 @@ const Filters = () => {
         {
           id: 'f2',
           name: 'cafe',
+          label: 'Cafe',
           icon: 'coffee-outline',
           as: MaterialCommunityIcons,
           preferences: [],
         },
         {
           id: 'f3',
-          name: 'Takeout',
+          label: 'Takeout',
+          name:"meal_takeaway",
           icon: 'food-takeout-box-outline',
           as: MaterialCommunityIcons,
           preferences: [],
         },
         {
           id: 'f4',
-          name: 'Delivery',
+          label: 'Delivery',
+          name:'meal_delivery',
           icon: 'delivery-dining',
           as: MaterialIcons,
           preferences: [],
         },
         {
           id:'f5',
-          name:"Bar",
-          icon: 'table-bar',
+          name:"bar",
+          label:"Bar",
+          icon: 'local-bar',
           as:MaterialIcons,
           preferences:[],
         },
@@ -97,7 +103,8 @@ const Filters = () => {
         },
         {
           id: 't4',
-          name: 'Attractions',
+          name: 'amusement_park',
+          label: 'Amusement Park',
           icon: 'attractions',
           as: MaterialIcons,
           preferences: [],
@@ -105,18 +112,10 @@ const Filters = () => {
         {
           id:'t5',
           name:'night_club',
-          label:'Night_Club',
+          label:'Night Club',
           icon:'musical-note',
           as:Ionicons,
           preferences:[]
-        },
-        {
-          id: 't7',
-          name: 'movies',
-          label:'Movies',
-          icon: 'movie-outline',
-          as: MaterialCommunityIcons,
-          preferences: [],
         },
         {
           id: 't8',
@@ -135,17 +134,9 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id:'t10',
-          name:'mmusement_park',
-          label:'Mmusement Park',
-          icon:'ferris-wheel',
-          as:MaterialCommunityIcons,
-          preferences:[]
-        },
-       
-        {
           id:'t12',
           name:'aquarium',
+          label:'Aquarium',
           icon:'dolphin',
           as:MaterialCommunityIcons,
           preferences:[]
@@ -220,17 +211,8 @@ const Filters = () => {
       id: 'cat3',
       type: 'Shopping',
       categories: [
-       
         {
-          id: 's3',
-          name: 'car_rental',
-          label: 'Car Rental',
-          icon: 'directions-car',
-          as: MaterialIcons,
-          preferences: [],
-        },
-        {
-          id: 's4',
+          id: 's1',
           name: 'home_goods_store',
           label: 'Home Goods Store',
           icon: 'home',
@@ -238,7 +220,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's5',
+          id: 's2',
           name: 'clothing_store',
           label: 'Clothing Store',
           icon: 'shirt',
@@ -246,7 +228,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's6',
+          id: 's3',
           name: 'shopping_mall',
           label: 'Shopping Mall',
           icon: 'local-mall',
@@ -254,7 +236,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's7',
+          id: 's4',
           name: 'electronics',
           label: 'Electronics',
           icon: 'devices',
@@ -262,7 +244,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's8',
+          id: 's5',
           name: 'sporting_goods',
           label: 'Sporting Goods',
           icon: 'football',
@@ -270,7 +252,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's9',
+          id: 's6',
           name: 'convenience_store',
           label: 'Convenience Store',
           icon: 'local-convenience-store',
@@ -278,7 +260,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's10',
+          id: 's7',
           name: 'liquor_store',
           label: 'Liquor Store',
           icon: 'local-bar',
@@ -286,7 +268,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's11',
+          id: 's8',
           name: 'shoe_store',
           label: 'Shoe Store',
           icon: 'shoe-sneaker',
@@ -295,7 +277,7 @@ const Filters = () => {
         },
         
         {
-          id: 's12',
+          id: 's9',
           name: 'jewelry_store',
           label: 'Jewelry Store',
           icon: 'necklace',
@@ -303,7 +285,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's13',
+          id: 's10',
           name: 'supermarket',
           label: 'SuperMarket',
           icon: 'local-convenience-store',
@@ -311,14 +293,14 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's14',
+          id: 's11',
           name: 'furniture_store',
           label: 'Furniture Store',
           icon: 'weekend',
           as: MaterialIcons,
           preferences: [],
         },{
-          id: 's15',
+          id: 's12',
           name: 'hardware_store',
           label: 'Hardware Store',
           icon: 'hardware-chip',
@@ -326,7 +308,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's16',
+          id: 's13',
           name: 'bicycle_store',
           label: 'Bicycle Store',
           icon: 'directions-bike',
@@ -334,7 +316,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's17',
+          id: 's14',
           name: 'book_store',
           label: 'Book Store',
           icon: 'menu-book',
@@ -342,7 +324,7 @@ const Filters = () => {
           preferences: [],
         },
         {
-          id: 's18',
+          id: 's15',
           name: 'department_store',
           label: 'Department Store',
           icon: 'store',
@@ -365,7 +347,7 @@ const Filters = () => {
         },
         {id: 'sa2', 
         name: 'atm', 
-        name: 'ATM', 
+        label: 'ATM', 
         icon: 'atm', as: MaterialIcons, preferences: []},
         {
           id: 'sa3',
@@ -377,16 +359,16 @@ const Filters = () => {
         },
         {
           id: 'sa4',
-          name: 'Car Rental',
-          label: 'car_tental',
+          name: 'car_rental',
+          label: 'Car Rental',
           icon: 'car-rental',
           as: MaterialIcons,
           preferences: [],
         },
         {
           id: 'sa5',
-          name: 'Car Wash',
-          label: 'car_wash',
+          name: 'car_wash',
+          label: 'car wash',
           icon: 'local-car-wash',
           as: MaterialIcons,
           preferences: [],
@@ -409,15 +391,17 @@ const Filters = () => {
         },
         {
           id: 'sa8',
-          name: 'Libraries',
+          label: 'Libraries',
+          name:'library',
           icon: 'local-library',
           as: MaterialIcons,
           preferences: [],
         },
         {
           id: 'sa9',
-          name: 'Mail & Shipping',
-          icon: 'local-shipping',
+          name: 'airport',
+          label: 'Airport',
+          icon: 'local-airport',
           as: MaterialIcons,
           preferences: [],
         },
@@ -620,8 +604,8 @@ const Filters = () => {
           id: 'sa34',
           name: 'hindu_temple',
           label: 'Hindu Temple', 
-          icon: 'temple-hindu',
-          as: MaterialIcons,
+          icon: 'place-of-worship',
+          as: FontAwesome5,
           preferences: [],
 
         },
@@ -683,6 +667,63 @@ const Filters = () => {
           as: FontAwesome5,
           preferences: [],
         },
+        {
+          id: 'sa43',
+          name: 'hair_care',
+          label: 'Hair Care', 
+          icon: 'spa',
+          as: MaterialIcons,
+          preferences: [],
+        },
+        {
+          id: 'sa43',
+          name: 'cemetery',
+          label: 'Cemetery', 
+          icon: 'grave-stone',
+          as: MaterialCommunityIcons,
+          preferences: [],
+        },
+        {
+          id: 'sa44',
+          name: 'car_repair',
+          label: 'Car Repair', 
+          icon: 'car-repair',
+          as: MaterialIcons,
+          preferences: [],
+        },
+        {
+          id: 'sa45',
+          name: 'city_hall',
+          label: 'City Hall', 
+          icon: 'town-hall',
+          as: MaterialCommunityIcons,
+          preferences: [],
+        },
+        {
+          id: 'sa46',
+          name: 'bank',
+          label: 'Bank', 
+          icon: 'bank',
+          as: FontAwesome,
+          preferences: [],
+        },
+        {
+          id: 'sa47',
+          name:'beauty_salon',
+          label: 'Beauty Salon',
+          icon: 'spa',
+          as: MaterialIcons,
+          preferences: [],
+        },
+        {
+          id: 'sa48',
+          name:'local_government_office',
+          label: 'Court',
+          icon: 'building',
+          as: FontAwesome,
+          preferences: [],
+        },
+
       ],
     },
   ]);
@@ -704,7 +745,7 @@ const Filters = () => {
         titleSize={moderateScale(18, 0.9)}
       />
 
-      <View style={{height: windowHeight * 0.85}}>
+      <View style={{height: windowHeight * 0.9}}>
         <FlatList
           data={types}
           keyExtractor={item => item.id}
@@ -725,14 +766,15 @@ const Filters = () => {
                           onPress={() => {
                             setModalIsVisible(true);
                             setSelectedType({
-                              name: catData?.name,
+                              name: catData?.label,
+                              keyword:catData?.name,
                               parentIndex: index,
                               childIndex: index1,
                             });
                           }}
                           key={index1}
                           style={[styles.sectionInnerItem]}>
-                          <View
+                        {catData?.preferences?.length > 0 &&  <View
                             style={{
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -752,22 +794,26 @@ const Filters = () => {
                                 fontSize: moderateScale(8, 0.9),
                                 textAlign: 'center',
                               }}>
+                                
                               {catData?.preferences?.length}
                             </CustomText>
                           </View>
+}                      
+ 
 
                           <Icon
                             as={catData.as}
                             name={catData.icon}
                             size={moderateScale(14, 0.1)}
                             color={Color.Darkblue}
-                          />
+                            />
+ 
                           <CustomText
                             style={{
                               color: Color.Darkblue,
                               fontSize: moderateScale(12, 0.1),
                             }}>
-                            {catData.name}
+                            {catData.label}
                           </CustomText>
                         </TouchableOpacity>
                       </>
@@ -817,7 +863,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    gap: 4,
+    gap: 7,
     margin: moderateScale(4, 0.2),
     padding: moderateScale(6, 0.5),
     borderWidth: 0.5,
