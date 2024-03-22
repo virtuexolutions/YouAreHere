@@ -34,12 +34,18 @@ import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import FiltersModal from './FiltersModal';
 import axios from 'axios';
+import OptionsMenu from 'react-native-options-menu';
 
-const HomeScreen = (props) => {
-  // const 
+const HomeScreen = props => {
+  // const
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ HomeScreen ~ token:', token);
   const user = useSelector(state => state.commonReducer.userData);
+  const userPreferences = useSelector(state => state.commonReducer.prefrences);
+  console.log('🚀 ~ HomeScreen ~ userPreferences:', userPreferences);
+  const filteredUserPreference = userPreferences?.map(item=> item?.preferences)
+  console.log("🚀 ~ HomeScreen ~ filteredUserPreference:", filteredUserPreference)
   const customLocation = useSelector(
     state => state.commonReducer.customLocation,
   );
@@ -50,14 +56,14 @@ const HomeScreen = (props) => {
   const [placesData, setplacesData] = useState([]);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [preferences, setPreferences] = useState([]);
-  // console.log('🚀 ~ HomeScreen ~ preferences:', preferences);
   const [selectedLocation, setSelectedLoacation] = useState();
-  const [refreshing, setRefreshing] = React.useState(false);
-  // const [places, setPlaces] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchedPlaces, setSearchedPlaces] = useState([]);
   const places = [
     {
       id: 'f1',
       name: 'Restaurants',
+      label: 'restaurant',
       icon: 'restaurant',
       as: MaterialIcons,
       // onPress: () => {},
@@ -65,6 +71,7 @@ const HomeScreen = (props) => {
     {
       id: 'h6',
       name: 'Gas',
+      label: 'gas',
       icon: 'local-gas-station',
       as: MaterialIcons,
       // onPress: () => {},
@@ -79,6 +86,7 @@ const HomeScreen = (props) => {
     {
       id: 'h1',
       name: 'Hotels',
+      label: 'hotel',
       icon: 'local-hotel',
       as: MaterialIcons,
       // onPress: () => {},
@@ -93,6 +101,7 @@ const HomeScreen = (props) => {
     {
       id: 's1',
       name: 'Groceries',
+      label: 'shopping_mall',
       icon: 'local-grocery-store',
       as: MaterialIcons,
       // onPress: () => {},
@@ -100,21 +109,13 @@ const HomeScreen = (props) => {
     {
       id: 't1',
       name: 'Parks',
+      label: 'parks',
       icon: 'park',
       as: MaterialIcons,
       // onPress: () => {},
     },
-    {
-      id: 8,
-      name: 'More',
-      icon: 'more-horiz',
-      as: MaterialIcons,
-      // onPress: () => {
-      //   // navigationService.navigate("filters")
-      // },
-    },
+   
   ];
-
 
   const cardData = [
     {
@@ -146,6 +147,8 @@ const HomeScreen = (props) => {
     preferences.map((item, index) => {
       url2 += `&place[]=${item?.name}`;
     });
+
+    console.log('url2   ', url2);
 
     const url = `location?latitude=${
       Object.keys(customLocation).length > 0
@@ -200,49 +203,37 @@ const HomeScreen = (props) => {
       });
   };
 
-
-  const findNearestMcDonalds = async() => {
-   
-  
+  const findNearestMcDonalds = async () => {
     const radius = 50000; // Search radius in meters (adjust as needed)
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
-    const longitude = 66.988060;
-    const keyword = 'bus_stop'
-    // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${latitude},${longitude}&radius=${radius}&keyword=chinese resturant`;
-   
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${"Karachi Bus Terminal"}&key=${apiKey}&keyword=${keyword}`
-    
+    const longitude = 66.98806;
+    const keyword = 'restaurant';
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${latitude},${longitude}&radius=${radius}&keyword=${keyword}`;
 
-
-    console.log('apiStart')
+    console.log('apiStart');
     try {
-    const response = await axios.get(url)
-    if(response != undefined){
-      // console.log(JSON.stringify( response?.data?.predictions , null ,2))
-      const filteredPredictions = response?.data?.predictions.filter(prediction =>
-        prediction.types.includes(keyword)
-      );
-      console.log('result here' , JSON.stringify(filteredPredictions , null ,2))
+      const response = await axios.get(url);
+      if (response != undefined) {
+        const filteredPredictions = response?.data?.results.filter(prediction =>
+          prediction.types.includes(keyword),
+        );
+        setSearchedPlaces(filteredPredictions);
+      }
+    } catch (error) {
+      console.error("Error fetching McDonald's locations:", error);
     }
-    }
-    catch(error){ console.error('Error fetching McDonald\'s locations:', error)};
-    
-     
   };
 
   // useEffect(() => {
   //   Platform.OS == 'android' ? handleEnableLocation() : getLocation();
   // }, [preferences, isFocused, customLocation]);
 
-
-
   useEffect(() => {
-    findNearestMcDonalds()
-  }, [])
-  
-  return  (
-    
+    findNearestMcDonalds();
+  }, []);
+
+  return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
@@ -257,38 +248,101 @@ const HomeScreen = (props) => {
         colors={Color.themeBgColor}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{minHeight: windowHeight * 0.9}}
+          style={{minHeight: windowHeight}}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
-          {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.placesContainer}>
-              {places?.map((item, index) => {
+              {filteredUserPreference?.map((item, index) => {
                 return (
                   <TouchableOpacity
-                  disabled={isLoading}
-                  activeOpacity={0.8}
+                    key={item.id}
                     onPress={() => {
-                      if (item?.name == 'More') {
-                        setIsVisibleModal(true);
-                      } else {
-                        if (
-                          preferences?.some(
-                            (item1, index) => item1?.id == item?.id,
-                          )
-                        ) {
-                          setPreferences(
-                            preferences?.filter(
-                              (item2, index) => item2?.id != item?.id,
-                            ),
-                          );
-                        } else {
-                          setPreferences(prev => [...prev, item]);
-                        }
-                      }
+                      console.log(item?.name);
+                      // findNearestMcDonalds(item?.label)
                     }}>
-                    <View
-                      key={item.id}
+                    <OptionsMenu
+                      customButton={
+                        <View
+                          key={item.id}
+                          style={[
+                            styles.sectionInnerItem,
+                            {
+                              backgroundColor: preferences?.some(
+                                (item1, index) => item1?.id == item?.id,
+                              )
+                                ? Color.yellow
+                                : Color.white,
+                            },
+                          ]}>
+                          <Icon
+                            as={item.as}
+                            name={item.icon}
+                            size={moderateScale(14, 0.1)}
+                            color={
+                              preferences?.some(
+                                (item1, index) => item1?.id == item?.id,
+                              )
+                                ? Color.white
+                                : Color.themeColor
+                            }
+                          />
+                          <CustomText
+                            isBold
+                            style={{
+                              color: preferences?.some(
+                                (item1, index) => item1?.id == item?.id,
+                              )
+                                ? Color.white
+                                : Color.themeColor,
+                              fontSize: moderateScale(12, 0.1),
+                            }}>
+                            {item.name}
+                          </CustomText>
+                        </View>
+                      }
+                      buttonStyle={{
+                        width: 40,
+                        height: 30,
+                        tintColor: '#000',
+                      }}
+                      destructiveIndex={1}
+                      options={item?.preferences.map(place => place?.name)}
+                      // options={['Invite Member', 'Bubble Management' , 'See Activity' ]}
+                      actions={
+                        [
+                          // InviteMember, BubbleMangement , handleActivity
+                        ]
+                      }
+                    />
+                  </TouchableOpacity>
+
+                  // <TouchableOpacity
+                  // disabled={isLoading}
+                  // activeOpacity={0.8}
+                  //   onPress={() => {
+                  //     console.log("Pressed")
+                  //     // if (item?.name == 'More') {
+                  //   setIsVisibleModal(true);
+                  // } else {
+                  //   if (
+                  //     preferences?.some(
+                  //       (item1, index) => item1?.id == item?.id,
+                  //     )
+                  //   ) {
+                  //     setPreferences(
+                  //       preferences?.filter(
+                  //         (item2, index) => item2?.id != item?.id,
+                  //       ),
+                  //     );
+                  //   } else {
+                  //     setPreferences(prev => [...prev, item]);
+                  //   }
+                  // }
+                  // }}>
+                  /*<View
+                  key={item.id}
                       style={[
                         styles.sectionInnerItem,
                         {
@@ -323,12 +377,13 @@ const HomeScreen = (props) => {
                         }}>
                         {item.name}
                       </CustomText>
-                    </View>
-                  </TouchableOpacity>
+                    </View> 
+                    */
+                  // </TouchableOpacity>
                 );
               })}
             </View>
-          </ScrollView> */}
+          </ScrollView>
           <View style={styles.search}>
             <SearchContainer
               onPress={() => {
@@ -441,12 +496,6 @@ const HomeScreen = (props) => {
               }}
             />
           )}
-          <FiltersModal
-            isVisibleModal={isVisibleModal}
-            setIsVisibleModal={setIsVisibleModal}
-            preferences={preferences}
-            setPreferences={setPreferences}
-          />
         </ScrollView>
       </LinearGradient>
     </ScreenBoiler>

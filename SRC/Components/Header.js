@@ -183,7 +183,7 @@ const styles = ScaledSheet.create({
   },
   header2: {
     width: windowWidth,
-    // height: windowHeight * 0.13,
+    // height: windowHeight * 0.1,
     backgroundColor: Color.themeColor,
     // justifyContent: 'center',
     flexDirection: 'row',

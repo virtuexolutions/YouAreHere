@@ -12,31 +12,32 @@ import CustomText from './CustomText';
 import {moderateScale} from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Icon} from 'native-base';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import TextInputWithTitle from './TextInputWithTitle';
 import Color from '../Assets/Utilities/Color';
 import PreferenceModalListItem from './PreferenceModalListItem';
 import axios from 'axios';
 import CustomImage from './CustomImage';
+import {setUserData} from '../Store/slices/common';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
 const PreferenceModal = ({
   modalIsVisible,
   setModalIsVisible,
   search,
   setSearch,
-  onSearch,
-  type,
-  setTypes,
-  selectedType,
+ selectedType,
+  setUserPreferences,
+  userPreferences,
 }) => {
-  console.log('🚀 ~ types:', JSON.stringify(type, null, 2));
-  console.log('🚀 ~ selectedType:', selectedType);
+  console.log('🚀 ~ userPreferences:', userPreferences);
+
   const [isLoading, setIsLoading] = useState(false);
-  const [item, setItem] = useState();
-  // const [item, setItem] = useState({
-  //   id: '',
-  //   name: '',
-  //   photo: '',
-  // });
+  const [item, setItem] = useState({});
+  const [index, setIndex] = useState(
+    userPreferences?.findIndex(data => data?.id == selectedType?.id),
+  );
+  console.log('🚀 ~ index:', index);
 
   const placesDetails = async placeId => {
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
@@ -44,32 +45,26 @@ const PreferenceModal = ({
     try {
       const response = await axios.get(url);
       if (response != undefined) {
+        console.log('response ===== >', response?.data?.result?.icon);
         setItem({
           id: response?.data?.result?.place_id,
-          name: response?.data?.result?.name,
-          photo: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${response?.data?.result?.photos[0]?.photo_reference}&key=${apiKey}`,
-          // photo: response?.data?.result?.photos[0]?.photo_reference,
+          name: search,
+          photo: response?.data?.result?.icon,
         });
-          }
+      }
     } catch (err) {
       console.log('Error Occured on getting places details : ', err);
-    
     }
   };
 
   const findNearestPlaces = async () => {
-    const radius = 50000; // Search radius in meters (adjust as needed)
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
-    const latitude = 24.871941;
-    const longitude = 66.98806;
-    const keyword = selectedType.keyword;
+    const keyword = selectedType.name;
     console.log('🚀 ~ findNearestMcDonalds ~ keyword:', keyword);
-
-   
-    // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${latitude},${longitude}&radius=${radius}&keyword=chinese-resturant`;
 
     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${search}&key=${apiKey}&keyword=${keyword}`;
 
+    // return console.log("🚀 ~ findNearestPlaces ~ url:", url)
     console.log('apiStart');
 
     try {
@@ -88,9 +83,8 @@ const PreferenceModal = ({
           );
         }
       }
-    setSearch('');
-    setIsLoading(false);
-
+      // setSearch('');
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching McDonald's locations:", error);
       setIsLoading(false);
@@ -99,13 +93,9 @@ const PreferenceModal = ({
 
   function onCloseModal() {
     setModalIsVisible(false);
-    // setItem({
-    //   id:'',
-    //   name:'',
-    //   photo:''
-    // })
+   
     setSearch('');
-    setItem(null);
+    setItem({});
   }
   return (
     <Modal
@@ -168,7 +158,7 @@ const PreferenceModal = ({
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            {!isLoading && item ===null && (
+            {Object.keys(item).length == 0 && (
               <>
                 <View
                   style={{
@@ -192,39 +182,32 @@ const PreferenceModal = ({
                 </CustomText>
               </>
             )}
-           
           </View>
-          {!isLoading && item && (
+          {Object.keys(item).length > 0 && (
             <View style={styles.list}>
               <PreferenceModalListItem
-                isSelected={type[selectedType?.parentIndex]?.categories[
-                  selectedType?.childIndex
-                ]?.preferences?.some((data, index) => data?.id == item?.id)}
+                isSelected={userPreferences[index]?.preferences?.some(
+                  (data, index) => data?.id == item?.id,
+                )}
                 onToggle={() => {
                   if (
-                    type[selectedType?.parentIndex]?.categories[
-                      selectedType?.childIndex
-                    ]?.preferences?.some((data, index) => data?.id == item?.id)
+                    userPreferences[index]?.preferences?.some(
+                      (data1, index) => data1?.id == item?.id,
+                    )
                   ) {
-                    setTypes(
+                    console.log('this runs 1')
+                    setUserPreferences(
                       prev => [...prev],
-                      type[selectedType?.parentIndex]?.categories[
-                        selectedType?.childIndex
-                      ]?.preferences?.splice(
-                        type[selectedType?.parentIndex]?.categories[
-                          selectedType?.childIndex
-                        ]?.preferences?.findIndex(
-                          data1 => data1?.id == item?.id,
-                        ),
-                        1,
-                      ),
-                    );
+                      (userPreferences[index].preferences = userPreferences[index]?.preferences?.filter(
+                        data1 => data1?.id != item?.id
+                      )),
+                    )
                   } else {
-                    setTypes(
+                    console.log('this runs 2')
+
+                    setUserPreferences(
                       prev => [...prev],
-                      type[selectedType?.parentIndex]?.categories[
-                        selectedType?.childIndex
-                      ]?.preferences.push(item),
+                      userPreferences[index]?.preferences.push(item),
                     );
                   }
                 }}
@@ -232,9 +215,12 @@ const PreferenceModal = ({
               />
             </View>
           )}
-           {isLoading && item === null && (
-              <ActivityIndicator color={Color.themeColor} size={moderateScale(29, 0.8)} />
-            )}
+          {isLoading && (
+            <ActivityIndicator
+              color={Color.themeColor}
+              size={moderateScale(29, 0.8)}
+            />
+          )}
         </View>
       </View>
     </Modal>

@@ -1,73 +1,74 @@
-import { StyleSheet , View, TouchableOpacity} from "react-native";
-import { moderateScale } from "react-native-size-matters";
-import Color from "../Assets/Utilities/Color";
-import { Icon } from "native-base";
-import CustomImage from "./CustomImage";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import CustomText from "./CustomText";
-import { windowWidth } from "../Utillity/utils";
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
+import Color from '../Assets/Utilities/Color';
+import {Icon} from 'native-base';
+import CustomImage from './CustomImage';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import CustomText from './CustomText';
+import {windowHeight, windowWidth} from '../Utillity/utils';
+import { mode } from 'native-base/lib/typescript/theme/tools';
 
-function PreferenceModalListItem({isSelected, item, onToggle }){
-    // console.log("🚀 ~ PreferenceModalListItem ~ item=>:", item)
-    // const photoUrl=`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${item?.photo}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc`;
-    return(
-        <TouchableOpacity
-        style={[styles.listComponent,  isSelected &&  {
+function PreferenceModalListItem({isSelected, item, onToggle}) {
+  console.log('🚀 ~ PreferenceModalListItem ~ item:', item);
+  return (
+    <TouchableOpacity
+      style={[
+        styles.listComponent,
+        isSelected && {
           opacity: 0.5,
-          borderRadius:moderateScale(12,0.9),
-          backgroundColor: Color.veryLightGray
-        }]}
-        onPress={() =>{
-          onToggle(item.id,item.name)
-         }}
-        >
-          <View style={{flexDirection:'row', alignItems:'center', gap:moderateScale(18,0.6)}}>
+          borderRadius: moderateScale(12, 0.9),
+          backgroundColor: Color.veryLightGray,
+        },
+      ]}
+      onPress={() => {
+        onToggle(item?.id, item?.name);
+      }}>
+      
+        <View
+          style={{
+            width: windowWidth * 0.08,
+            height: windowWidth * 0.08,
+            overflow: 'hidden',
+            // backgroundColor : 'green'
+          }}>
+          <CustomImage
+            style={{width: '100%', height: '100%'}}
+            source={{uri: item?.photo}}
+            resizeMode={'contain'}
+          />
+      </View>
+          <CustomText style={styles.text}>{item?.name}</CustomText>
 
-            <View
-            style={{width:windowWidth * 0.11, height: windowWidth * 0.11,
-              borderRadius:(windowWidth * 0.11) / 2,
-              overflow:'hidden'}}
-              >
-            <CustomImage
-            style={{width:'100%', height:"100%"}}
-            source={{uri: item.photo }}
-            resizeMode={"cover"}
-            />
-            </View>
-            <View
-            style={{width:windowWidth * 0.5}}
-            >
-            <CustomText
-            >
-                {item.name}
-            </CustomText>
-            </View>
-            </View>
-            
-            <View>
-              <Icon
-              name={isSelected ? 'circle' : 'circle-o'}
-              as={FontAwesome}
-              color={Color.themeColor}
-              />
-            </View>
-        </TouchableOpacity>
-    );
+      <View style={styles.button}>
+        <Icon
+          name={isSelected ? 'circle' : 'circle-o'}
+          as={FontAwesome}
+          color={Color.themeColor}
+        />
+      </View>
+    </TouchableOpacity>
+  );
 }
 export default PreferenceModalListItem;
 
 const styles = StyleSheet.create({
-    listComponent:{
-        flexDirection:'row',
-        alignItems:"center",
-        width:'100%',
-        justifyContent:'space-between',
-        gap:moderateScale(24,0.6),
-        paddingHorizontal:moderateScale(18,0.9),
-        marginVertical:moderateScale(7,0.9),
-        paddingVertical:moderateScale(4,0.9),
-        borderBottomWidth:1 /2,
-        borderBottomColor:Color.veryLightGray
-    
-      },
-})
+  listComponent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: windowWidth * 0.83,
+    paddingHorizontal: moderateScale(5, 0.6),
+    borderBottomWidth: 0.5,
+    borderBottomColor: Color.veryLightGray,
+    height : windowHeight * 0.07,
+    // backgroundColor : 'red'
+  },
+  text: {
+    textTransform: 'capitalize',
+    marginLeft : moderateScale(10,0.6)
+    // backgroundColor : 'red'
+  },
+  button : { 
+    position : 'absolute' ,
+    right : 0,
+  },
+});

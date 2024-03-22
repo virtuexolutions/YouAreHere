@@ -148,14 +148,7 @@ const CommonSlice = createSlice({
       state.WishList.push(action.payload);
     },
     setPrefrences(state, action){
-      if(state.prefrences.includes(action.payload)){
-        // console.log('condition 1')
-        state.prefrences = state.prefrences.filter(asset=> asset != action.payload)
-      }else{
-        // console.log('condition 2')
-
-        state.prefrences.push(action.payload)
-      }
+     state.prefrences = action.payload
     },
     setCustomLocation(state , action){
       state.customLocation = action.payload

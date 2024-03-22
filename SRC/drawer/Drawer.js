@@ -45,9 +45,9 @@ const user = useSelector(state => state.commonReducer.userData)
       name: 'Preferences',
       onPress: () => {
         navigation.navigate('Filters',
-      //  {
-          //       fromDrawer : true 
-          //     }   
+       {
+                fromDrawer : true 
+      }   
         );
       },
       iconName: 'room-preferences',
@@ -118,7 +118,8 @@ const user = useSelector(state => state.commonReducer.userData)
             marginTop: moderateScale(20, 0.3),
             alignItems: 'center',
             marginLeft: moderateScale(10, 0.3),
-          }}>
+            height : windowHeight * 0.2,
+}}>
           <View style={styles.Profile}>
             <CustomImage
               resizeMode={'cover'}

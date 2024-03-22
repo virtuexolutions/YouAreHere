@@ -27,7 +27,6 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Post} from '../Axios/AxiosInterceptorFunction';
 import {setUserData} from '../Store/slices/common';
-import {setPreferencesSet} from '../Store/slices/auth';
 
 const AssetScreen = props => {
   const navigation = useNavigation();

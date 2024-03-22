@@ -33,7 +33,6 @@ import LoginScreen from './Screens/LoginScreen';
 
 const AppNavigator = () => {
   // const isLogin = false;
-  const preferencesSet = useSelector(state => state.authReducer.preferencesSet);
   const walkThrough = useSelector(state => state.authReducer.userWalkThrough);
   const isVerified = useSelector(state => state.authReducer.isVerified);
   const token = useSelector(state => state.authReducer.token);
@@ -68,7 +67,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="Files" component={Files} />
           <RootNav.Screen name="NotePad" component={NotePad} />
           <RootNav.Screen name="AssetScreen" component={AssetScreen} />
-          <RootNav.Screen name="Filters" component={Filters} />
+          {/* <RootNav.Screen name="Filters" component={Filters} /> */}
 
 
         </RootNav.Navigator>
@@ -76,7 +75,7 @@ const AppNavigator = () => {
     );
   };
 
-  return <AppNavigatorContainer />;
+  return <AppNavigatorContainer />;  
 };
 
 export const MyDrawer = () => {
@@ -94,9 +93,10 @@ export const MyDrawer = () => {
         name="SubscriptionScreen"
         component={SubscriptionScreen}
       />
+          <DrawerNavigation.Screen name="Filters" component={Filters} />
 
       {/* <DrawerNavigation.Screen name="AssetScreen" component={AssetScreen} /> */}
-    
+      
       <DrawerNavigation.Screen name="HighLights" component={HighLights} />
       <DrawerNavigation.Screen name="ChangePassword" component={ChangePassword} />
       <DrawerNavigation.Screen
