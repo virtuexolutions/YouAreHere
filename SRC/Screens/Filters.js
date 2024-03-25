@@ -1,7 +1,9 @@
 import {
   ActivityIndicator,
+  Alert,
   Button,
   FlatList,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -38,18 +40,24 @@ import axios from 'axios';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 const Filters = ({route}) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const fromDrawer = route?.params?.fromDrawer;
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
-  const userReduxPreferences = useSelector(state => state.commonReducer.prefrences);
-  const filteredUserPreference = userReduxPreferences?.map(item=> item?.preferences)
-  console.log("🚀 ~ Filters ~ filteredUserPreference:", filteredUserPreference)
+  const userReduxPreferences = useSelector(
+    state => state.commonReducer.prefrences,
+  );
+  const filteredUserPreference = userReduxPreferences?.map(
+    item => item?.preferences,
+  );
+  console.log('🚀 ~ Filters ~ filteredUserPreference:', filteredUserPreference);
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const [search, setSearch] = useState('');
-  const [userPreferences, setUserPreferences] = useState(filteredUserPreference?.length > 0 ? filteredUserPreference : []);
+  const [userPreferences, setUserPreferences] = useState(
+    filteredUserPreference?.length > 0 ? filteredUserPreference : [],
+  );
   const [currentItem, setCurrentItem] = useState({});
-  const [isLoading , setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [types, setTypes] = useState([
     // {
     // id: 'cat1',
@@ -79,14 +87,14 @@ const Filters = ({route}) => {
       as: MaterialCommunityIcons,
       preferences: [],
     },
-    {
-      id: 'f4',
-      label: 'Delivery',
-      name: 'meal_delivery',
-      icon: 'delivery-dining',
-      as: MaterialIcons,
-      preferences: [],
-    },
+    // {
+    //   id: 'f4',
+    //   label: 'Delivery',
+    //   name: 'meal_delivery',
+    //   icon: 'delivery-dining',
+    //   as: MaterialIcons,
+    //   preferences: [],
+    // },
     {
       id: 'f5',
       name: 'bar',
@@ -748,22 +756,27 @@ const Filters = ({route}) => {
       preferences: userPreferences,
     };
 
-    if(userPreferences.length < 1){
-      ToastAndroid.show("Please choose Preferences....", ToastAndroid.SHORT);
+    if (userPreferences.length < 1) {
+      ToastAndroid.show('Please choose Preferences....', ToastAndroid.SHORT);
       return;
     }
 
-    console.log('🚀 ~ sendPrefrences ~ body:', JSON.stringify(body , null , 2));
+    console.log('🚀 ~ sendPrefrences ~ body:', JSON.stringify(body, null, 2));
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (response != undefined) {
-   console.log("🚀 ~ sendPrefrences ~ response:", JSON.stringify(response?.data?.user,null,2))
-      
+      console.log(
+        '🚀 ~ sendPrefrences ~ response:',
+        JSON.stringify(response?.data?.user, null, 2),
+      );
+
       dispatch(setUserData(response?.data?.user));
+      dispatch(setPrefrences([]));
       dispatch(setPrefrences(response?.data?.user?.preferences));
-      // fromDrawer ? navigation.goBack() :
-      // dispatch(setPreferencesSet(true));
+      Platform.OS == 'android'
+        ? ToastAndroid.show('Preference updated', ToastAndroid.SHORT)
+        : alert('Preference updated');
     }
   };
 
@@ -771,21 +784,24 @@ const Filters = ({route}) => {
     <ScreenBoiler
       statusBarBackgroundColor={[Color.themeColor, Color.themeColor]}
       statusBarContentStyle={'light-content'}>
-       
-          
-         {fromDrawer && <TouchableOpacity activeOpacity={0.8} style={styles.Rounded} onPress={() => {
-                navigation.toggleDrawer();
-              }}>
-            <Icon
-              onPress={() => {
-                navigation.toggleDrawer();
-              }}
-              name="menu"
-              as={Ionicons}
-              size={moderateScale(25)}
-              color={Color.black}
-            />
-          </TouchableOpacity>}
+      {fromDrawer && (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.Rounded}
+          onPress={() => {
+            navigation.toggleDrawer();
+          }}>
+          <Icon
+            onPress={() => {
+              navigation.toggleDrawer();
+            }}
+            name="menu"
+            as={Ionicons}
+            size={moderateScale(25)}
+            color={Color.black}
+          />
+        </TouchableOpacity>
+      )}
 
       <Header
         headerColor={[Color.themeColor, Color.themeColor]}
@@ -797,36 +813,34 @@ const Filters = ({route}) => {
         titleSize={moderateScale(20, 0.9)}
       />
 
-      <LinearGradient 
-      colors={["#f5f1ed","#ffffff", "#f5f1ed"]}
-      start={{x:1,y:0}}
-      end={{x:0,y:1}}
-      style={{height: windowHeight * 0.9,
-      
-   
-      }}>
+      <LinearGradient
+        colors={['#f5f1ed', '#ffffff', '#f5f1ed']}
+        start={{x: 1, y: 0}}
+        end={{x: 0, y: 1}}
+        style={{height: windowHeight * 0.9}}>
         {/* <Button title="Send Preferences" onPress={sendPrefrences} /> */}
-        <TouchableOpacity
-        onPress={sendPrefrences}
-        style={styles.save}
-        >
-           <Icon
-              onPress={sendPrefrences}
-              name="save"
-              as={Ionicons}
-              size={moderateScale(25)}
-              color={Color.themeBgColor}
-            />
+        <TouchableOpacity onPress={sendPrefrences} style={styles.save}>
+          <Icon
+            onPress={sendPrefrences}
+            name="save"
+            as={Ionicons}
+            size={moderateScale(25)}
+            color={Color.themeBgColor}
+          />
 
-            {isLoading ? <ActivityIndicator size={'small'} color={Color.themeColor} /> : <CustomText isBold>Save</CustomText>}
+          {isLoading ? (
+            <ActivityIndicator size={'small'} color={Color.themeColor} />
+          ) : (
+            <CustomText isBold>Save</CustomText>
+          )}
         </TouchableOpacity>
-       {!fromDrawer && <TouchableOpacity
-        onPress={() =>{
-          // navigation.pop()
-        }}
-        style={styles.skip}
-        >
-           <Icon
+        {!fromDrawer && (
+          <TouchableOpacity
+            onPress={() => {
+              // navigation.pop()
+            }}
+            style={styles.skip}>
+            <Icon
               onPress={sendPrefrences}
               name="skip"
               as={Octicons}
@@ -834,7 +848,8 @@ const Filters = ({route}) => {
               color={Color.themeBgColor}
             />
             <CustomText>Skip</CustomText>
-        </TouchableOpacity>}
+          </TouchableOpacity>
+        )}
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.contentStyle}>
@@ -848,11 +863,24 @@ const Filters = ({route}) => {
                         // userPreferences?.length == 0 ||
                         userPreferences?.some(item1 => item1?.id == item?.id)
                       ) {
-                        setUserPreferences(
-                          userPreferences?.filter(
-                            item2 => item2?.id != item?.id,
-                          ),
-                        );
+                        Alert.alert('Alert!!', 'Action Required.', [
+                          {
+                            text: 'Delete Preference',
+                            onPress: () =>
+                              setUserPreferences(
+                                userPreferences?.filter(
+                                  item2 => item2?.id != item?.id,
+                                ),
+                              ),
+                          },
+                          {
+                            text: 'Add more preferences',
+                            onPress: () => {
+                              setCurrentItem(item);
+                              setModalIsVisible(true);
+                            },
+                          },
+                        ]);
                       } else {
                         setUserPreferences(prev => [...prev, item]);
                         setCurrentItem(item);
@@ -959,14 +987,14 @@ const styles = StyleSheet.create({
   // scrollView :  {
   //   height : windowHeight * 0.6,
   // },
- save:{
+  save: {
     width: windowWidth * 0.22,
     height: windowHeight * 0.05,
-    gap:6,
+    gap: 6,
     borderRadius: moderateScale(30, 0.3),
     backgroundColor: Color.white,
     alignItems: 'center',
-    flexDirection:'row',
+    flexDirection: 'row',
     justifyContent: 'center',
     elevation: 5,
     position: 'absolute',
@@ -974,19 +1002,17 @@ const styles = StyleSheet.create({
     right: 30,
 
     // right: 10,
-    zIndex:1
+    zIndex: 1,
   },
-  actions:{
-
-  },
- skip:{
+  actions: {},
+  skip: {
     width: windowWidth * 0.22,
     height: windowHeight * 0.05,
-    gap:6,
+    gap: 6,
     borderRadius: moderateScale(30, 0.3),
     backgroundColor: Color.white,
     alignItems: 'center',
-    flexDirection:'row',
+    flexDirection: 'row',
     justifyContent: 'center',
     elevation: 5,
     position: 'absolute',
@@ -994,7 +1020,7 @@ const styles = StyleSheet.create({
     right: 30,
 
     // right: 10,
-    zIndex:1
+    zIndex: 1,
   },
   Rounded: {
     width: windowWidth * 0.1,
@@ -1008,7 +1034,7 @@ const styles = StyleSheet.create({
     top: 60,
 
     right: 10,
-    zIndex:1
+    zIndex: 1,
   },
 
   sectionItems: {

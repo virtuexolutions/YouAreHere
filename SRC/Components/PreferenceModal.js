@@ -26,14 +26,15 @@ const PreferenceModal = ({
   setModalIsVisible,
   search,
   setSearch,
- selectedType,
+  selectedType,
   setUserPreferences,
   userPreferences,
 }) => {
-  console.log('🚀 ~ userPreferences:', userPreferences);
+  // console.log('🚀 ~ userPreferences:', userPreferences);
 
   const [isLoading, setIsLoading] = useState(false);
   const [item, setItem] = useState({});
+  console.log("🚀 ~ item:", item)
   const [index, setIndex] = useState(
     userPreferences?.findIndex(data => data?.id == selectedType?.id),
   );
@@ -75,7 +76,11 @@ const PreferenceModal = ({
           prediction => prediction.types.includes(keyword),
         );
         if (filteredPredictions.length > 0) {
-          placesDetails(filteredPredictions[0]?.place_id);
+          userPreferences[index]?.preferences.some(
+            item => item?.id == filteredPredictions[0]?.place_id,
+          )
+            ? alert('Already added in your preference')
+            : placesDetails(filteredPredictions[0]?.place_id);
         } else {
           ToastAndroid.show(
             'Not Found Under this category!',
@@ -93,7 +98,7 @@ const PreferenceModal = ({
 
   function onCloseModal() {
     setModalIsVisible(false);
-   
+
     setSearch('');
     setItem({});
   }
@@ -158,33 +163,72 @@ const PreferenceModal = ({
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            {Object.keys(item).length == 0 && (
-              <>
-                <View
-                  style={{
-                    width: windowWidth * 0.45,
-                    height: windowWidth * 0.44,
-                    marginTop: moderateScale(24, 0.2),
-                    overflow: 'hidden',
-                  }}>
-                  <CustomImage
-                    style={{width: '100%', height: '100%'}}
-                    source={require('../Assets/Images/fallback.png')}
-                  />
-                </View>
-                <CustomText
-                  style={{
-                    color: Color.themeColor,
-                    fontSize: moderateScale(19, 0.8),
-                  }}
-                  isBold={true}>
-                  No places
-                </CustomText>
-              </>
-            )}
+            {Object.keys(item).length == 0 &&
+              userPreferences[index]?.preferences.length == 0 && (
+                <>
+                  <View
+                    style={{
+                      width: windowWidth * 0.45,
+                      height: windowWidth * 0.44,
+                      marginTop: moderateScale(24, 0.2),
+                      overflow: 'hidden',
+                    }}>
+                    <CustomImage
+                      style={{width: '100%', height: '100%'}}
+                      source={require('../Assets/Images/fallback.png')}
+                    />
+                  </View>
+                  <CustomText
+                    style={{
+                      color: Color.themeColor,
+                      fontSize: moderateScale(19, 0.8),
+                    }}
+                    isBold={true}>
+                    No places
+                  </CustomText>
+                </>
+              )}
           </View>
-          {Object.keys(item).length > 0 && (
-            <View style={styles.list}>
+          <View style={styles.list}>
+            {userPreferences[index]?.preferences.length > 0 &&
+              userPreferences[index]?.preferences.map(
+                (preferenceItem, preferenceindex) => {
+                  return (
+                    <PreferenceModalListItem
+                      isSelected={userPreferences[index]?.preferences?.some(
+                        (data, index) => data?.id == preferenceItem?.id,
+                      )}
+                      onToggle={() => {
+                        if (
+                          userPreferences[index]?.preferences?.some(
+                            (data1, index) => data1?.id == preferenceItem?.id,
+                          )
+                        ) {
+                          console.log('this runs 1');
+                          setUserPreferences(
+                            prev => [...prev],
+                            (userPreferences[index].preferences =
+                              userPreferences[index]?.preferences?.filter(
+                                data1 => data1?.id != preferenceItem?.id,
+                              )),
+                          );
+                        } else {
+                          console.log('this runs 2');
+
+                          setUserPreferences(
+                            prev => [...prev],
+                            userPreferences[index]?.preferences.push(
+                              preferenceItem,
+                            ),
+                          );
+                        }
+                      }}
+                      item={preferenceItem}
+                    />
+                  );
+                },
+              )}
+            {Object.keys(item).length > 0 && (
               <PreferenceModalListItem
                 isSelected={userPreferences[index]?.preferences?.some(
                   (data, index) => data?.id == item?.id,
@@ -195,26 +239,27 @@ const PreferenceModal = ({
                       (data1, index) => data1?.id == item?.id,
                     )
                   ) {
-                    console.log('this runs 1')
+                    console.log('this runs 1');
                     setUserPreferences(
                       prev => [...prev],
-                      (userPreferences[index].preferences = userPreferences[index]?.preferences?.filter(
-                        data1 => data1?.id != item?.id
-                      )),
-                    )
+                      (userPreferences[index].preferences = userPreferences[
+                        index
+                      ]?.preferences?.filter(data1 => data1?.id != item?.id)),
+                    );
                   } else {
-                    console.log('this runs 2')
+                    console.log('this runs 2');
 
                     setUserPreferences(
                       prev => [...prev],
                       userPreferences[index]?.preferences.push(item),
                     );
+                    setItem({});
                   }
                 }}
                 item={item}
               />
-            </View>
-          )}
+            )}
+          </View>
           {isLoading && (
             <ActivityIndicator
               color={Color.themeColor}
@@ -237,18 +282,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: moderateScale(5, 0.2),
   },
-  //   listComponent:{
-  //     flexDirection:'row',
-  //     alignItems:"center",
-  //     justifyContent:'space-between',
-  //     gap:moderateScale(24,0.6),
-  //     paddingHorizontal:moderateScale(18,0.9),
-  //     marginVertical:moderateScale(7,0.9),
-  //     paddingVertical:moderateScale(4,0.9),
-  //     borderBottomWidth:1 /2,
-  //     borderBottomColor:Color.veryLightGray
 
-  //   },
   modal: {
     width: windowWidth * 0.9,
     height: windowHeight * 0.6,

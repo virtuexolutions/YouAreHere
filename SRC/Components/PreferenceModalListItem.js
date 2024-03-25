@@ -9,7 +9,8 @@ import {windowHeight, windowWidth} from '../Utillity/utils';
 import { mode } from 'native-base/lib/typescript/theme/tools';
 
 function PreferenceModalListItem({isSelected, item, onToggle}) {
-  console.log('🚀 ~ PreferenceModalListItem ~ item:', item);
+  console.log("🚀 ~ PreferenceModalListItem ~ isSelected:", isSelected)
+  // console.log('🚀 ~ PreferenceModalListItem ~ item:', item);
   return (
     <TouchableOpacity
       style={[
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: Color.veryLightGray,
     height : windowHeight * 0.07,
+    marginVertical : moderateScale(5,0.6),
     // backgroundColor : 'red'
   },
   text: {

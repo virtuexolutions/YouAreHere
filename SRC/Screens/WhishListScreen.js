@@ -23,6 +23,7 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import PlacesCard from '../Components/PlacesCard';
 import {useSelector} from 'react-redux';
 import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import NearPlacesCard from '../Components/NearPlacesCard';
 
 const WhishListScreen = ({item}) => {
   const isFocused = useIsFocused();
@@ -32,12 +33,13 @@ const WhishListScreen = ({item}) => {
   const navigationN = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [wishListData, setWishListData] = useState([]);
+  console.log('🚀 ~ WhishListScreen ~ wishListData=========>:', wishListData);
   const [ids, setIds] = useState([]);
-  console.log('🚀 ~ file: WhishListScreen.js:36 ~ WhishListScreen ~ ids:', ids);
-  console.log(
-    '🚀 ~ file: WhishListScreen.js:27 ~ WhishListScreen ~ wishListData:',
-    wishListData,
-  );
+  // console.log('🚀 ~ file: WhishListScreen.js:36 ~ WhishListScreen ~ ids:', ids);
+  // console.log(
+  //   '🚀 ~ file: WhishListScreen.js:27 ~ WhishListScreen ~ wishListData:',
+  //   wishListData,
+  // );
 
   const removeCard = async () => {
     const url = `auth/wishlist/delete`;
@@ -54,7 +56,7 @@ const WhishListScreen = ({item}) => {
         response?.data,
       );
       getWishListData();
-      setIds([])
+      setIds([]);
       Platform.OS == 'android'
         ? ToastAndroid.show('Removed from WishList', ToastAndroid.SHORT)
         : Alert.alert('Removed from WishList');
@@ -123,7 +125,7 @@ const WhishListScreen = ({item}) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               paddingHorizontal: moderateScale(20, 0.6),
-              marginVertical:moderateScale(10,.3)
+              marginVertical: moderateScale(10, 0.3),
             }}>
             <CustomText
               style={{color: 'black', fontSize: moderateScale(14, 0.6)}}
@@ -167,14 +169,27 @@ const WhishListScreen = ({item}) => {
               marginBottom: moderateScale(20, 0.3),
             }}
             renderItem={({item, index}) => {
-              return (
-                <PlacesCard
-                  item={item}
-                  fromWishList={true}
-                  setIds={setIds}
-                  ids={ids}
-                />
-              );
+              return  <PlacesCard
+              item={item}
+              fromWishList={true}
+              setIds={setIds}
+              ids={ids}
+            /> 
+              // return  item?.sub_category == true ? (
+              //   <NearPlacesCard
+              //     item={item}
+              //     fromWishList={true}
+              //     setIds={setIds}
+              //     ids={ids}
+              //   />
+              // ) : (
+              //   <PlacesCard
+              //     item={item}
+              //     fromWishList={true}
+              //     setIds={setIds}
+              //     ids={ids}
+              //   />
+              // );
             }}
           />
         )}

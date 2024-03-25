@@ -35,17 +35,20 @@ import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import FiltersModal from './FiltersModal';
 import axios from 'axios';
 import OptionsMenu from 'react-native-options-menu';
+import CustomImage from '../Components/CustomImage';
+import NearPlacesCard from '../Components/NearPlacesCard';
 
 const HomeScreen = props => {
   // const
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ HomeScreen ~ token:', token);
   const user = useSelector(state => state.commonReducer.userData);
+  // console.log("🚀 ~ HomeScreen ~ user==================>:", user)
   const userPreferences = useSelector(state => state.commonReducer.prefrences);
-  console.log('🚀 ~ HomeScreen ~ userPreferences:', userPreferences);
-  const filteredUserPreference = userPreferences?.map(item=> item?.preferences)
-  console.log("🚀 ~ HomeScreen ~ filteredUserPreference:", filteredUserPreference)
+  const filteredUserPreference = userPreferences?.map(
+    item => item?.preferences,
+  );
+
   const customLocation = useSelector(
     state => state.commonReducer.customLocation,
   );
@@ -114,7 +117,6 @@ const HomeScreen = props => {
       as: MaterialIcons,
       // onPress: () => {},
     },
-   
   ];
 
   const cardData = [
@@ -133,7 +135,7 @@ const HomeScreen = props => {
       image: require('../Assets/Images/resort.png'),
     },
   ];
-
+  const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
@@ -143,12 +145,6 @@ const HomeScreen = props => {
   };
   const getData = async location => {
     setplacesData([]);
-    var url2 = '';
-    preferences.map((item, index) => {
-      url2 += `&place[]=${item?.name}`;
-    });
-
-    console.log('url2   ', url2);
 
     const url = `location?latitude=${
       Object.keys(customLocation).length > 0
@@ -158,13 +154,42 @@ const HomeScreen = props => {
       Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
         : location?.lng
-    }${url2}`;
+    }&place[]=${preferences?.name != undefined ? preferences?.name : 'all'}`;
+    console.log('🚀 ~ getData ~ url:', url);
 
     setIsLoading(true);
     const response = await Get(url, token);
     setIsLoading(false);
     if (response != undefined) {
       setplacesData(response?.data?.places);
+    }
+  };
+  const findNearestMcDonalds = async location => {
+    const radius = 50000; // Search radius in meters (adjust as needed)
+    const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
+    const latitude = 24.871941;
+    const longitude = 66.98806;
+    // const keyword = 'mc donald';
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${
+      Object.keys(customLocation).length > 0
+        ? customLocation?.location?.lat
+        : location?.lat
+    },${
+      Object.keys(customLocation).length > 0
+        ? customLocation?.location?.lng
+        : location?.lng
+    }&radius=${radius}&keyword=${preferences?.name}`;
+
+    console.log('🚀 ~ findNearestMcDonalds ~ url:', url);
+    try {
+      setIsLoading(true);
+      const response = await axios.get(url);
+      setIsLoading(false);
+      if (response != undefined) {
+        setplacesData(response?.data?.results);
+      }
+    } catch (error) {
+      console.error("Error fetching McDonald's locations:", error);
     }
   };
 
@@ -193,8 +218,12 @@ const HomeScreen = props => {
     })
 
       .then(async location => {
-        console.log({lat: location?.latitude, lng: location?.longitude});
-        getData({lat: location?.latitude, lng: location?.longitude});
+        preferences?.label == 'All' || preferences?.label == undefined
+          ? getData({lat: location?.latitude, lng: location?.longitude})
+          : findNearestMcDonalds({
+              lat: location?.latitude,
+              lng: location?.longitude,
+            });
       })
       .catch(error => {
         setIsLoading(false);
@@ -203,36 +232,19 @@ const HomeScreen = props => {
       });
   };
 
-  const findNearestMcDonalds = async () => {
-    const radius = 50000; // Search radius in meters (adjust as needed)
-    const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
-    const latitude = 24.871941;
-    const longitude = 66.98806;
-    const keyword = 'restaurant';
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${latitude},${longitude}&radius=${radius}&keyword=${keyword}`;
-
-    console.log('apiStart');
-    try {
-      const response = await axios.get(url);
-      if (response != undefined) {
-        const filteredPredictions = response?.data?.results.filter(prediction =>
-          prediction.types.includes(keyword),
-        );
-        setSearchedPlaces(filteredPredictions);
-      }
-    } catch (error) {
-      console.error("Error fetching McDonald's locations:", error);
-    }
-  };
-
-  // useEffect(() => {
-  //   Platform.OS == 'android' ? handleEnableLocation() : getLocation();
-  // }, [preferences, isFocused, customLocation]);
-
   useEffect(() => {
-    findNearestMcDonalds();
-  }, []);
+    Platform.OS == 'android' ? handleEnableLocation() : getLocation();
+  }, [preferences, isFocused, customLocation]);
 
+  // return Object.keys(searchedPlaces)?.length > 0 &&    <CustomImage
+  // source={{uri : `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${searchedPlaces?.photos[0]?.photo_reference}&key=${apiKey}`}}
+  // style={{
+  // width : 200 ,
+  //   height : 200 ,
+  //   backgroundColor : 'red'
+  // }}
+
+  // />
   return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
@@ -256,12 +268,7 @@ const HomeScreen = props => {
             <View style={styles.placesContainer}>
               {filteredUserPreference?.map((item, index) => {
                 return (
-                  <TouchableOpacity
-                    key={item.id}
-                    onPress={() => {
-                      console.log(item?.name);
-                      // findNearestMcDonalds(item?.label)
-                    }}>
+                  <TouchableOpacity key={item.id} onPress={() => {}}>
                     <OptionsMenu
                       customButton={
                         <View
@@ -269,33 +276,19 @@ const HomeScreen = props => {
                           style={[
                             styles.sectionInnerItem,
                             {
-                              backgroundColor: preferences?.some(
-                                (item1, index) => item1?.id == item?.id,
-                              )
-                                ? Color.yellow
-                                : Color.white,
+                              backgroundColor:
+                                preferences?.id == item?.id
+                                  ? Color.yellow
+                                  : Color.white,
                             },
                           ]}>
-                          <Icon
-                            as={item.as}
-                            name={item.icon}
-                            size={moderateScale(14, 0.1)}
-                            color={
-                              preferences?.some(
-                                (item1, index) => item1?.id == item?.id,
-                              )
-                                ? Color.white
-                                : Color.themeColor
-                            }
-                          />
                           <CustomText
                             isBold
                             style={{
-                              color: preferences?.some(
-                                (item1, index) => item1?.id == item?.id,
-                              )
-                                ? Color.white
-                                : Color.themeColor,
+                              color:
+                                preferences?.id == item?.id
+                                  ? Color.white
+                                  : Color.themeColor,
                               fontSize: moderateScale(12, 0.1),
                             }}>
                             {item.name}
@@ -308,78 +301,29 @@ const HomeScreen = props => {
                         tintColor: '#000',
                       }}
                       destructiveIndex={1}
-                      options={item?.preferences.map(place => place?.name)}
+                      options={[
+                        ...item?.preferences.map(place => place?.name),
+                        'All',
+                      ]}
                       // options={['Invite Member', 'Bubble Management' , 'See Activity' ]}
-                      actions={
-                        [
-                          // InviteMember, BubbleMangement , handleActivity
-                        ]
-                      }
+                      actions={[
+                        ...item?.preferences.map(place => () => {
+                          setPreferences({
+                            id: item?.id,
+                            label: place?.name,
+                            name: place?.name,
+                          });
+                        }),
+                        () => {
+                          setPreferences({
+                            id: item?.id,
+                            label: 'All',
+                            name: item?.name,
+                          });
+                        },
+                      ]}
                     />
                   </TouchableOpacity>
-
-                  // <TouchableOpacity
-                  // disabled={isLoading}
-                  // activeOpacity={0.8}
-                  //   onPress={() => {
-                  //     console.log("Pressed")
-                  //     // if (item?.name == 'More') {
-                  //   setIsVisibleModal(true);
-                  // } else {
-                  //   if (
-                  //     preferences?.some(
-                  //       (item1, index) => item1?.id == item?.id,
-                  //     )
-                  //   ) {
-                  //     setPreferences(
-                  //       preferences?.filter(
-                  //         (item2, index) => item2?.id != item?.id,
-                  //       ),
-                  //     );
-                  //   } else {
-                  //     setPreferences(prev => [...prev, item]);
-                  //   }
-                  // }
-                  // }}>
-                  /*<View
-                  key={item.id}
-                      style={[
-                        styles.sectionInnerItem,
-                        {
-                          backgroundColor: preferences?.some(
-                            (item1, index) => item1?.id == item?.id,
-                          )
-                            ? Color.yellow
-                            : Color.white,
-                        },
-                      ]}>
-                      <Icon
-                        as={item.as}
-                        name={item.icon}
-                        size={moderateScale(14, 0.1)}
-                        color={
-                          preferences?.some(
-                            (item1, index) => item1?.id == item?.id,
-                          )
-                            ? Color.white
-                            : Color.themeColor
-                        }
-                      />
-                      <CustomText
-                        isBold
-                        style={{
-                          color: preferences?.some(
-                            (item1, index) => item1?.id == item?.id,
-                          )
-                            ? Color.white
-                            : Color.themeColor,
-                          fontSize: moderateScale(12, 0.1),
-                        }}>
-                        {item.name}
-                      </CustomText>
-                    </View> 
-                    */
-                  // </TouchableOpacity>
                 );
               })}
             </View>
@@ -492,7 +436,12 @@ const HomeScreen = props => {
                 //   height: windowHeight * 0.25,
               }}
               renderItem={({item, index}) => {
-                return <PlacesCard item={item} fromHome={true} />;
+                return preferences?.label == 'All' ||
+                  preferences?.label == undefined ? (
+                  <PlacesCard item={item} fromHome={true} />
+                ) : (
+                  <NearPlacesCard item={item} fromHome={true} />
+                );
               }}
             />
           )}

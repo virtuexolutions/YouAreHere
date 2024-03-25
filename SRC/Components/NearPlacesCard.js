@@ -31,8 +31,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Alert} from 'react-native';
 import navigationService from '../navigationService';
 
-const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
-  // console.log("🚀 ~ PlacesCard ~ item:", item)
+const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
+    // console.log('🚀 ~ NearPlacesCard ~ item==========>:', JSON.stringify(item,null ,2));
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
@@ -46,13 +46,16 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
   const [isLoading2, setIsLoading2] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
+
   const getData = async () => {
-    const url = `auth/review_detail/${item.id}`;
+    const url = `auth/review_detail/${item.place_id}`;
     setIsLoading(true);
     const response = await Get(url, token);
     setIsLoading(false);
 
     if (response != undefined) {
+    //   console.log('🚀 ~ getData ~ response:', response?.data);
       setReviewData(response?.data?.reviews);
     }
   };
@@ -61,23 +64,26 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
     const url = 'auth/wishlist';
     const body = {
       user_id: user?.id,
-      place_id: item?.id,
+      place_id: item?.place_id,
       name: item?.name,
-      address: item?.address,
+      address: item?.vicinity,
       types: item?.types,
       rating: item?.rating,
-      totalRatings: item?.totalRatings,
-      openNow: item?.openNow,
-      image: item?.image,
-      latitude: item?.latitude,
-      longitude: item?.longitude,
-      sub_category : false
+      totalRatings: item?.user_ratings_total,
+      openNow: item?.opening_hours?.open_now,
+      image: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
+        item?.photos[0]?.photo_reference
+      }&key=${apiKey}`,
+      latitude: item?.geometry?.location?.lat,
+      longitude: item?.geometry?.location?.lng,
+      sub_category : true
     };
+
     setIsLoading2(true);
     const response = await Post(url, body, apiHeader(token));
     setIsLoading2(false);
     if (response?.data?.success) {
-     return console.log(response?.data);
+       console.log('pro here ==========> ',response?.data);
       Platform.OS == 'android'
         ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
         : Alert.alert('Added To Wishlist');
@@ -85,7 +91,9 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
   };
 
   useEffect(() => {
-    if (isModalVisible) {getData()};
+    if (isModalVisible) {
+      getData();
+    }
   }, [isModalVisible]);
 
   const toggleModal = () => {
@@ -97,7 +105,7 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
       ios: 'maps://0,0?q=',
       android: 'geo:0,0?q=',
     });
-    const latLng = `${item?.latitude},${item?.longitude}`;
+    const latLng = `${item?.geometry?.location?.lat},${item?.geometry?.location?.lng}`;
     const label = 'Custom Label';
     const url = Platform.select({
       ios: `${scheme}${label}@${latLng}`,
@@ -133,17 +141,20 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
             } else {
               ref.open();
             }
-          }else{
+          } else {
             ref.open();
-
           }
         }}>
         <View style={styles.image}>
           <CustomImage
             source={
-              ['', undefined, null].includes(item?.image)
+              ['', undefined, null].includes(item?.photos)
                 ? require('../Assets/Images/errorimage.png')
-                : {uri: item?.image}
+                : {
+                    uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
+                      item?.photos[0]?.photo_reference
+                    }&key=${apiKey}`,
+                  }
             }
             style={{
               width: '100%',
@@ -165,7 +176,8 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
               color: Color.veryLightGray,
             }}
             numberOfLines={1}>
-            {item?.address}
+            {/* fhjagdhagshdjas */}
+            {item?.vicinity}
           </CustomText>
         </View>
 
@@ -254,9 +266,13 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
             }}>
             <CustomImage
               source={
-                ['', undefined, null].includes(item?.image)
+                ['', undefined, null].includes(item?.photos)
                   ? require('../Assets/Images/errorimage.png')
-                  : {uri: item?.image}
+                  : {
+                      uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
+                        item?.photos[0]?.photo_reference
+                      }&key=${apiKey}`,
+                    }
               }
               style={{width: '100%', height: '100%', backgroundColor: 'white'}}
               resizeMode={'stretch'}
@@ -278,7 +294,6 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
                 fontSize: moderateScale(17, 0.6),
                 color: Color.black,
               }}>
-                
               {item?.name}
             </CustomText>
 
@@ -298,6 +313,7 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
               flexDirection: 'row',
               alignItems: 'center',
               marginTop: moderateScale(5, 0.3),
+              //   backgroundColor :'red'
             }}>
             <CustomText
               style={{
@@ -322,7 +338,7 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
                 fontSize: moderateScale(13, 0.6),
                 color: Color.themeDarkGray,
               }}>
-              {` (${item?.totalRatings})`}
+              {` (${item?.user_ratings_total})`}
             </CustomText>
           </View>
 
@@ -355,7 +371,12 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
               onPress={() => {
                 ref.close();
                 navigationService.navigate('NotepadDesign', {
-                  item: {uri: item?.image, name: item?.name},
+                  item: {
+                    uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
+                      item?.photos[0]?.photo_reference
+                    }&key=${apiKey}`,
+                    name: item?.name,
+                  },
                   fromDetails: true,
                 });
               }}>
@@ -363,7 +384,12 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
                 onPress={() => {
                   ref.close();
                   navigationService.navigate('NotepadDesign', {
-                    item: {uri: item?.image, name: item?.name},
+                    item: {
+                      uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
+                        item?.photos[0]?.photo_reference
+                      }&key=${apiKey}`,
+                      name: item?.name,
+                    },
                     fromDetails: true,
                   });
                 }}
@@ -388,12 +414,9 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
             }}>
             <CustomText
               style={{
-                color:['', null, undefined].includes(item?.openNow) && item.openNow && item.openNow.toLowerCase() == 'yes' ? 'green' : 'red'
- 
-                // item?.openNow.toLowerCase() == 'yes' ? 'green' : 'red',
+                color: item?.opening_hours?.open_now == true ? 'green' : 'red',
               }}>
-                {['', null, undefined].includes(item?.openNow) && item.openNow && item.openNow.toLowerCase() == 'yes' ? 'Open Now' : 'Closed'}
-              {/* {item?.openNow.toLowerCase() == 'yes' ? 'Open Now' : 'Closed'} */}
+              {item?.opening_hours?.open_now == true ? 'Open Now' : 'Closed'}
             </CustomText>
 
             <TouchableOpacity
@@ -492,8 +515,9 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
                 fontSize: moderateScale(12, 0.6),
                 color: Color.black,
                 width: windowWidth * 0.85,
+                // backgroundColor :  'red'
               }}>
-              {item?.address}
+              {item?.vicinity}
             </CustomText>
           </View>
           <View
@@ -616,7 +640,7 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
   );
 };
 
-export default PlacesCard;
+export default NearPlacesCard;
 
 const styles = StyleSheet.create({
   container: {
