@@ -29,11 +29,9 @@ import HighLights from './Screens/HighLights';
 import WhishListScreen from './Screens/WhishListScreen';
 import NotepadDesign from './Screens/NotepadDesign';
 import LoginScreen from './Screens/LoginScreen';
- 
 
 const AppNavigator = () => {
   // const isLogin = false;
-  const preferencesSet = useSelector(state => state.authReducer.preferencesSet);
   const walkThrough = useSelector(state => state.authReducer.userWalkThrough);
   const isVerified = useSelector(state => state.authReducer.isVerified);
   const token = useSelector(state => state.authReducer.token);
@@ -42,7 +40,8 @@ const AppNavigator = () => {
 
   const AppNavigatorContainer = () => {
     const firstScreen =
-      token != null ?'MyDrawer'
+      token != null
+        ? 'MyDrawer'
         : walkThrough == true
         ? 'GetStarted'
         : 'WalkThroughScreen';
@@ -68,9 +67,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="Files" component={Files} />
           <RootNav.Screen name="NotePad" component={NotePad} />
           <RootNav.Screen name="AssetScreen" component={AssetScreen} />
-          <RootNav.Screen name="Filters" component={Filters} />
-
-
+          {/* <RootNav.Screen name="Filters" component={Filters} /> */}
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -94,20 +91,19 @@ export const MyDrawer = () => {
         name="SubscriptionScreen"
         component={SubscriptionScreen}
       />
+      <DrawerNavigation.Screen name="Filters" component={Filters} />
 
-      {/* <DrawerNavigation.Screen name="AssetScreen" component={AssetScreen} /> */}
-    
       <DrawerNavigation.Screen name="HighLights" component={HighLights} />
-      <DrawerNavigation.Screen name="ChangePassword" component={ChangePassword} />
+      <DrawerNavigation.Screen
+        name="ChangePassword"
+        component={ChangePassword}
+      />
       <DrawerNavigation.Screen
         name="WhishListScreen"
         component={WhishListScreen}
       />
 
-      <DrawerNavigation.Screen
-        name="NotepadDesign"
-        component={NotepadDesign}
-      />
+      <DrawerNavigation.Screen name="NotepadDesign" component={NotepadDesign} />
     </DrawerNavigation.Navigator>
   );
 };

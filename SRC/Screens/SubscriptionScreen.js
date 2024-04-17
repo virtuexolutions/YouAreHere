@@ -117,6 +117,7 @@ const SubscriptionScreen = () => {
           />
 
           <TouchableOpacity activeOpacity={0.8} style={styles.Rounded} onPress={() => {
+                // navigation.toggleDrawer();
                 navigation.toggleDrawer();
               }}>
             <Icon

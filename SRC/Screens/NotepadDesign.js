@@ -300,7 +300,6 @@ const Stories = [
 const NotepadDesign = props => {
   let Notedata = props?.route?.params;
   const user = useSelector(state => state.commonReducer.userData);
-  // console.log("🚀 ~ file: HomeScreen.js:24 ~ HomeScreen ~ user:", user)
   console.log("🚀 ~ file: NotepadDesign.js:302 ~ NotepadDesign ~ Notedata:", Notedata)
   const token = useSelector(state => state.authReducer.token);
   const isFocused = useIsFocused();
@@ -386,22 +385,14 @@ const NotepadDesign = props => {
       console.error('Error fetching or converting image:', error);
     }
 
-    // dispatch(setNotePadData({...body, Notes: []}));
   };
   const saveTrip = async () => {
-    // return console.log('here')
     const url = 'auth/trip';
-
-    // console.log('Base64 image:', imageForServer);
-    // return console.log("🚀 ~ file: NotepadDesign.js:361 ~ saveTrip ~ imageForServer:" , `data:application/octet-stream;base64,${imageForServer}`)
-    const body = {
+ const body = {
       title: country,
       user_id: user?.id,
     };
-    // return console.log('🚀 ~ file: NotepadDesign.js:297 ~ saveTrip ~ body:',  Platform.OS == 'ios' ? image?.uri : image?.uri.replace('file:///Users','/Users'),
-    // );
-    // setIsLoading(true);
-    if (Object.keys(image).length > 0) {
+   if (Object.keys(image).length > 0) {
       const imageForServer = await RNFetchBlob.fs.readFile(
         Platform.OS == 'android' ? image?.uri : image?.uri.replace('file://',''),
         'base64',
@@ -437,12 +428,10 @@ const NotepadDesign = props => {
   const getTrips = async () => {
     console.log('fasdasd asd ad asd d asd d  sdasd');
     const url = `auth/trip/index/${user?.id}`;
-    // return  console.log("🚀 ~ file: NotepadDesign.js:437 ~ getTrips ~ url:", url)
     setTripLoading(true);
     const response = await Get(url, token);
     setTripLoading(false);
     if (response != undefined) {
-      // console.log("🚀 ~ file: NotepadDesign.js:390 ~ getTrips ~ response:", response?.data)
       setTrips(response?.data?.Trip);
     }
   };
@@ -452,10 +441,6 @@ const NotepadDesign = props => {
     const response = await Get(url, token);
     setNotesLoading(false);
     if (response !== undefined) {
-      // console.log(
-      //   '🚀 ~ file: NotepadDesign.js:426 ~ tripNotes ~ response:',
-      //   response?.data,
-      // );
       setTripNotes(response?.data?.notes);
     }
   };
@@ -483,10 +468,6 @@ const NotepadDesign = props => {
     if (Object.keys(image).length > 0) {
       formData.append('image', image);
     }
-
-    //  return console.log(
-    //     `🚀 ~ file: TripDetailsScreen.js ~ line 157 ~ saveTripNote ~ ${JSON.stringify(formData,null ,2)}`,
-    //   );
     setIsLoading(true);
     const response = await Post(url, formData, apiHeader(token));
     setIsLoading(false);
@@ -495,7 +476,6 @@ const NotepadDesign = props => {
       '🚀 ~ file: NotepadDesign.js:442 ~ saveTripNote ~ response:',
       response?.data,
     );
-    // return console.log('Data is here========>>>>>>>>>>',{...body, storyId: selectedStory.id})
     if (response != undefined) {
       setNoteDesc('');
       setImage({});
@@ -504,15 +484,6 @@ const NotepadDesign = props => {
       getTripNotes();
     }
 
-    // dispatch(
-    //   setFiles({
-    //     ...body,
-    //     image: image,
-    //     id: -1,
-    //     storyId: selectedStory?.id,
-    //     date: moment().format('DD MMMM YYYY'),
-    //   }),
-    // );
   };
 
   useEffect(() => {
@@ -1029,6 +1000,7 @@ const NotepadDesign = props => {
                 onPress={() => {
                   saveTripNote();
                 }}
+                disabled={isLoading}
               />
             </View>
           </Modal>
@@ -1100,228 +1072,4 @@ const styles = StyleSheet.create({
   },
 });
 
-// <RBSheet
-// ref={ref => {
-//   setRbsheetRef(ref);
-// }}
-// closeOnDragDown={true}
-// dragFromTopOnly={true}
-// openDuration={250}
-// height={windowHeight * 0.5}
-// customStyles={{
-//   container: {
-//     borderTopEndRadius: moderateScale(30, 0.6),
-//     borderTopLeftRadius: moderateScale(30, 0.6),
-//     overflow: 'hidden',
-//   },
-// }}>
-// <View
-//   style={{
-//     height: '100%',
-//     width: windowWidth,
-//     alignItems: 'center',
-//   }}>
-//   <TouchableOpacity
-//     style={{
-//       height: windowHeight * 0.2,
-//       width: windowWidth,
-//       overflow: 'hidden',
-//       justifyContent: 'center',
-//       // alignItems: 'center',
-//       // borderColor:'black',
-//       // borderWidth:1,
-//       zIndex: -1,
-//       marginTop: moderateScale(-25, 0.3),
-//       // backgroundColor: 'red',
-//     }}>
-//     {Object.keys(image).length > 0 ? (
-//       <CustomImage
-//         source={{uri: image.uri}}
-//         style={{width: '100%', height: '100%'}}
-//         resizeMode={'cover'}
-//       />
-//     ) : (
-//       <CustomButton
-//         text={'Add Image'}
-//         isBold
-//         textColor={Color.white}
-//         // width={windowWidth * 0.2}
-//         height={windowHeight * 0.05}
-//         bgColor={Color.themeColor}
-//         fontSize={moderateScale(11, 0.6)}
-//         borderRadius={moderateScale(5, 0.3)}
-//         // alignSelf={'flex-end'}
-//         marginTop={moderateScale(30, 0.3)}
-//         style={{
-//           marginRight: moderateScale(10, 0.3),
-//         }}
-//         onPress={() => {
-//           setImagePicker(true);
-//         }}
-//         // right={moderateScale(5,0.3)}
-//       />
-//     )}
-//   </TouchableOpacity>
 
-//   <TextInputWithTitle
-//     titleText={'Story Title'}
-//     secureText={false}
-//     placeholder={'Story Title'}
-//     setText={setCountry}
-//     value={country}
-//     viewHeight={0.07}
-//     viewWidth={0.9}
-//     inputWidth={0.9}
-//     // border={1}
-//     borderColor={'#ffffff'}
-//     backgroundColor={'#FFFFFF'}
-//     marginTop={moderateScale(35, 0.3)}
-//     color={Color.themeColor}
-//     placeholderColor={Color.themeLightGray}
-//     borderRadius={moderateScale(25, 0.3)}
-//     elevation
-//   />
-
-//   <CustomButton
-//     text={
-//       isLoading ? (
-//         <ActivityIndicator size={'small'} color={'white'} />
-//       ) : (
-//         'Save'
-//       )
-//     }
-//     isBold
-//     textColor={Color.white}
-//     width={windowWidth * 0.3}
-//     height={windowHeight * 0.05}
-//     bgColor={Color.themeColor}
-//     fontSize={moderateScale(15, 0.6)}
-//     borderRadius={moderateScale(5, 0.3)}
-//     // alignSelf={'flex-end'}
-//     marginTop={moderateScale(30, 0.3)}
-//     style={{
-//       marginRight: moderateScale(10, 0.3),
-//     }}
-//     onPress={() => {
-//       saveTrip();
-//     }}
-//     // right={moderateScale(5,0.3)}
-//   />
-// </View>
-// </RBSheet>
-// <RBSheet
-// ref={ref => {
-//   setAddNotesRef(ref);
-// }}
-// closeOnDragDown={true}
-// dragFromTopOnly={true}
-// openDuration={250}
-// height={windowHeight * 0.8}
-// customStyles={{
-//   container: {
-//     borderTopEndRadius: moderateScale(30, 0.6),
-//     borderTopLeftRadius: moderateScale(30, 0.6),
-//     overflow: 'hidden',
-//   },
-// }}>
-// <View
-//   style={{
-//     height: windowHeight,
-//     width: windowWidth,
-//     alignItems: 'center',
-//   }}>
-//   <TouchableOpacity
-//     style={{
-//       height: windowHeight * 0.4,
-//       width: windowWidth,
-//       overflow: 'hidden',
-//       justifyContent: 'center',
-//       zIndex: -1,
-//       marginTop: moderateScale(-25, 0.3),
-//     }}>
-//     {Object.keys(image).length > 0 ? (
-//       <CustomImage
-//         source={{uri: image.uri}}
-//         style={{width: '100%', height: '100%'}}
-//         resizeMode={'stretch'}
-//       />
-//     ) : (
-//       <CustomButton
-//         text={'Add Image'}
-//         isBold
-//         textColor={Color.white}
-//         height={windowHeight * 0.05}
-//         bgColor={Color.themeColor}
-//         fontSize={moderateScale(11, 0.6)}
-//         borderRadius={moderateScale(5, 0.3)}
-//         marginTop={moderateScale(30, 0.3)}
-//         style={{
-//           marginRight: moderateScale(10, 0.3),
-//         }}
-//         onPress={() => {
-//           setImagePicker(true);
-//         }}
-//       />
-//     )}
-//   </TouchableOpacity>
-
-//   <TextInputWithTitle
-//     titleText={'Title'}
-//     secureText={false}
-//     placeholder={'Title'}
-//     setText={setNoteName}
-//     value={noteName}
-//     viewHeight={0.07}
-//     viewWidth={0.9}
-//     inputWidth={0.9}
-//     borderColor={'#ffffff'}
-//     backgroundColor={'#FFFFFF'}
-//     marginTop={moderateScale(35, 0.3)}
-//     color={Color.themeColor}
-//     placeholderColor={Color.themeLightGray}
-//     borderRadius={moderateScale(25, 0.3)}
-//     elevation
-//   />
-//   <TextInputWithTitle
-//     titleText={'Description'}
-//     secureText={false}
-//     placeholder={'Description'}
-//     setText={setNoteDesc}
-//     value={noteDesc}
-//     viewHeight={0.07}
-//     viewWidth={0.9}
-//     inputWidth={0.9}
-//     borderColor={'#ffffff'}
-//     backgroundColor={'#FFFFFF'}
-//     marginTop={moderateScale(35, 0.3)}
-//     color={Color.themeColor}
-//     placeholderColor={Color.themeLightGray}
-//     borderRadius={moderateScale(25, 0.3)}
-//     elevation
-//   />
-
-//   <CustomButton
-//     text={
-//       isLoading ? (
-//         <ActivityIndicator size={'small'} color={'white'} />
-//       ) : (
-//         'Save'
-//       )
-//     }
-//     isBold
-//     textColor={Color.white}
-//     width={windowWidth * 0.3}
-//     height={windowHeight * 0.05}
-//     bgColor={Color.themeColor}
-//     fontSize={moderateScale(15, 0.6)}
-//     borderRadius={moderateScale(5, 0.3)}
-//     marginTop={moderateScale(30, 0.3)}
-//     style={{
-//       marginRight: moderateScale(10, 0.3),
-//     }}
-//     onPress={() => {
-//       saveTripNote();
-//     }}
-//   />
-// </View>
-// </RBSheet>

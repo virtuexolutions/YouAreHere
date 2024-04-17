@@ -31,6 +31,8 @@ const Header = props => {
     showList,
     headerColor,
     titleColor,
+    titleSize,
+    titleWeight,
     close,
     navigateTO,
     headerType,
@@ -88,7 +90,7 @@ const Header = props => {
           <View></View>
         )}
       </View>
-  { title ? <CustomText>{title}</CustomText> :   
+  { title ? <CustomText style={{color:titleColor, fontSize: titleSize, FontWeight:titleWeight}}>{title}</CustomText> :   
   <CustomImage
         resizeMode={'contain'}
         style={{
@@ -181,7 +183,7 @@ const styles = ScaledSheet.create({
   },
   header2: {
     width: windowWidth,
-    // height: windowHeight * 0.13,
+    // height: windowHeight * 0.1,
     backgroundColor: Color.themeColor,
     // justifyContent: 'center',
     flexDirection: 'row',

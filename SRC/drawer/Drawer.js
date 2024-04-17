@@ -41,6 +41,18 @@ const user = useSelector(state => state.commonReducer.userData)
       iconName: 'subscriptions',
       iconType: MaterialIcons,
     },
+    {
+      name: 'Preferences',
+      onPress: () => {
+        navigation.navigate('Filters',
+       {
+                fromDrawer : true 
+      }   
+        );
+      },
+      iconName: 'room-preferences',
+      iconType: MaterialIcons,
+    },
     // {
     //   name: 'Interests',
     //   onPress: () => {
@@ -106,7 +118,8 @@ const user = useSelector(state => state.commonReducer.userData)
             marginTop: moderateScale(20, 0.3),
             alignItems: 'center',
             marginLeft: moderateScale(10, 0.3),
-          }}>
+            height : windowHeight * 0.2,
+}}>
           <View style={styles.Profile}>
             <CustomImage
               resizeMode={'cover'}

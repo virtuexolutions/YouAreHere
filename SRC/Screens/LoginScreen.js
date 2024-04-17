@@ -28,7 +28,7 @@ import {setPreferencesSet, setUserToken} from '../Store/slices/auth';
 import {validateEmail} from '../Config';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {Post} from '../Axios/AxiosInterceptorFunction';
-import {setUserData} from '../Store/slices/common';
+import {setPrefrences, setUserData} from '../Store/slices/common';
 
 const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -71,13 +71,14 @@ const LoginScreen = () => {
       // );
       dispatch(setUserToken({token: response?.data?.data?.token}));
       dispatch(setUserData(response?.data?.data?.user_info));
-      dispatch(
-        setPreferencesSet(
-          response?.data?.data?.user_info?.preferences.length > 0
-            ? true
-            : false,
-        ),
-      );
+      dispatch(setPrefrences(response?.data?.data?.user_info?.preferences));
+      // dispatch(
+      //   setPreferencesSet(
+      //     response?.data?.data?.user_info?.preferences.length > 0
+      //       ? true
+      //       : false,
+      //   ),
+      // );
     }
   };
 
