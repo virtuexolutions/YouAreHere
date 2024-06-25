@@ -14,6 +14,9 @@ import {
   TouchableOpacity,
   RefreshControl,
   Platform,
+  ToastAndroid,
+  Alert,
+  Linking,
 } from 'react-native';
 import CustomText from '../Components/CustomText';
 import SearchContainer from '../Components/SearchContainer';
@@ -37,6 +40,7 @@ import axios from 'axios';
 import OptionsMenu from 'react-native-options-menu';
 import CustomImage from '../Components/CustomImage';
 import NearPlacesCard from '../Components/NearPlacesCard';
+import {PERMISSIONS, check, request} from 'react-native-permissions';
 
 const HomeScreen = props => {
   // const
@@ -56,6 +60,7 @@ const HomeScreen = props => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [searchData, setSearchData] = useState('');
+  console.log('test=====> hello=====>',searchData)
   const [placesData, setplacesData] = useState([]);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [preferences, setPreferences] = useState([]);
@@ -155,7 +160,7 @@ const HomeScreen = props => {
         ? customLocation?.location?.lng
         : location?.lng
     }&place[]=${preferences?.name != undefined ? preferences?.name : 'all'}`;
-    console.log('🚀 ~ getData ~ url:', url);
+    // return console.log('🚀 ~ getData ~  url:', url);
 
     setIsLoading(true);
     const response = await Get(url, token);
@@ -209,15 +214,75 @@ const HomeScreen = props => {
       });
   };
 
+  const requestLocationPermissionIOS = async () => {
+    try {
+      const permissionStatus = await check(
+        PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+      );
+
+      console.log(permissionStatus);
+      if (permissionStatus === 'granted') {
+        console.log('Location permission already granted');
+        return true;
+      } else if (
+        permissionStatus === 'blocked' ||
+        permissionStatus === 'denied'
+      ) {
+        const permissionRequest = await request(
+          PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        );
+
+        if (permissionRequest === 'granted') {
+          console.log('Location permission granted');
+          return true;
+        } else {
+          console.log('Location permission denied sfsdfdfdfs');
+          return false;
+        }
+      } else {
+        console.log('Unknown permission status');
+        return false;
+      }
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  };
+
   const getLocation = async () => {
+    console.log('test', preferences, preferences?.name);
     const url = 'locationstore';
-    Platform.OS == 'android' && (await requestLocationPermission());
+    const permissionResult =
+      Platform.OS == 'android'
+        ? await requestLocationPermission()
+        : await requestLocationPermissionIOS();
+
+    // return console.log('result == >', permissionResult);
+    if (permissionResult == false) {
+      return Platform.OS == 'android'
+        ? ToastAndroid.show(
+            'Location Permission denied by user',
+            ToastAndroid.SHORT,
+          )
+        : Alert.alert('Location blocked', 'Location is blocked as denied by user , enable in settings and try again', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'Settings', onPress: () => Linking.openSettings()},
+        ]); 
+        
+        
+       
+    }
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 60000,
     })
 
       .then(async location => {
+        console.log('test======>', preferences, preferences?.name);
         preferences?.label == 'All' || preferences?.label == undefined
           ? getData({lat: location?.latitude, lng: location?.longitude})
           : findNearestMcDonalds({
@@ -291,7 +356,7 @@ const HomeScreen = props => {
                                   : Color.themeColor,
                               fontSize: moderateScale(12, 0.1),
                             }}>
-                            {item.name}
+                            {item.label}
                           </CustomText>
                         </View>
                       }
@@ -318,7 +383,7 @@ const HomeScreen = props => {
                           setPreferences({
                             id: item?.id,
                             label: 'All',
-                            name: item?.name,
+                            name: item?.label,
                           });
                         },
                       ]}

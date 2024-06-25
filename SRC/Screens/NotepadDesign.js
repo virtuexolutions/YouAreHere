@@ -1013,6 +1013,7 @@ const NotepadDesign = props => {
         setTripModalVisibe={
           type == 'trip' ?
             setTripModalVisibe : setNoteModalVisible}
+            fromNotePad={true}
         // type={type}
       />
     </ScreenBoiler>

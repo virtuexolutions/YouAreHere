@@ -5,6 +5,7 @@ import {
   FlatList,
   ActivityIndicator,
   ToastAndroid,
+  Platform,
 } from 'react-native';
 import React, {useState} from 'react';
 import Modal from 'react-native-modal';
@@ -82,10 +83,12 @@ const PreferenceModal = ({
             ? alert('Already added in your preference')
             : placesDetails(filteredPredictions[0]?.place_id);
         } else {
+          Platform.OS == 'android' ?
           ToastAndroid.show(
-            'Not Found Under this category!',
+            'No place Found,kindly enter right place or corrent your spellinig',
             ToastAndroid.SHORT,
-          );
+          ) :
+          alert('No place Found,kindly enter right place or corrent your spellinig')
         }
       }
       // setSearch('');
@@ -115,7 +118,7 @@ const PreferenceModal = ({
               fontSize: moderateScale(25, 0.8),
               fontWeight: 'bold',
             }}>
-            {selectedType?.name}
+            {selectedType?.label}
           </CustomText>
         </View>
         <View style={styles.modalBody}>

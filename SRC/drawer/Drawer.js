@@ -19,7 +19,7 @@ import { setCustomLocation, setUserLogOut } from '../Store/slices/common';
 
 const Drawer = () => {
 const user = useSelector(state => state.commonReducer.userData)
-  // console.log("🚀 ~ file: Drawer.js:22 ~ Drawer ~ user:", user)
+  console.log("🚀 ~ file: Drawer.js:22 ~ Drawer ~ user:", JSON.stringify(user,null,2))
   const navigation = useNavigation();
   const dispatch = useDispatch()
 
@@ -63,6 +63,14 @@ const user = useSelector(state => state.commonReducer.userData)
     //   iconName: 'room-preferences',
     //   iconType: MaterialIcons,
     // },
+    {
+      name: 'Profile',
+      onPress: () => {
+        navigation.navigate('Profile');
+      },
+      iconName: 'note-edit-outline',
+      iconType: MaterialCommunityIcons,
+    },
     {
       name: 'Saved Notes',
       onPress: () => {
@@ -123,7 +131,7 @@ const user = useSelector(state => state.commonReducer.userData)
           <View style={styles.Profile}>
             <CustomImage
               resizeMode={'cover'}
-              source={require('../Assets/Images/user.png')}
+              source={user?.image ? {uri :user?.image} : require('../Assets/Images/user.png')}
               style={{width: '100%', height: '100%'}}
             />
           </View>

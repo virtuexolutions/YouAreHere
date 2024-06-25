@@ -29,6 +29,7 @@ import HighLights from './Screens/HighLights';
 import WhishListScreen from './Screens/WhishListScreen';
 import NotepadDesign from './Screens/NotepadDesign';
 import LoginScreen from './Screens/LoginScreen';
+import Profile from './Screens/Profile';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -66,6 +67,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="MyDrawer" component={MyDrawer} />
           <RootNav.Screen name="Files" component={Files} />
           <RootNav.Screen name="NotePad" component={NotePad} />
+          {/* <RootNav.Screen name="Profile" component={Profile} /> */}
           <RootNav.Screen name="AssetScreen" component={AssetScreen} />
           {/* <RootNav.Screen name="Filters" component={Filters} /> */}
         </RootNav.Navigator>
@@ -102,7 +104,7 @@ export const MyDrawer = () => {
         name="WhishListScreen"
         component={WhishListScreen}
       />
-
+      <DrawerNavigation.Screen name="Profile" component={Profile} />
       <DrawerNavigation.Screen name="NotepadDesign" component={NotepadDesign} />
     </DrawerNavigation.Navigator>
   );

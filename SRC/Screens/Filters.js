@@ -782,28 +782,54 @@ const Filters = ({route}) => {
 
   return (
     <ScreenBoiler
-      statusBarBackgroundColor={[Color.themeColor, Color.themeColor]}
-      statusBarContentStyle={'light-content'}>
+      // statusBarBackgroundColor={ Color.orange}
+      statusBarContentStyle={'dark-content'}>
       {fromDrawer && (
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.Rounded}
-          onPress={() => {
-            navigation.toggleDrawer();
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: windowWidth,
+            backgroundColor: Color.orange,
+            paddingHorizontal: moderateScale(10, 0.6),
+            height: windowHeight * 0.08,
+            alignItems: 'center',
+            marginBottom: moderateScale(10, 0.3),
           }}>
-          <Icon
+          <CustomText
+            style={{
+              color: 'white',
+              fontSize: moderateScale(22, 0.6),
+              width: windowWidth * 0.8,
+              // backgroundColor :'white'
+              textAlign: 'center',
+              paddingLeft: moderateScale(50, 0.6),
+            }}>
+            {' '}
+            Preferences
+          </CustomText>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.Rounded}
             onPress={() => {
+              console.log('Toggle drawer');
               navigation.toggleDrawer();
-            }}
-            name="menu"
-            as={Ionicons}
-            size={moderateScale(25)}
-            color={Color.black}
-          />
-        </TouchableOpacity>
+            }}>
+            <Icon
+              onPress={() => {
+                console.log('Toggle drawer');
+                navigation.toggleDrawer();
+              }}
+              name="menu"
+              as={Ionicons}
+              size={moderateScale(25)}
+              color={Color.black}
+            />
+          </TouchableOpacity>
+        </View>
       )}
 
-      <Header
+      {/* <Header
         headerColor={[Color.themeColor, Color.themeColor]}
         title={'Preferences'}
         titleColor={Color.white}
@@ -811,7 +837,7 @@ const Filters = ({route}) => {
         showBack={false}
         hideUser={true}
         titleSize={moderateScale(20, 0.9)}
-      />
+      /> */}
 
       <LinearGradient
         colors={['#f5f1ed', '#ffffff', '#f5f1ed']}
@@ -1030,10 +1056,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 5,
-    position: 'absolute',
-    top: 60,
+    // position: 'absolute',
+    // top: 60,
 
-    right: 10,
+    // right: 10,
     zIndex: 1,
   },
 

@@ -101,8 +101,9 @@ const LoginScreen = () => {
           <View
             style={{
               width: windowWidth * 0.6,
-              height: windowHeight * 0.1,
-              marginTop: moderateScale(130, 0.3),
+              height: windowHeight * 0.15,
+              marginTop: moderateScale(100, 0.3),
+              // backgroundColor : 'red'
             }}>
             <LottieView
               resizeMode="cover"
@@ -127,7 +128,7 @@ const LoginScreen = () => {
             inputWidth={0.6}
             border={1}
             borderColor={Color.black}
-            marginTop={moderateScale(50, 0.3)}
+            marginTop={moderateScale(30, 0.3)}
             color={Color.black}
             placeholderColor={Color.black}
           />

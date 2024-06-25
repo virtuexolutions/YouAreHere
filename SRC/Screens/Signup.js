@@ -92,13 +92,13 @@ const Signup = () => {
         <View
           style={{
             width: windowWidth * 0.6,
-            height: windowHeight * 0.1,
-            marginTop: moderateScale(130, 0.3),
+            height: windowHeight * 0.15,
+            marginTop: moderateScale(40, 0.3),
           }}>
              <LottieView
         resizeMode="cover"
         source={require('../Assets/Images/animation2.json')}
-        // style={{height: '90%' }}
+        style={{height: '90%' }}
         autoPlay
         loop
       />
@@ -121,7 +121,7 @@ const Signup = () => {
           inputWidth={0.86}
           border={1}
           borderColor={Color.black}
-          marginTop={moderateScale(50, 0.3)}
+          marginTop={moderateScale(30, 0.3)}
           color={Color.black}
           placeholderColor={Color.black}
         />
@@ -195,32 +195,7 @@ const Signup = () => {
           borderRadius={moderateScale(5, 0.3)}
           isGradient
         />
-         <CustomText
-         onPress={() => {
-          navigationService.navigate('LoginScreen');
-        }}
-          style={{
-            color: Color.white,
-            fontSize: moderateScale(12, 0.6),
-            width: windowWidth * 0.7,
-            textAlign: 'center',
-            paddingVertical: moderateScale(10, 0.6),
-          }}>
-          Already have an account? </CustomText >
-          {
-            <CustomText
-              isBold
-              style={{
-                color: Color.black,
-                fontSize: moderateScale(12, 0.7),
-              }}
-              onPress={() => {
-                navigationService.navigate('LoginScreen');
-              }}>
-              {' '}
-              Login Now
-            </CustomText>
-          }
+      
        
       </LinearGradient>
       </ScrollView>

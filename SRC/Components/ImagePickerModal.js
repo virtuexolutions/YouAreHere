@@ -43,7 +43,8 @@ const requestCameraPermission = async () => {
 };
 
 const ImagePickerModal = props => {
-  let { show, setShow, setFileObject, setMultiImages, crop, type, setTripModalVisibe } = props;
+  let { show, setShow, setFileObject, setMultiImages, crop, type, setTripModalVisibe ,fromNotePad} = props;
+  console.log('fromNotePad',fromNotePad)
 
   const openGallery = () => {
     let options = {
@@ -64,34 +65,39 @@ const ImagePickerModal = props => {
     //       })
     //     : 
     launchImageLibrary(options, response => {
-      if (Platform.OS === 'ios') {
-        setShow(false);
-       
+      try{
 
-      }
-      if (response.didCancel) {
-      } else if (response.error) {
-      } else if (response.customButton) {
-        alert(response.customButton);
-      } else {
-        setFileObject &&
-          setFileObject({
-            uri: response?.assets[0]?.uri,
-            type: response?.assets[0]?.type,
-            name: response?.assets[0]?.fileName,
-          });
-          setTimeout(() => { setTripModalVisibe(true) }, 500)
-
-        setMultiImages &&
-          setMultiImages(x => [
-            ...x,
-            {
+        if (Platform.OS === 'ios') {
+          setShow(false);
+         
+  
+        }
+        if (response.didCancel) {
+        } else if (response.error) {
+        } else if (response.customButton) {
+          alert(response.customButton);
+        } else {
+          setFileObject &&
+            setFileObject({
               uri: response?.assets[0]?.uri,
               type: response?.assets[0]?.type,
               name: response?.assets[0]?.fileName,
-            },
-          ]);
-
+            });
+          fromNotePad &&  setTimeout(() => { setTripModalVisibe(true) }, 500)
+  
+          setMultiImages &&
+            setMultiImages(x => [
+              ...x,
+              {
+                uri: response?.assets[0]?.uri,
+                type: response?.assets[0]?.type,
+                name: response?.assets[0]?.fileName,
+              },
+            ]);
+  
+        }
+      }catch(error){
+        console.log('error here=========> ',error)
       }
     });
     // }
@@ -129,7 +135,7 @@ const ImagePickerModal = props => {
             type: response?.assets[0]?.type,
             name: response?.assets[0]?.fileName,
           });
-          setTimeout(() => { setTripModalVisibe(true) }, 500)
+          fromNotePad == true && setTimeout(() => { setTripModalVisibe(true) }, 500)
         setMultiImages &&
           setMultiImages(x => [
             ...x,

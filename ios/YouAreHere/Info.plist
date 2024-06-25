@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key></key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -37,27 +39,22 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>YouAreHere would like to access Your camera</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>We need access to the app&apos;s Documents folder for file management and storage.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Access the Downloads folder for importing files and documents.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>YouAreHere would like to access Your location</string>
+	<string>your location allows you to watch near by restaurants or place of your selected preference</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We require access to the microphone for audio recording and processing.</string>
+	<key>NSOpenAccessUsageDescription</key>
+	<string>we require you open access usage description</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>YouAreHere would like to access Your Gallery</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>YouAreHere would like to access Your Gallery</string>
-	
-
-
-<key>NSMicrophoneUsageDescription</key>
-<string>We require access to the microphone for audio recording and processing.</string>
-
-<key>NSDocumentsFolderUsageDescription</key>
-<string>We need access to the app's Documents folder for file management and storage.</string>
-
-<key>NSDownloadsFolderUsageDescription</key>
-<string>Access the Downloads folder for importing files and documents.</string>
-
-<key>NSOpenAccessUsageDescription</key>
-<string>We need access to external files and directories for importing and exporting data.</string>
-
+	<key>NSAppleMusicUsageDescription</key>
+	<string>YouAreHere would like to access Your apple music</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -84,11 +81,11 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarStyle</key>
+	<string></string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<!-- <string>UIInterfaceOrientationLandscapeLeft</string> -->
-		<!-- <string>UIInterfaceOrientationLandscapeRight</string> -->
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
