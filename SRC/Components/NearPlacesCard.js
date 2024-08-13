@@ -30,9 +30,11 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Alert} from 'react-native';
 import navigationService from '../navigationService';
+import Share from 'react-native-share';
 
 const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
-    // console.log('🚀 ~ NearPlacesCard ~ item==========>:', JSON.stringify(item,null ,2));
+  console.log('hello from near places card')
+    console.log('🚀 ~ NearPlacesCard ~ item==========>:', JSON.stringify(item,null ,2));
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
@@ -89,6 +91,31 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
         : Alert.alert('Added To Wishlist');
     }
   };
+  const sharePlace = () =>{
+   
+  //   Share.open({url: `${item?.geometry?.location?.lat},${item?.geometry?.location?.lng}`})
+  // .then((res) => {
+  //   console.log(res);
+  // })
+  // .catch((err) => {
+  //   err && console.log(err);
+  // });
+  // const navigateToMap = () => {
+    const scheme = Platform.select({
+      ios: 'maps://0,0?q=',
+      android: 'geo:0,0?q=',
+    });
+    const latLng = `${item?.geometry?.location?.lat},${item?.geometry?.location?.lng}`;
+    const label = 'Custom Label';
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`,
+    });
+    return console.log(url)
+
+ Share.open({url : url})
+  };
+  // }
 
   useEffect(() => {
     if (isModalVisible) {
@@ -173,7 +200,7 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
           <CustomText
             style={{
               fontSize: moderateScale(10, 0.6),
-              color: Color.veryLightGray,
+              color: Color.black,
             }}
             numberOfLines={1}>
             {/* fhjagdhagshdjas */}
@@ -484,7 +511,11 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
                 backgroundColor: '#1a73e8',
                 justifyContent: 'center',
                 alignItems: 'center',
-              }}>
+              }}
+              onPress={()=>{
+sharePlace()
+              }}
+              >
               <Icon
                 name="share-google"
                 as={EvilIcons}

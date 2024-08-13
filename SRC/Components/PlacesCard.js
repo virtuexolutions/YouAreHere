@@ -30,8 +30,11 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Alert} from 'react-native';
 import navigationService from '../navigationService';
+import Share from 'react-native-share';
+
 
 const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
+  // console.log('hello from places card')
   // console.log("🚀 ~ PlacesCard ~ item:", item)
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
@@ -77,7 +80,7 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
     const response = await Post(url, body, apiHeader(token));
     setIsLoading2(false);
     if (response?.data?.success) {
-     return console.log(response?.data);
+    console.log(response?.data);
       Platform.OS == 'android'
         ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
         : Alert.alert('Added To Wishlist');
@@ -91,6 +94,30 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+  const sharePlace = async() =>{
+   
+    //   Share.open({url: `${item?.geometry?.location?.lat},${item?.geometry?.location?.lng}`})
+    // .then((res) => {
+    //   console.log(res);
+    // })
+    // .catch((err) => {
+    //   err && console.log(err);
+    // });
+    // const navigateToMap = () => {
+      const scheme = Platform.select({
+        ios: 'maps://0,0?q=',
+        android: 'geo:0,0?q=',
+      });
+      const latLng = `${item?.latitude},${item?.longitude}`;
+      const label = 'Custom Label';
+      const url = Platform.select({
+        ios: `${scheme}${label}@${latLng}`,
+        android: `${scheme}${latLng}(${label})`,
+      });
+      console.log(url)
+  
+      const shareResponse = await Share.open({url : url});
+    };
 
   const navigateToMap = () => {
     const scheme = Platform.select({
@@ -162,7 +189,7 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
           <CustomText
             style={{
               fontSize: moderateScale(10, 0.6),
-              color: Color.veryLightGray,
+              color: Color.black,
             }}
             numberOfLines={1}>
             {item?.address}
@@ -453,6 +480,7 @@ const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
             </TouchableOpacity>
 
             <TouchableOpacity
+            onPress={sharePlace}
               activeOpacity={0.5}
               style={{
                 height: windowWidth * 0.1,

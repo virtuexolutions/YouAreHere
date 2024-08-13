@@ -60,7 +60,7 @@ const SearchScreen = () => {
             // returnKeyType: "search"
           }}
           onPress={(data, details = null) => {
-            console.log({ name : data?.description ,  location : details?.geometry?.location});
+            console.log('hello hereeeee ========  >>>>>>>>>',{ name : data?.description ,  location : details?.geometry?.location});
             setSearchData( { name : data?.description ,  location : details?.geometry?.location})
           }}
           query={{

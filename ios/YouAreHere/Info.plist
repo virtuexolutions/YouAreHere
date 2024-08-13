@@ -24,6 +24,15 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>whatsapp</string>
+      <string>mailto</string>
+      <string>instagram</string>
+      <string>instagram-stories</string>
+      <string>fb</string>
+      <string>facebook-stories</string>
+    </array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -45,6 +54,8 @@
 	<string>Access the Downloads folder for importing files and documents.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>your location allows you to watch near by restaurants or place of your selected preference</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>your location allows you to watch near by restaurants or place of your selected preference</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We require access to the microphone for audio recording and processing.</string>
 	<key>NSOpenAccessUsageDescription</key>

@@ -68,7 +68,7 @@ const user = useSelector(state => state.commonReducer.userData)
       onPress: () => {
         navigation.navigate('Profile');
       },
-      iconName: 'note-edit-outline',
+      iconName: 'account-edit',
       iconType: MaterialCommunityIcons,
     },
     {
