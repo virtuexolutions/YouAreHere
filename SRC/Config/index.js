@@ -1,5 +1,5 @@
-export const baseUrl = "https://nearplace.ad-wize.net";
-// export const baseUrl = "https://4b54-113-203-241-1.in.ngrok.io";
+// export const baseUrl = "https://nearplace.ad-wize.net";
+export const baseUrl = "https://nick.cstmpanel.com";
 export const imageUrl = `${baseUrl}/api/images/`;
 export const profilePicUrl = `${baseUrl}/uploads`
 

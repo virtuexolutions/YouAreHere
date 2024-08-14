@@ -149,8 +149,8 @@ const Profile = props => {
                 source={
                   Object.keys(image).length > 0
                     ? {uri: image?.uri}
-                    : userData?.photo
-                    ? {uri: userData?.photo}
+                    : userData?.image
+                    ? {uri: userData?.image}
                     : require('../Assets/Images/user.png')
                 }
                 style={{

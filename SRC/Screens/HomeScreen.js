@@ -60,7 +60,7 @@ const HomeScreen = props => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [searchData, setSearchData] = useState('');
-  console.log('test=====> hello=====>',searchData)
+  console.log('test=====> hello=====>', searchData);
   const [placesData, setplacesData] = useState([]);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [preferences, setPreferences] = useState([]);
@@ -150,7 +150,6 @@ const HomeScreen = props => {
   };
   const getData = async location => {
     setplacesData([]);
-
     const url = `location?latitude=${
       Object.keys(customLocation).length > 0
         ? customLocation?.location?.lat
@@ -264,23 +263,23 @@ const HomeScreen = props => {
             'Location Permission denied by user',
             ToastAndroid.SHORT,
           )
-        : Alert.alert('Location blocked', 'Location is blocked as denied by user , enable in settings and try again', [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          {text: 'Settings', onPress: () => Linking.openSettings()},
-        ]); 
-        
-        
-       
+        : Alert.alert(
+            'Location blocked',
+            'Location is blocked as denied by user , enable in settings and try again',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'Settings', onPress: () => Linking.openSettings()},
+            ],
+          );
     }
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 60000,
     })
-
       .then(async location => {
         console.log('test======>', preferences, preferences?.name);
         preferences?.label == 'All' || preferences?.label == undefined
