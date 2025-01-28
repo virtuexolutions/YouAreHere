@@ -22,6 +22,8 @@ const DropDownSingleSelect = ({
   rowTextForSelection,
   disabled,
   backgroundColor,
+  borderColor,
+  borderWidth,
   width,
   iconName,
   iconType,
@@ -87,9 +89,16 @@ const DropDownSingleSelect = ({
       <SelectDropdown
         data={data}
         defaultValue={item}
+        
         buttonStyle={{
           ...styles.dropDownBtn,
           width: width * 0.89,
+          ...(borderColor && {
+            borderColor: borderColor
+          }),
+          ...(borderWidth && {
+            borderWidth: borderWidth
+          }),
 
           ...(disabled && {backgroundColor: `${Color.veryLightGray}90`}),
           ...(myJobs && {
@@ -172,6 +181,8 @@ const styles = ScaledSheet.create({
     height: height * 0.06,
     borderBottomWidth: moderateScale(1, 0.3),
     borderColor: 'lightgrey',
+    alignItems:"center",
+    // borderWidth:2,
     marginTop: moderateScale(6, 0.3),
     // borderRadius: moderateScale(20, 0.3),
     paddingLeft: moderateScale(32, 0.3),

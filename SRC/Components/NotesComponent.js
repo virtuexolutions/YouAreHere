@@ -10,7 +10,7 @@ import navigationService from '../navigationService';
 import moment from 'moment';
 
 const NotesComponent = ({item, setSelectedNote, selectedStory}) => {
-  console.log("🚀 ~ file: NotesComponent.js:12 ~ NotesComponent ~ item:", item)
+  console.log('🚀 ~ file: NotesComponent.js:12 ~ NotesComponent ~ item:', item);
   // console.log('DATA=========>>>>', item.image?.uri);
   return (
     <TouchableOpacity
@@ -73,35 +73,59 @@ const NotesComponent = ({item, setSelectedNote, selectedStory}) => {
         <View style={styles.Profile}>
           <CustomImage
             resizeMode={'cover'}
-            source={item?.image ? {uri: item?.image} : require('../Assets/Images/n.jpg')}
+            source={
+              item?.image
+                ? {uri: item?.image}
+                : require('../Assets/Images/n.jpg')
+            }
             style={{width: '100%', height: '100%'}}
           />
         </View>
 
         <View
-        
           style={{
             marginLeft: moderateScale(20, 0.3),
-          
           }}>
           <CustomText
             numberOfLines={1}
-            style={{fontSize: moderateScale(13, 0.6), color: Color.black ,   width: windowWidth * 0.4,
-              }}>
+            style={{
+              fontSize: moderateScale(13, 0.6),
+              color: Color.black,
+              width: windowWidth * 0.4,
+            }}>
             {item.title}
           </CustomText>
           <CustomText
             numberOfLines={2}
-            style={{fontSize: moderateScale(9, 0.6), color: Color.black, width: windowWidth * 0.4
-              }}>
+            style={{
+              fontSize: moderateScale(9, 0.6),
+              color: Color.black,
+              width: windowWidth * 0.4,
+            }}>
             {item.description}
           </CustomText>
         </View>
+        <TouchableOpacity
+          style={{
+            backgroundColor: Color.themeColor,
+            padding: moderateScale(3, 6),
+            borderRadius: moderateScale(5, 0.6),
+            position : 'absolute' ,
+             right: 15 ,
+          }}>
+          <CustomText
+            isBold
+            style={{
+              color: 'white',
+            }}>
+            Start Trip
+          </CustomText>
+        </TouchableOpacity>
 
-        <View style={{position: 'absolute', right: 10 , top :2}}>
+        <View style={{position: 'absolute', right: 10, top: 2}}>
           <CustomText
             style={{fontSize: moderateScale(9, 0.6), color: Color.black}}>
-            {moment(item?.created_at).format("DD MMM")}
+            {moment(item?.created_at).format('DD MMM')}
           </CustomText>
         </View>
       </View>

@@ -3,7 +3,7 @@ import { Text } from "react-native";
 import Color from "../Assets/Utilities/Color";
 
 const CustomText = (props) => {
-  const { children, numberOfLines, style, isBold, onPress } = props;
+  const { children, numberOfLines, style, isBold, onPress, ellipsizeMode} = props;
   return (
     <Text
       onPress={onPress}
@@ -20,6 +20,7 @@ const CustomText = (props) => {
           fontWeight: "bold",
         },
       ]}
+      ellipsizeMode={ellipsizeMode}
       numberOfLines={numberOfLines}
     >
       {children}

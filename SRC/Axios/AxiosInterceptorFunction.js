@@ -29,7 +29,7 @@ let Get = async (route, token, showAlert = true) => {
     const response = await axios.get(apiUrl, options);
     return response;
   } catch (error) {
-    console.log("error", error.response);
+    console.log("error", error);
     let networkError = error.message === "Network Error";
     if (showAlert == true) {
       if (networkError === true) {

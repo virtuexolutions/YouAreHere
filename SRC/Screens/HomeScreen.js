@@ -17,14 +17,15 @@ import {
   ToastAndroid,
   Alert,
   Linking,
+  share,
 } from 'react-native';
 import CustomText from '../Components/CustomText';
 import SearchContainer from '../Components/SearchContainer';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
-import Fontisto from 'react-native-vector-icons/Fontisto';
+import Geocoder from 'react-native-geocoding';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {FlatList, Icon, ScrollView} from 'native-base';
 import PlacesCard from '../Components/PlacesCard';
@@ -42,13 +43,22 @@ import CustomImage from '../Components/CustomImage';
 import NearPlacesCard from '../Components/NearPlacesCard';
 import {PERMISSIONS, check, request} from 'react-native-permissions';
 
+import Share from 'react-native-share';
+import AddPlacesModal from '../Components/AddPlacesModal';
+import WelcomeModal from '../Components/WelcomeModal';
 const HomeScreen = props => {
   // const
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
-  // console.log("🚀 ~ HomeScreen ~ user==================>:", user)
   const userPreferences = useSelector(state => state.commonReducer.prefrences);
+  const favouriteplaces = useSelector(
+    state => state.commonReducer.favouriteLocation,
+  );
+  // console.log(
+  //   '00000000000000 00 0 0 0 00 0 0 0 0 0 00 0 0 0 0 0 0 ',
+  //   favouriteplaces,
+  // );
   const filteredUserPreference = userPreferences?.map(
     item => item?.preferences,
   );
@@ -59,14 +69,38 @@ const HomeScreen = props => {
 
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
+
+  const [label, setLabel] = useState('');
+  // const [favouriteLocation, setFavouriteLocaion] = useState([]);
   const [searchData, setSearchData] = useState('');
-  console.log('test=====> hello=====>', searchData);
   const [placesData, setplacesData] = useState([]);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
+  console.log('iVis', isVisibleModal);
   const [preferences, setPreferences] = useState([]);
   const [selectedLocation, setSelectedLoacation] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [searchedPlaces, setSearchedPlaces] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState({});
+  const [locationName, setLocationName] = useState('');
+  const [foundLocation , setFoundLocation] = useState({})
+  // console.log(
+  //   '[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]] ,,,,,,,,, >>>>>>>>> <<<<<<<<<<<<< ',
+  //   customLocation,
+  //   locationName,
+  // );
+  const currentLocation2 = {
+    latitude: 24.8598186,
+    longitude: 67.06233019999999,
+  };
+  // console.log(
+  //   'currentLocation   ',
+  //   // currentLocation,
+  //   customLocation?.location,
+  //   // favouriteplaces[0].name,
+  //   favouriteplaces[1],
+  // );
+  // const [welcomeModal ,setWelcomeModal ] =useState(true)
+  const [rbRef, setRbRef] = useState(null);
   const places = [
     {
       id: 'f1',
@@ -159,7 +193,6 @@ const HomeScreen = props => {
         ? customLocation?.location?.lng
         : location?.lng
     }&place[]=${preferences?.name != undefined ? preferences?.name : 'all'}`;
-    // return console.log('🚀 ~ getData ~  url:', url);
 
     setIsLoading(true);
     const response = await Get(url, token);
@@ -173,7 +206,7 @@ const HomeScreen = props => {
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
     const longitude = 66.98806;
-    // const keyword = 'mc donald';
+    const keyword = 'mc donald';
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${
       Object.keys(customLocation).length > 0
         ? customLocation?.location?.lat
@@ -182,9 +215,8 @@ const HomeScreen = props => {
       Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
         : location?.lng
-    }&radius=${radius}&keyword=${preferences?.name}`;
-
-    console.log('🚀 ~ findNearestMcDonalds ~ url:', url);
+    }&rankby=distance&keyword=${preferences?.name}`;
+    // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&keyword=${keyword}&key=${apiKey}`;
     try {
       setIsLoading(true);
       const response = await axios.get(url);
@@ -197,15 +229,58 @@ const HomeScreen = props => {
     }
   };
 
+  useEffect(() => {
+    // console.log(
+    //   'Running loscatddions ',
+    //   currentLocation,
+    //   JSON.stringify(favouriteplaces, null, 2),
+    // )
+console.log('hello1')
+    if (
+      Object.keys(customLocation).length > 0
+       && isFocused
+    
+    ) {
+      console.log('hello')
+      favouriteplaces.some(
+        (item, index) =>
+          item?.lat ==  customLocation?.location?.lat &&
+          item?.lng ==   customLocation?.location?.lng,
+      )&&(
+        setFoundLocation(
+        favouriteplaces.find(
+          (item, index) =>
+            item?.lat ==  customLocation?.location?.lat &&
+            item?.lng ==   customLocation?.location?.lng,
+        )),
+        setIsVisibleModal(true)
+        )
+    }
+   else{
+      favouriteplaces.some(
+        (item, index) =>
+          item?.lat ==  currentLocation?.latitude &&
+          item?.lng ==  currentLocation?.longitude,
+      )&&
+      (
+        setFoundLocation(
+        favouriteplaces.find(
+          (item, index) =>
+          item?.lat ==  currentLocation?.latitude &&
+          item?.lng ==  currentLocation?.longitude,
+        )),
+      setIsVisibleModal(true))
+    }
+  }, [isFocused]);
   const handleEnableLocation = () => {
     RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
       interval: 10000,
       fastInterval: 5000,
     })
       .then(data => {
-        console.log('data ================= =  = = =  = = = = >', data);
         setIsLoading(true);
         getLocation();
+        // fetchAddress();
       })
       .catch(err => {
         setIsLoading(false);
@@ -249,7 +324,6 @@ const HomeScreen = props => {
   };
 
   const getLocation = async () => {
-    console.log('test', preferences, preferences?.name);
     const url = 'locationstore';
     const permissionResult =
       Platform.OS == 'android'
@@ -281,7 +355,10 @@ const HomeScreen = props => {
       timeout: 60000,
     })
       .then(async location => {
-        console.log('test======>', preferences, preferences?.name);
+        // console.log('test================>', location);
+        // fetchAddress(location);
+        setCurrentLocation(location);
+        getAddressFromCoordinates(location?.latitude, location?.longitude);
         preferences?.label == 'All' || preferences?.label == undefined
           ? getData({lat: location?.latitude, lng: location?.longitude})
           : findNearestMcDonalds({
@@ -300,6 +377,60 @@ const HomeScreen = props => {
     Platform.OS == 'android' ? handleEnableLocation() : getLocation();
   }, [preferences, isFocused, customLocation]);
 
+  const getAddressFromCoordinates = async (latitude, longitude) => {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc'}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.status === 'OK') {
+        const givenaddress = data.results[0].formatted_address;
+        setLocationName(givenaddress);
+      } else {
+        console.log('No address found');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentLocation) {
+      getAddressFromCoordinates(
+        currentLocation.latitude,
+        currentLocation.longitude,
+      );
+    }
+  }, []);
+  // const fetchAddress = async () => {
+  //   try {
+  //     // Validate latitude and longitude
+  //     if (
+  //       !currentLocation?.latitude ||
+  //       !currentLocation?.longitude ||
+  //       isNaN(currentLocation?.latitude) ||
+  //       isNaN(currentLocation?.longitude)
+  //     ) {
+  //       throw new Error(
+  //         `Invalid latitude or longitude: ${currentLocation?.latitude}, ${currentLocation?.longitude}`,
+  //       );
+  //     }
+  //     Geocoder.init(apiKey);
+  //     const response = await Geocoder.from(
+  //       currentLocation?.latitude,
+  //       currentLocation?.longitude,
+  //     );
+  //     if (response.status === 'OK' && response.results.length > 0) {
+  //       const address = response.results[0].formatted_address;
+  //       setLocationName(address);
+  //       console.log('Address:=================================', response.results[0]);
+  //     } else {
+  //       console.error('No results found for the given location.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error during geocoding:', error);
+  //   }
+  // };
+
   // return Object.keys(searchedPlaces)?.length > 0 &&    <CustomImage
   // source={{uri : `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${searchedPlaces?.photos[0]?.photo_reference}&key=${apiKey}`}}
   // style={{
@@ -309,6 +440,14 @@ const HomeScreen = props => {
   // }}
 
   // />
+  const feedBackForm = async () => {
+    const url = Platform.select({
+      ios: `https://forms.gle/edJ3QPvb6B1awqvi6`,
+      android: `https://forms.gle/edJ3QPvb6B1awqvi6`,
+    });
+    Linking.openURL(url);
+  };
+
   return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
@@ -328,6 +467,72 @@ const HomeScreen = props => {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
+          {/* <View style={{
+              backgroundColor : 'white', 
+              width : windowWidth*0.95,
+              borderRadius : 20,
+              marginVertical :moderateScale(5,.3) ,
+              flexDirection : 'row',
+                paddingVertical :moderateScale(8.6),
+              marginHorizontal :moderateScale(10,.3)
+            }}>
+            <CustomText
+   
+            style={{
+              fontSize: moderateScale(12, 0.6),
+              // paddingTop: moderateScale(10, 0.6),
+              paddingHorizontal: moderateScale(5, 0.6),
+              color: Color.darkGray,
+              paddingLeftt: moderateScale(5,.6)
+            }}>
+            we value your input :
+          </CustomText>
+          <CustomText
+            onPress={() => {
+              console.log('----------------------')
+              feedBackForm()
+            }}
+            style={{
+              fontSize: moderateScale(12, 0.6),
+              color: 'blue',
+            }}>
+            `https://forms.gle/edJ3QPvb6B1awqvi6`
+          </CustomText>
+            </View> */}
+          <View style={styles.welView}>
+            <CustomText style={styles.weltxt}>
+              hello ,<CustomText style={styles.weltxt}>{user?.name}</CustomText>
+            </CustomText>
+          </View>
+          <View style={styles.loc}>
+            <TouchableOpacity
+              onPress={() => {
+                rbRef.open();
+                // console.log('================== hello ')
+              }}
+              style={[
+                styles.loc,
+                {
+                  paddingHorizontal: moderateScale(0, 0.6),
+                },
+              ]}>
+              <Icon
+                name="location"
+                color={Color.white}
+                size={moderateScale(28, 0.6)}
+                as={EvilIcons}
+              />
+              <CustomText style={styles.loctxt}>{locationName}</CustomText>
+            </TouchableOpacity>
+
+            {/* <Icon
+              name="heart"
+              color={Color.white}
+              size={moderateScale(28, 0.6)}
+              as={EvilIcons}
+            /> */}
+          </View>
+
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.placesContainer}>
               {filteredUserPreference?.map((item, index) => {
@@ -493,6 +698,7 @@ const HomeScreen = props => {
               data={placesData}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
+                paddingBottom: 50,
                 //   alignItems: 'center',
                 marginTop: moderateScale(10, 0.3),
                 marginBottom: moderateScale(20, 0.3),
@@ -509,6 +715,22 @@ const HomeScreen = props => {
               }}
             />
           )}
+          <WelcomeModal
+            isModalVisible={isVisibleModal}
+            setIsModdalVisible={setIsVisibleModal}
+            matchLocation = {foundLocation}
+              setMatchLocation={setFoundLocation}
+          />
+          <AddPlacesModal
+            setLabel={setLabel}
+            label={label}
+            // favouriteLocation={favouriteLocation}
+            // setFavouriteLocaion={setFavouriteLocaion}
+            setRef={setRbRef}
+            rbRef={rbRef}
+            item={currentLocation}
+            locationName={locationName}
+          />
         </ScrollView>
       </LinearGradient>
     </ScreenBoiler>
@@ -523,6 +745,25 @@ const styles = ScaledSheet.create({
     width: windowWidth,
     backgroundColor: Color.themeColor,
   },
+  weltxt: {
+    fontSize: moderateScale(18, 0.6),
+    // backgroundColor :'reds'
+    textTransform: 'capitalize',
+    color: Color.white,
+  },
+  loctxt: {
+    fontSize: moderateScale(13, 0.6),
+    paddingTop: moderateScale(5, 0.6),
+    color: Color.white,
+  },
+  loc: {
+    flexDirection: 'row',
+    paddingHorizontal: moderateScale(6, 6),
+    paddingVertical: moderateScale(5, 0.6),
+    justifyContent: 'space-between',
+    // backgroundColor :'red'
+  },
+
   bottomImage: {
     width: windowWidth * 0.5,
   },
@@ -602,6 +843,12 @@ const styles = ScaledSheet.create({
     justifyContent: 'flex-start',
     paddingHorizontal: moderateScale(10, 0.3),
     // backgroundColor:'red',
+  },
+  welView: {
+    flexDirection: 'row',
+    width: '100%',
+    paddingTop: moderateScale(15.6),
+    paddingHorizontal: moderateScale(17, 0.6),
   },
 });
 

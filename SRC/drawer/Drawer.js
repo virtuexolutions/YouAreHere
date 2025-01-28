@@ -19,7 +19,6 @@ import { setCustomLocation, setUserLogOut } from '../Store/slices/common';
 
 const Drawer = () => {
 const user = useSelector(state => state.commonReducer.userData)
-  console.log("🚀 ~ file: Drawer.js:22 ~ Drawer ~ user:", JSON.stringify(user,null,2))
   const navigation = useNavigation();
   const dispatch = useDispatch()
 

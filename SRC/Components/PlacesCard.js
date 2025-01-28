@@ -35,7 +35,6 @@ import Share from 'react-native-share';
 
 const PlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
   // console.log('hello from places card')
-  // console.log("🚀 ~ PlacesCard ~ item:", item)
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
