@@ -55,10 +55,10 @@ const HomeScreen = props => {
   const favouriteplaces = useSelector(
     state => state.commonReducer.favouriteLocation,
   );
-  // console.log(
-  //   '00000000000000 00 0 0 0 00 0 0 0 0 0 00 0 0 0 0 0 0 ',
-  //   favouriteplaces,
-  // );
+  console.log(
+    '00000000000000 00 0 0 0 00 0 0 0 0 0 00 0 0 0 0 0 0 ',
+    favouriteplaces,
+  );
   const filteredUserPreference = userPreferences?.map(
     item => item?.preferences,
   );
@@ -82,7 +82,7 @@ const HomeScreen = props => {
   const [searchedPlaces, setSearchedPlaces] = useState([]);
   const [currentLocation, setCurrentLocation] = useState({});
   const [locationName, setLocationName] = useState('');
-  const [foundLocation , setFoundLocation] = useState({})
+  const [foundLocation, setFoundLocation] = useState({});
   // console.log(
   //   '[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]] ,,,,,,,,, >>>>>>>>> <<<<<<<<<<<<< ',
   //   customLocation,
@@ -229,49 +229,48 @@ const HomeScreen = props => {
     }
   };
 
+
+
+  // ye abhi comment  kiya ha
   useEffect(() => {
     // console.log(
     //   'Running loscatddions ',
     //   currentLocation,
     //   JSON.stringify(favouriteplaces, null, 2),
     // )
-console.log('hello1')
-    if (
-      Object.keys(customLocation).length > 0
-       && isFocused
-    
-    ) {
-      console.log('hello')
+    console.log('hello1');
+    if (Object.keys(customLocation).length > 0 && isFocused) {
+      console.log('hello');
       favouriteplaces.some(
         (item, index) =>
-          item?.lat ==  customLocation?.location?.lat &&
-          item?.lng ==   customLocation?.location?.lng,
-      )&&(
-        setFoundLocation(
-        favouriteplaces.find(
-          (item, index) =>
-            item?.lat ==  customLocation?.location?.lat &&
-            item?.lng ==   customLocation?.location?.lng,
-        )),
-        setIsVisibleModal(true)
-        )
-    }
-   else{
-      favouriteplaces.some(
+          item?.lat == customLocation?.location?.lat &&
+          item?.lng == customLocation?.location?.lng,
+      ) &&
+        (setFoundLocation(
+          favouriteplaces.find(
+            (item, index) =>
+              item?.lat == customLocation?.location?.lat &&
+              item?.lng == customLocation?.location?.lng,
+          ),
+        ),
+        setIsVisibleModal(true));
+    } else {
+      favouriteplaces?.some(
         (item, index) =>
-          item?.lat ==  currentLocation?.latitude &&
-          item?.lng ==  currentLocation?.longitude,
-      )&&
-      (
-        setFoundLocation(
-        favouriteplaces.find(
-          (item, index) =>
-          item?.lat ==  currentLocation?.latitude &&
-          item?.lng ==  currentLocation?.longitude,
-        )),
-      setIsVisibleModal(true))
+          item?.lat == currentLocation?.latitude &&
+          item?.lng == currentLocation?.longitude,
+      ) &&
+        (setFoundLocation(
+          favouriteplaces?.find(
+            (item, index) =>
+              item?.lat == currentLocation?.latitude &&
+              item?.lng == currentLocation?.longitude,
+          ),
+        ),
+        setIsVisibleModal(true));
     }
   }, [isFocused]);
+
   const handleEnableLocation = () => {
     RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
       interval: 10000,
@@ -571,12 +570,12 @@ console.log('hello1')
                       }}
                       destructiveIndex={1}
                       options={[
-                        ...item?.preferences.map(place => place?.name),
+                        ...item?.preferences?.map(place => place?.name),
                         'All',
                       ]}
                       // options={['Invite Member', 'Bubble Management' , 'See Activity' ]}
                       actions={[
-                        ...item?.preferences.map(place => () => {
+                        ...item?.preferences?.map(place => () => {
                           setPreferences({
                             id: item?.id,
                             label: place?.name,
@@ -598,35 +597,7 @@ console.log('hello1')
             </View>
           </ScrollView>
           <View style={styles.search}>
-            <SearchContainer
-              onPress={() => {
-                navigationService.navigate('SearchScreen');
-              }}
-              width={windowWidth * 0.82}
-              // input
-              text
-              // inputStyle={{
-              //   height: windowHeight * 0.05,
-              // }}
-              style={{
-                // height: windowHeight * 0.06,
-                //   marginTop: moderateScale(13, 0.3),
-                marginRight: moderateScale(5, 0.3),
-                borderRadius: moderateScale(25, 0.3),
-                alignSelf: 'center',
-                justifyContent: 'space-between',
-              }}
-              textStyle={{
-                width: windowWidth * 0.6,
-                fontSize: moderateScale(10, 0.6),
-                // backgroundColor :'red'
-              }}
-              data={searchData}
-              placeHolder={customLocation?.name}
-              setData={setSearchData}
-              rightIcon
-            />
-            <TouchableOpacity
+          <TouchableOpacity
               onPress={() => {
                 navigation.toggleDrawer();
               }}
@@ -641,6 +612,35 @@ console.log('hello1')
                 }}
               />
             </TouchableOpacity>
+            <SearchContainer
+              onPress={() => {
+                navigationService.navigate('SearchScreen');
+              }}
+              width={windowWidth * 0.82}
+              // input
+              text
+              // inputStyle={{
+              //   height: windowHeight * 0.05,
+              // }}
+              style={{
+                // height: windowHeight * 0.06,
+                //   marginTop: moderateScale(13, 0.3),
+              
+                borderRadius: moderateScale(25, 0.3),
+                alignSelf: 'center',
+                justifyContent: 'space-between',
+              }}
+              textStyle={{
+                width: windowWidth * 0.6,
+                fontSize: moderateScale(10, 0.6),
+                // backgroundColor :'red'
+              }}
+              data={searchData}
+              placeHolder={customLocation?.name}
+              setData={setSearchData}
+              rightIcon
+            />
+          
           </View>
 
           <View
@@ -718,8 +718,8 @@ console.log('hello1')
           <WelcomeModal
             isModalVisible={isVisibleModal}
             setIsModdalVisible={setIsVisibleModal}
-            matchLocation = {foundLocation}
-              setMatchLocation={setFoundLocation}
+            matchLocation={foundLocation}
+            setMatchLocation={setFoundLocation}
           />
           <AddPlacesModal
             setLabel={setLabel}
@@ -813,6 +813,7 @@ const styles = ScaledSheet.create({
     borderRadius: (windowWidth * 0.11) / 2,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: moderateScale(5, 0.3),
   },
 
   textContainer: {

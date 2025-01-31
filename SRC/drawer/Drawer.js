@@ -144,7 +144,7 @@ const user = useSelector(state => state.commonReducer.userData)
 
             <CustomText
               style={{
-                width: windowWidth * 0.4,
+                width: windowWidth * 0.3,
                 fontSize: moderateScale(9, 0.6),
                 color: Color.black,
               }}>

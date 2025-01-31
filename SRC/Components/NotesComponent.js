@@ -105,7 +105,7 @@ const NotesComponent = ({item, setSelectedNote, selectedStory}) => {
             {item.description}
           </CustomText>
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{
             backgroundColor: Color.themeColor,
             padding: moderateScale(3, 6),
@@ -120,7 +120,7 @@ const NotesComponent = ({item, setSelectedNote, selectedStory}) => {
             }}>
             Start Trip
           </CustomText>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={{position: 'absolute', right: 10, top: 2}}>
           <CustomText
