@@ -17,14 +17,12 @@ import {
   ToastAndroid,
   Alert,
   Linking,
-  share,
 } from 'react-native';
 import CustomText from '../Components/CustomText';
 import SearchContainer from '../Components/SearchContainer';
-
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Geocoder from 'react-native-geocoding';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {FlatList, Icon, ScrollView} from 'native-base';
@@ -36,18 +34,14 @@ import {useSelector} from 'react-redux';
 import navigationService from '../navigationService';
 import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import FiltersModal from './FiltersModal';
 import axios from 'axios';
-import OptionsMenu from 'react-native-options-menu';
-import CustomImage from '../Components/CustomImage';
 import NearPlacesCard from '../Components/NearPlacesCard';
 import {PERMISSIONS, check, request} from 'react-native-permissions';
-
-import Share from 'react-native-share';
+import Modal from 'react-native-modal';
 import AddPlacesModal from '../Components/AddPlacesModal';
 import WelcomeModal from '../Components/WelcomeModal';
+
 const HomeScreen = props => {
-  // const
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
@@ -55,10 +49,7 @@ const HomeScreen = props => {
   const favouriteplaces = useSelector(
     state => state.commonReducer.favouriteLocation,
   );
-  console.log(
-    '00000000000000 00 0 0 0 00 0 0 0 0 0 00 0 0 0 0 0 0 ',
-    favouriteplaces,
-  );
+
   const filteredUserPreference = userPreferences?.map(
     item => item?.preferences,
   );
@@ -71,11 +62,9 @@ const HomeScreen = props => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [label, setLabel] = useState('');
-  // const [favouriteLocation, setFavouriteLocaion] = useState([]);
   const [searchData, setSearchData] = useState('');
   const [placesData, setplacesData] = useState([]);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
-  console.log('iVis', isVisibleModal);
   const [preferences, setPreferences] = useState([]);
   const [selectedLocation, setSelectedLoacation] = useState();
   const [refreshing, setRefreshing] = useState(false);
@@ -83,23 +72,12 @@ const HomeScreen = props => {
   const [currentLocation, setCurrentLocation] = useState({});
   const [locationName, setLocationName] = useState('');
   const [foundLocation, setFoundLocation] = useState({});
-  // console.log(
-  //   '[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]] ,,,,,,,,, >>>>>>>>> <<<<<<<<<<<<< ',
-  //   customLocation,
-  //   locationName,
-  // );
+  const [isModalVisible, setIsModdalVisible] = useState(false);
+
   const currentLocation2 = {
     latitude: 24.8598186,
     longitude: 67.06233019999999,
   };
-  // console.log(
-  //   'currentLocation   ',
-  //   // currentLocation,
-  //   customLocation?.location,
-  //   // favouriteplaces[0].name,
-  //   favouriteplaces[1],
-  // );
-  // const [welcomeModal ,setWelcomeModal ] =useState(true)
   const [rbRef, setRbRef] = useState(null);
   const places = [
     {
@@ -185,11 +163,11 @@ const HomeScreen = props => {
   const getData = async location => {
     setplacesData([]);
     const url = `location?latitude=${
-      Object.keys(customLocation).length > 0
+      Object?.keys(customLocation)?.length > 0
         ? customLocation?.location?.lat
         : location?.lat
     }&longitude=${
-      Object.keys(customLocation).length > 0
+      Object?.keys(customLocation)?.length > 0
         ? customLocation?.location?.lng
         : location?.lng
     }&place[]=${preferences?.name != undefined ? preferences?.name : 'all'}`;
@@ -202,17 +180,17 @@ const HomeScreen = props => {
     }
   };
   const findNearestMcDonalds = async location => {
-    const radius = 50000; // Search radius in meters (adjust as needed)
+    const radius = 50000;
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
     const longitude = 66.98806;
     const keyword = 'mc donald';
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${
-      Object.keys(customLocation).length > 0
+      Object?.keys(customLocation)?.length > 0
         ? customLocation?.location?.lat
         : location?.lat
     },${
-      Object.keys(customLocation).length > 0
+      Object.keys(customLocation)?.length > 0
         ? customLocation?.location?.lng
         : location?.lng
     }&rankby=distance&keyword=${preferences?.name}`;
@@ -229,17 +207,8 @@ const HomeScreen = props => {
     }
   };
 
-
-
-  // ye abhi comment  kiya ha
   useEffect(() => {
-    // console.log(
-    //   'Running loscatddions ',
-    //   currentLocation,
-    //   JSON.stringify(favouriteplaces, null, 2),
-    // )
-    console.log('hello1');
-    if (Object.keys(customLocation).length > 0 && isFocused) {
+    if (Object?.keys(customLocation)?.length > 0 && isFocused) {
       console.log('hello');
       favouriteplaces.some(
         (item, index) =>
@@ -247,7 +216,7 @@ const HomeScreen = props => {
           item?.lng == customLocation?.location?.lng,
       ) &&
         (setFoundLocation(
-          favouriteplaces.find(
+          favouriteplaces?.find(
             (item, index) =>
               item?.lat == customLocation?.location?.lat &&
               item?.lng == customLocation?.location?.lng,
@@ -328,8 +297,6 @@ const HomeScreen = props => {
       Platform.OS == 'android'
         ? await requestLocationPermission()
         : await requestLocationPermissionIOS();
-
-    // return console.log('result == >', permissionResult);
     if (permissionResult == false) {
       return Platform.OS == 'android'
         ? ToastAndroid.show(
@@ -354,8 +321,6 @@ const HomeScreen = props => {
       timeout: 60000,
     })
       .then(async location => {
-        // console.log('test================>', location);
-        // fetchAddress(location);
         setCurrentLocation(location);
         getAddressFromCoordinates(location?.latitude, location?.longitude);
         preferences?.label == 'All' || preferences?.label == undefined
@@ -382,7 +347,7 @@ const HomeScreen = props => {
       const response = await fetch(url);
       const data = await response.json();
       if (data.status === 'OK') {
-        const givenaddress = data.results[0].formatted_address;
+        const givenaddress = data?.results[0].formatted_address;
         setLocationName(givenaddress);
       } else {
         console.log('No address found');
@@ -395,8 +360,8 @@ const HomeScreen = props => {
   useEffect(() => {
     if (currentLocation) {
       getAddressFromCoordinates(
-        currentLocation.latitude,
-        currentLocation.longitude,
+        currentLocation?.latitude,
+        currentLocation?.longitude,
       );
     }
   }, []);
@@ -455,7 +420,6 @@ const HomeScreen = props => {
         style={{
           width: windowWidth,
           height: windowHeight,
-          //   justifyContent:'center'
         }}
         start={{x: 0, y: 0}}
         end={{x: 1, y: 1}}
@@ -466,38 +430,6 @@ const HomeScreen = props => {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
-          {/* <View style={{
-              backgroundColor : 'white', 
-              width : windowWidth*0.95,
-              borderRadius : 20,
-              marginVertical :moderateScale(5,.3) ,
-              flexDirection : 'row',
-                paddingVertical :moderateScale(8.6),
-              marginHorizontal :moderateScale(10,.3)
-            }}>
-            <CustomText
-   
-            style={{
-              fontSize: moderateScale(12, 0.6),
-              // paddingTop: moderateScale(10, 0.6),
-              paddingHorizontal: moderateScale(5, 0.6),
-              color: Color.darkGray,
-              paddingLeftt: moderateScale(5,.6)
-            }}>
-            we value your input :
-          </CustomText>
-          <CustomText
-            onPress={() => {
-              console.log('----------------------')
-              feedBackForm()
-            }}
-            style={{
-              fontSize: moderateScale(12, 0.6),
-              color: 'blue',
-            }}>
-            `https://forms.gle/edJ3QPvb6B1awqvi6`
-          </CustomText>
-            </View> */}
           <View style={styles.welView}>
             <CustomText style={styles.weltxt}>
               hello ,<CustomText style={styles.weltxt}>{user?.name}</CustomText>
@@ -532,15 +464,15 @@ const HomeScreen = props => {
             /> */}
           </View>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.placesContainer}>
               {filteredUserPreference?.map((item, index) => {
                 return (
-                  <TouchableOpacity key={item.id} onPress={() => {}}>
+                  <TouchableOpacity key={item?.id} onPress={() => {}}>
                     <OptionsMenu
                       customButton={
                         <View
-                          key={item.id}
+                          key={item?.id}
                           style={[
                             styles.sectionInnerItem,
                             {
@@ -559,7 +491,7 @@ const HomeScreen = props => {
                                   : Color.themeColor,
                               fontSize: moderateScale(12, 0.1),
                             }}>
-                            {item.label}
+                            {item?.label}
                           </CustomText>
                         </View>
                       }
@@ -595,9 +527,9 @@ const HomeScreen = props => {
                 );
               })}
             </View>
-          </ScrollView>
+          </ScrollView> */}
           <View style={styles.search}>
-          <TouchableOpacity
+            <TouchableOpacity
               onPress={() => {
                 navigation.toggleDrawer();
               }}
@@ -616,33 +548,39 @@ const HomeScreen = props => {
               onPress={() => {
                 navigationService.navigate('SearchScreen');
               }}
-              width={windowWidth * 0.82}
-              // input
+              width={windowWidth * 0.72}
               text
-              // inputStyle={{
-              //   height: windowHeight * 0.05,
-              // }}
               style={{
-                // height: windowHeight * 0.06,
-                //   marginTop: moderateScale(13, 0.3),
-              
                 borderRadius: moderateScale(25, 0.3),
                 alignSelf: 'center',
                 justifyContent: 'space-between',
               }}
               textStyle={{
-                width: windowWidth * 0.6,
+                width: windowWidth * 0.4,
                 fontSize: moderateScale(10, 0.6),
-                // backgroundColor :'red'
               }}
               data={searchData}
               placeHolder={customLocation?.name}
               setData={setSearchData}
               rightIcon
             />
-          
+            <TouchableOpacity
+              onPress={() => {
+                setIsModdalVisible(true);
+              }}
+              style={styles.filterIcon}>
+              <Icon
+                as={FontAwesome}
+                name={'filter'}
+                color={Color.black}
+                size={6}
+                onPress={() => {
+                  setIsModdalVisible(true);
+                }}
+              />
+            </TouchableOpacity>
           </View>
-
+          {isModalVisible && <View style={styles.modal}></View>}
           <View
             style={{flexDirection: 'row', marginTop: moderateScale(10, 0.3)}}>
             <FlatList
@@ -699,11 +637,8 @@ const HomeScreen = props => {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
                 paddingBottom: 50,
-                //   alignItems: 'center',
                 marginTop: moderateScale(10, 0.3),
                 marginBottom: moderateScale(20, 0.3),
-                //   backgroundColor:'black',
-                //   height: windowHeight * 0.25,
               }}
               renderItem={({item, index}) => {
                 return preferences?.label == 'All' ||
@@ -724,8 +659,6 @@ const HomeScreen = props => {
           <AddPlacesModal
             setLabel={setLabel}
             label={label}
-            // favouriteLocation={favouriteLocation}
-            // setFavouriteLocaion={setFavouriteLocaion}
             setRef={setRbRef}
             rbRef={rbRef}
             item={currentLocation}
@@ -733,13 +666,14 @@ const HomeScreen = props => {
           />
         </ScrollView>
       </LinearGradient>
+
+    
     </ScreenBoiler>
   );
 };
 
 const styles = ScaledSheet.create({
   container: {
-    // alignItems: "center",
     justifyContent: 'center',
     height: windowHeight,
     width: windowWidth,
@@ -747,7 +681,6 @@ const styles = ScaledSheet.create({
   },
   weltxt: {
     fontSize: moderateScale(18, 0.6),
-    // backgroundColor :'reds'
     textTransform: 'capitalize',
     color: Color.white,
   },
@@ -761,22 +694,18 @@ const styles = ScaledSheet.create({
     paddingHorizontal: moderateScale(6, 6),
     paddingVertical: moderateScale(5, 0.6),
     justifyContent: 'space-between',
-    // backgroundColor :'red'
   },
 
   bottomImage: {
     width: windowWidth * 0.5,
   },
   sectionInnerItem: {
-    // width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
     gap: 4,
     margin: moderateScale(6, 0.6),
     padding: moderateScale(6, 0.5),
-    // borderWidth:0.5,
-    // borderColor: Color.red,
     borderRadius: moderateScale(25, 0.2),
     overflow: 'hidden',
     paddingHorizontal: 8,
@@ -794,11 +723,9 @@ const styles = ScaledSheet.create({
     borderRadius: moderateScale(15, 0.6),
     paddingHorizontal: moderateScale(10, 0.6),
     paddingVertical: moderateScale(7, 0.6),
-    // backgroundColor:'green',
     textAlign: 'center',
     alignSelf: 'center',
     overflow: 'hidden',
-
     margin: moderateScale(3, 0.3),
     backgroundColor: Color.white,
     fontSize: moderateScale(12, 0.6),
@@ -831,25 +758,39 @@ const styles = ScaledSheet.create({
   },
   search: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    paddingHorizontal: moderateScale(10, 0.6),
     alignItems: 'center',
     marginTop: moderateScale(10, 0.6),
   },
   placesContainer: {
-    // backgroundColor:'white',
-    // height:windowHeight*0.2,
     flexDirection: 'row',
     gap: moderateScale(5, 0.25),
     marginTop: moderateScale(10, 0.3),
     justifyContent: 'flex-start',
     paddingHorizontal: moderateScale(10, 0.3),
-    // backgroundColor:'red',
   },
   welView: {
     flexDirection: 'row',
     width: '100%',
     paddingTop: moderateScale(15.6),
     paddingHorizontal: moderateScale(17, 0.6),
+  },
+  filterIcon: {
+    backgroundColor: Color.themeColor,
+    width: windowWidth * 0.11,
+    height: windowWidth * 0.11,
+    borderRadius: (windowWidth * 0.11) / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: moderateScale(5, 0.3),
+    textAlign: 'center',
+  },
+  modal: {
+    borderRadius: 20,
+    width: windowWidth * 0.4,
+    height: windowHeight * 0.25,
+    backgroundColor: 'white',
+    justifyContent: 'flex-end',
   },
 });
 
