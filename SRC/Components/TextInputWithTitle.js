@@ -113,7 +113,7 @@ const TextInputWithTitle = props => {
               props.rightIcon && {
 
                 position: 'absolute',
-                right: moderateScale(10, 0.3),
+                // right: moderateScale(10, 0.3),
               },
               props.LeftIcon && {
 
@@ -216,7 +216,7 @@ const TextInputWithTitle = props => {
               value={props.value}
               placeholder={`${props.placeholder}`}
               placeholderTextColor={
-                props.placeholderColor ? props.placeholderColor : Color.white
+                props.placeholderColor ? props.placeholderColor : Color.red
               }
               keyboardType={props.keyboardType}
               multiline={props.multiline || false}
@@ -250,6 +250,7 @@ const styles = ScaledSheet.create({
     // paddingLeft: moderateScale(35, 0.6),
     borderRadius: 8,
     fontSize: moderateScale(13, 0.3),
+    // backgroundColor : 'red',
     // fontWeight:'bold',
 
     // textTransform: 'capitalize',

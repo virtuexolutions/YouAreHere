@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Color from '../Assets/Utilities/Color';
 import {
   requestLocationPermission,
   windowHeight,
   windowWidth,
 } from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import {
@@ -21,18 +21,17 @@ import {
 } from 'react-native';
 import CustomText from '../Components/CustomText';
 import SearchContainer from '../Components/SearchContainer';
-
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Geocoder from 'react-native-geocoding';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {FlatList, Icon, ScrollView} from 'native-base';
+import { FlatList, Icon, ScrollView } from 'native-base';
 import PlacesCard from '../Components/PlacesCard';
 import WelcomeCard from '../Components/WelcomeCard';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {Get} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { Get } from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
 import navigationService from '../navigationService';
 import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
@@ -41,11 +40,13 @@ import axios from 'axios';
 import OptionsMenu from 'react-native-options-menu';
 import CustomImage from '../Components/CustomImage';
 import NearPlacesCard from '../Components/NearPlacesCard';
-import {PERMISSIONS, check, request} from 'react-native-permissions';
+import { PERMISSIONS, check, request } from 'react-native-permissions';
 
 import Share from 'react-native-share';
 import AddPlacesModal from '../Components/AddPlacesModal';
 import WelcomeModal from '../Components/WelcomeModal';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import PreferenceModal from '../Components/PreferenceModal';
 const HomeScreen = props => {
   // const
   const isFocused = useIsFocused();
@@ -76,13 +77,14 @@ const HomeScreen = props => {
   const [placesData, setplacesData] = useState([]);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   console.log('iVis', isVisibleModal);
-  const [preferences, setPreferences] = useState([]);
+  const [preferences, setPreferences] = useState(false);
   const [selectedLocation, setSelectedLoacation] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [searchedPlaces, setSearchedPlaces] = useState([]);
   const [currentLocation, setCurrentLocation] = useState({});
   const [locationName, setLocationName] = useState('');
   const [foundLocation, setFoundLocation] = useState({});
+  const [countryCode, setCountryCode] = useState('')
   // console.log(
   //   '[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]] ,,,,,,,,, >>>>>>>>> <<<<<<<<<<<<< ',
   //   customLocation,
@@ -174,6 +176,7 @@ const HomeScreen = props => {
       image: require('../Assets/Images/resort.png'),
     },
   ];
+
   const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
   const onRefresh = () => {
     setRefreshing(true);
@@ -184,15 +187,13 @@ const HomeScreen = props => {
   };
   const getData = async location => {
     setplacesData([]);
-    const url = `location?latitude=${
-      Object.keys(customLocation).length > 0
-        ? customLocation?.location?.lat
-        : location?.lat
-    }&longitude=${
-      Object.keys(customLocation).length > 0
+    const url = `location?latitude=${Object.keys(customLocation).length > 0
+      ? customLocation?.location?.lat
+      : location?.lat
+      }&longitude=${Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
         : location?.lng
-    }&place[]=${preferences?.name != undefined ? preferences?.name : 'all'}`;
+      }&place[]=${preferences?.name != undefined ? preferences?.name : 'all'}`;
 
     setIsLoading(true);
     const response = await Get(url, token);
@@ -201,21 +202,20 @@ const HomeScreen = props => {
       setplacesData(response?.data?.places);
     }
   };
+
   const findNearestMcDonalds = async location => {
     const radius = 50000; // Search radius in meters (adjust as needed)
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
     const longitude = 66.98806;
     const keyword = 'mc donald';
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${
-      Object.keys(customLocation).length > 0
-        ? customLocation?.location?.lat
-        : location?.lat
-    },${
-      Object.keys(customLocation).length > 0
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${Object.keys(customLocation).length > 0
+      ? customLocation?.location?.lat
+      : location?.lat
+      },${Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
         : location?.lng
-    }&rankby=distance&keyword=${preferences?.name}`;
+      }&rankby=distance&keyword=${preferences?.name}`;
     // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&keyword=${keyword}&key=${apiKey}`;
     try {
       setIsLoading(true);
@@ -253,7 +253,7 @@ const HomeScreen = props => {
               item?.lng == customLocation?.location?.lng,
           ),
         ),
-        setIsVisibleModal(true));
+          setIsVisibleModal(true));
     } else {
       favouriteplaces?.some(
         (item, index) =>
@@ -267,7 +267,7 @@ const HomeScreen = props => {
               item?.lng == currentLocation?.longitude,
           ),
         ),
-        setIsVisibleModal(true));
+          setIsVisibleModal(true));
     }
   }, [isFocused]);
 
@@ -333,21 +333,21 @@ const HomeScreen = props => {
     if (permissionResult == false) {
       return Platform.OS == 'android'
         ? ToastAndroid.show(
-            'Location Permission denied by user',
-            ToastAndroid.SHORT,
-          )
+          'Location Permission denied by user',
+          ToastAndroid.SHORT,
+        )
         : Alert.alert(
-            'Location blocked',
-            'Location is blocked as denied by user , enable in settings and try again',
-            [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              {text: 'Settings', onPress: () => Linking.openSettings()},
-            ],
-          );
+          'Location blocked',
+          'Location is blocked as denied by user , enable in settings and try again',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'Settings', onPress: () => Linking.openSettings() },
+          ],
+        );
     }
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
@@ -357,19 +357,44 @@ const HomeScreen = props => {
         // console.log('test================>', location);
         // fetchAddress(location);
         setCurrentLocation(location);
+        getCountryCode()
         getAddressFromCoordinates(location?.latitude, location?.longitude);
         preferences?.label == 'All' || preferences?.label == undefined
-          ? getData({lat: location?.latitude, lng: location?.longitude})
+          ? getData({ lat: location?.latitude, lng: location?.longitude })
           : findNearestMcDonalds({
-              lat: location?.latitude,
-              lng: location?.longitude,
-            });
+            lat: location?.latitude,
+            lng: location?.longitude,
+          });
       })
       .catch(error => {
         setIsLoading(false);
-        const {code, message} = error;
+        const { code, message } = error;
         console.warn(code, message);
       });
+  };
+
+
+
+  const getCountryCode = async (latitude, longitude) => {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation?.latitude},${currentLocation?.longitude}&key=${apiKey}`;
+
+    try {
+      let response = await fetch(url);
+      let data = await response.json();
+
+      if (data.results.length > 0) {
+        let addressComponents = data.results[0].address_components;
+        let country = addressComponents.find(comp => comp.types.includes("country"));
+
+        if (country) {
+          setCountryCode(country.short_name)
+          console.log("Country Code: ", country.short_name);
+          return country.short_name;
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching country code:", error);
+    }
   };
 
   useEffect(() => {
@@ -457,12 +482,12 @@ const HomeScreen = props => {
           height: windowHeight,
           //   justifyContent:'center'
         }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         colors={Color.themeBgColor}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{minHeight: windowHeight}}
+          style={{ minHeight: windowHeight }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
@@ -533,10 +558,10 @@ const HomeScreen = props => {
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.placesContainer}>
+            {/* <View style={styles.placesContainer}>
               {filteredUserPreference?.map((item, index) => {
                 return (
-                  <TouchableOpacity key={item.id} onPress={() => {}}>
+                  <TouchableOpacity key={item.id} onPress={() => { }}>
                     <OptionsMenu
                       customButton={
                         <View
@@ -594,10 +619,10 @@ const HomeScreen = props => {
                   </TouchableOpacity>
                 );
               })}
-            </View>
+            </View> */}
           </ScrollView>
           <View style={styles.search}>
-          <TouchableOpacity
+            <TouchableOpacity
               onPress={() => {
                 navigation.toggleDrawer();
               }}
@@ -612,39 +637,54 @@ const HomeScreen = props => {
                 }}
               />
             </TouchableOpacity>
-            <SearchContainer
-              onPress={() => {
-                navigationService.navigate('SearchScreen');
+            <GooglePlacesAutocomplete
+              placeholder="Search"
+              textInputProps={{
+                placeholderTextColor: '#5d5d5d',
+                // returnKeyType: "search"
               }}
-              width={windowWidth * 0.82}
-              // input
-              text
-              // inputStyle={{
-              //   height: windowHeight * 0.05,
-              // }}
-              style={{
-                // height: windowHeight * 0.06,
-                //   marginTop: moderateScale(13, 0.3),
-              
-                borderRadius: moderateScale(25, 0.3),
-                alignSelf: 'center',
-                justifyContent: 'space-between',
+              onPress={(data, details = null) => {
+                console.log('hello hereeeee ========  >>>>>>>>>', { name: data?.description, location: details?.geometry?.location });
+                setSearchData({ name: data?.description, location: details?.geometry?.location })
               }}
-              textStyle={{
-                width: windowWidth * 0.6,
-                fontSize: moderateScale(10, 0.6),
-                // backgroundColor :'red'
-              }}
-              data={searchData}
-              placeHolder={customLocation?.name}
-              setData={setSearchData}
-              rightIcon
-            />
-          
-          </View>
+              query={{
+                // key: 'AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8' --old api,
+                key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
 
+                language: 'en',
+              }}
+              isRowScrollable={true}
+              fetchDetails={true}
+              styles={{
+                textInputContainer: {
+                  width: windowWidth * 0.72,
+                  marginLeft: moderateScale(5, 0.6)
+                },
+                textInput: {
+                  height: windowHeight * 0.06,
+                  color: '#5d5d5d',
+                  fontSize: 16,
+                  borderWidth: 2,
+                  borderColor: Color.lightGrey,
+                  borderRadius: moderateScale(20, 0.6),
+                },
+                listView: {
+                  width: windowWidth * 0.8,
+                  marginLeft: moderateScale(5, 0.6),
+                  borderColor: Color.veryLightGray,
+                },
+                description: {
+                  color: '#5d5d5d',
+                }
+              }}
+            />
+            <TouchableOpacity style={styles.menuIcon} onPress={() => setPreferences(true)}>
+              <Icon name='filter' as={Ionicons} color={Color.white}
+                size={moderateScale(28, 0.6)} />
+            </TouchableOpacity>
+          </View>
           <View
-            style={{flexDirection: 'row', marginTop: moderateScale(10, 0.3)}}>
+            style={{ flexDirection: 'row', marginTop: moderateScale(10, 0.3) }}>
             <FlatList
               data={cardData}
               horizontal
@@ -653,7 +693,7 @@ const HomeScreen = props => {
                 marginTop: moderateScale(10, 0.3),
                 height: windowHeight * 0.25,
               }}
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 return <WelcomeCard item={item} />;
               }}
             />
@@ -661,15 +701,15 @@ const HomeScreen = props => {
 
           <View style={styles.textContainer}>
             <CustomText
-              style={{fontSize: moderateScale(15, 0.6), color: Color.black}}
-              onPress={() => {}}
+              style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
+              onPress={() => { }}
               isBold>
               Places
             </CustomText>
             {!isLoading && (
               <CustomText
                 isBold
-                onPress={() => {}}
+                onPress={() => { }}
                 style={{
                   fontSize: moderateScale(13, 0.6),
                   color: Color.white,
@@ -689,7 +729,7 @@ const HomeScreen = props => {
               }}>
               <ActivityIndicator size={'large'} color={Color.white} />
               <CustomText
-                style={{color: 'white', fontSize: moderateScale(14, 0.6)}}>
+                style={{ color: 'white', fontSize: moderateScale(14, 0.6) }}>
                 Please Wait
               </CustomText>
             </View>
@@ -705,7 +745,7 @@ const HomeScreen = props => {
                 //   backgroundColor:'black',
                 //   height: windowHeight * 0.25,
               }}
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard item={item} fromHome={true} />
@@ -730,6 +770,11 @@ const HomeScreen = props => {
             rbRef={rbRef}
             item={currentLocation}
             locationName={locationName}
+          />
+          <PreferenceModal
+            modalIsVisible={preferences}
+            search
+            setModalIsVisible={setPreferences}
           />
         </ScrollView>
       </LinearGradient>

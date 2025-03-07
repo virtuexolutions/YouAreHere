@@ -35,9 +35,6 @@ import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import RNFetchBlob from 'rn-fetch-blob';
 import axios from 'axios';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import CountryPicker from "react-native-country-picker-modal";
-import Emoji from 'react-native-emoji';
-import { mode } from 'native-base/lib/typescript/theme/tools';
 
 const Stories = [
   {
@@ -307,9 +304,11 @@ const NotepadDesign = props => {
   const token = useSelector(state => state.authReducer.token);
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
+
   // const stories = useSelector(state => state.commonReducer.notePadData);
   const [isLoading, setIsLoading] = useState(false);
   const [trips, setTrips] = useState([]);
+  console.log("🚀 ~ trips:", trips)
   const [tripNotes, setTripNotes] = useState([]);
   const [image, setImage] = useState({});
   const [selectedNote, setSelectedNote] = useState({});
@@ -324,22 +323,9 @@ const NotepadDesign = props => {
   const [searchData, setSearchData] = useState({})
   const [selectedStory, setSelectedStory] = useState({});
   const [country, setCountry] = useState('');
-  console.log("🚀 ~ country:", country)
   const [imagePicker, setImagePicker] = useState(false);
-  const [countryCode, setCountryCode] = useState("US");
-  // const [country, setCountry] = useState(null);
-  const [visible, setVisible] = useState(false);
-  const [withFilter, setFilter] = useState(true);
-  const [cites, setCities] = useState(null)
-  const [citiesmodalVisible, setCitiesModalVisible] = useState(false)
-  const [selectedCities, setSelectedCities] = useState('')
-  console.log("🚀 ~ selectedCities:", selectedCities)
-
-  console.log("🚀 ~ cites:", cites)
-  const onSelect = country => {
-    setCountryCode(country.cca2);
-    setCountry(country);
-  };
+  const [currentLocation, setCurrentLocation] = useState({})
+  const [countryCode, setcountryCode] = useState({})
 
   const saveTripFromDetails = async () => {
     //  return console.log('here from details')
@@ -373,6 +359,10 @@ const NotepadDesign = props => {
         const responseData = await Post(url, body, apiHeader(token));
         setIsLoading(false);
         if (responseData != undefined) {
+          console.log(
+            '🚀 ~ file: NotepadDesign.js:373 ~ saveTrip ~ responseData:',
+            responseData?.data,
+          );
           setTripModalVisibe(false);
           setImage({});
           setCountry('');
@@ -391,15 +381,13 @@ const NotepadDesign = props => {
       console.error('Error fetching or converting image:', error);
     }
   };
+
   const saveTrip = async () => {
     const url = 'auth/trip';
     const body = {
       title: country,
       user_id: user?.id,
-      country: country?.name,
-      city: selectedCities,
-      flag: country?.cca2
-      // location : searchData,
+      location: searchData,
     };
     if (Object.keys(image).length > 0) {
       const imageForServer = await RNFetchBlob.fs.readFile(
@@ -422,6 +410,10 @@ const NotepadDesign = props => {
     const responseData = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (responseData != undefined) {
+      console.log(
+        '🚀 ~ file: NotepadDesign.js:373 ~ saveTrip ~ responseData:',
+        responseData?.data,
+      );
       setTripModalVisibe(false);
       setImage({});
       setCountry('');
@@ -431,22 +423,6 @@ const NotepadDesign = props => {
         : Alert.alert('Place Added Successfully');
     }
   };
-
-  useEffect(() => {
-    fetchCities()
-  }, [country])
-
-  const fetchCities = async (countryName) => {
-    try {
-      const response = await axios.post('https://countriesnow.space/api/v0.1/countries/cities', {
-        country: country?.name,
-      });
-      setCities(response.data.data);
-    } catch (error) {
-      console.log('Error fetching cities', error);
-    }
-  };
-
 
   const getTrips = async () => {
     console.log('fasdasd asd ad asd d asd d  sdasd');
@@ -494,6 +470,11 @@ const NotepadDesign = props => {
     setIsLoading(true);
     const response = await Post(url, formData, apiHeader(token));
     setIsLoading(false);
+
+    console.log(
+      '🚀 ~ file: NotepadDesign.js:442 ~ saveTripNote ~ response:',
+      response?.data,
+    );
     if (response != undefined) {
       setNoteDesc('');
       setImage({});
@@ -530,6 +511,42 @@ const NotepadDesign = props => {
       getTripNotes();
     }
   }, [selectedStory]);
+
+
+  useEffect(() => {
+    getLatLngFromCity('USA')
+  }, [])
+
+  const getLatLngFromCity = async (city) => {
+    const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(Notedata?.name)}&key=${apiKey}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log("🚀 ~ getLatLngFromCity ~ data:", data)
+
+      if (data.status === "OK") {
+        const result = data.results[0];
+        const location = result.geometry.location;
+        const countryComponent = result.address_components.find(component =>
+          component.types.includes("country")
+        );
+
+        const countryCode = countryComponent ? countryComponent.short_name : "Unknown";
+
+        console.log(`Latitude: ${location.lat}, Longitude: ${location.lng}, Country Code: ${countryCode}`);
+        setCurrentLocation({
+          latitude: location.lat,
+          longitude: location?.lng,
+        })
+        setcountryCode(countryCode)
+        return { lat: location.lat, lng: location.lng, countryCode };
+      }
+    } catch (error) {
+      console.error("Error fetching location:", error);
+      return null;
+    }
+  };
 
   return (
     <ScreenBoiler
@@ -772,7 +789,7 @@ const NotepadDesign = props => {
             />
           )}
           <Modal
-            isVisible={true}
+            isVisible={tripModalVisibe}
             onBackdropPress={() => {
               setTripModalVisibe(false);
               setImage({});
@@ -801,28 +818,33 @@ const NotepadDesign = props => {
                 <View
                   style={[
                     styles.Profile1,
+                    !(Object.keys(image).length > 0) && {
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
                   ]}>
-                  {country?.cca2 ?
-                    <CustomImage
-                      resizeMode={'cover'}
-                      source={{ uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png` }}
-                      style={{
-                        width: '100%',
-                        height: '100%'
-                      }}
-                    /> :
-                    <CustomImage
-                      source={require('../Assets/Images/profileimage.png')}
-                      resizeMode={'cover'}
-                      style={{
-                        width: '100%',
-                        height: '100%'
-                      }}
-                    />
-                  }
+                  <CustomImage
+                    resizeMode={'cover'}
+                    source={
+                      Object.keys(image).length > 0
+                        ? { uri: image?.uri }
+                        : require('../Assets/Images/profileimage.png')
+                    }
+                    style={{
+                      width:
+                        Object.keys(image).length > 0
+                          ? '100%'
+                          : moderateScale(70, 0.6),
+                      height:
+                        Object.keys(image).length > 0
+                          ? '100%'
+                          : moderateScale(70, 0.6),
+                    }}
+                  />
                 </View>
                 {/* { !Notedata?.fromDetails && Object.keys(image).length > 0 && */}
-                {/* <TouchableOpacity
+
+                <TouchableOpacity
                   activeOpacity={0.6}
                   style={styles.edit}
                   onPress={() => {
@@ -844,118 +866,14 @@ const NotepadDesign = props => {
                       }, 500);
                     }}
                   />
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                 {/* } */}
               </View>
-              {/* <TouchableOpacity style={{
-                borderBottomWidth: 1,
-                borderColor: Color.black,
-                width: windowWidth * 0.7
-              }} onPress={() => setVisible(true)}>
-                <Text style={{ fontSize: moderateScale(14, 0.3), marginBottom: moderateScale(10, 0.6) }}>
-                  {country ? `Selected: ${country.name}` : "Select a country"}
-                </Text>
-              </TouchableOpacity> */}
-              {/* <CountryPicker
 
-                {...{
-                  // withCallingCode,
-                  onSelect,
-                  withFilter,
-                }}
-                visible={visible}
-                onClose={() => {
-                  setVisible(false);
-                }}
-              /> */}
-              <TouchableOpacity
-                onPress={() => {
-                  setVisible(true);
-                  console.log('first');
-                }}
-                activeOpacity={0.9}
-                style={[
-                  styles.birthday,
-                  {
-                    justifyContent: 'flex-start',
-                    // backgroundColor: 'red',
-                    borderRadius: moderateScale(25, 0.6),
-                  },
-                ]}>
-                <CountryPicker
-                  {...{
-                    countryCode,
-                    // withCallingCode,
-                    onSelect,
-                    withFilter,
-                  }}
-                  visible={visible}
-                  onClose={() => {
-                    setVisible(false);
-                  }}
-                />
-
-                {country && (
-                  <CustomText
-                    style={{
-                      fontSize: moderateScale(15, 0.6),
-                      color: '#5E5E5E',
-                    }}>{`${country?.name}`}</CustomText>
-                )}
-
-                <Icon
-                  name={'angle-down'}
-                  as={FontAwesome}
-                  size={moderateScale(20, 0.6)}
-                  color={Color.themeDarkGray}
-                  onPress={() => {
-                    setVisible(true);
-                  }}
-                  style={{
-                    position: 'absolute',
-                    right: moderateScale(5, 0.3),
-                  }}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  setCitiesModalVisible(true);
-                }}
-                activeOpacity={0.9}
-                style={[
-                  styles.birthday,
-                  {
-                    justifyContent: 'flex-start',
-                    // backgroundColor: 'red',
-                    borderRadius: moderateScale(25, 0.6),
-                  },
-                ]}>
-                {selectedCities && (
-                  <CustomText
-                    style={{
-                      fontSize: moderateScale(15, 0.6),
-                      color: '#5E5E5E',
-                    }}>{selectedCities ? `${selectedCities}` : 'Select Cites'}</CustomText>
-                )}
-                <Icon
-                  name={'angle-down'}
-                  as={FontAwesome}
-                  size={moderateScale(20, 0.6)}
-                  color={Color.themeDarkGray}
-                  onPress={() => {
-                    setVisible(true);
-                  }}
-                  style={{
-                    position: 'absolute',
-                    right: moderateScale(5, 0.3),
-                  }}
-                />
-              </TouchableOpacity>
-              {/* <TextInputWithTitle
-                title={'Country Name'}
-                titleText={'Enter country Name'}
-                placeholder={'Enter country Name'}
+              <TextInputWithTitle
+                title={'Place Name'}
+                titleText={'Enter Place Name'}
+                placeholder={'Enter Place Name'}
                 setText={setCountry}
                 value={country}
                 viewHeight={0.06}
@@ -966,24 +884,9 @@ const NotepadDesign = props => {
                 // marginTop={moderateScale(15, 0.3)}
                 color={Color.black}
                 placeholderColor={Color.veryLightGray}
-              /> */}
-              {/* <TextInputWithTitle
-                title={'City Name'}
-                titleText={'Enter City Name'}
-                placeholder={'Enter City Name'}
-                setText={setCountry}
-                value={country}
-                viewHeight={0.06}
-                viewWidth={0.7}
-                inputWidth={0.7}
-                borderBottom={1}
-                borderColor={Color.black}
-                // marginTop={moderateScale(15, 0.3)}
-                color={Color.black}
-                placeholderColor={Color.veryLightGray}
-              /> */}
+              />
 
-              {/* <View
+              <View
                 style={styles.searchbox}
               >
                 <GooglePlacesAutocomplete
@@ -1005,6 +908,8 @@ const NotepadDesign = props => {
                   query={{
                     key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
                     language: 'en',
+                    components: `country:${countryCode}`,
+                    location: `${currentLocation?.latitude},${currentLocation?.longitude}`,
                   }}
                   isRowScrollable={true}
                   fetchDetails={true}
@@ -1032,7 +937,8 @@ const NotepadDesign = props => {
                     },
                   }}
                 />
-              </View> */}
+              </View>
+
               <CustomButton
                 text={
                   isLoading ? (
@@ -1054,50 +960,6 @@ const NotepadDesign = props => {
                   Notedata?.fromDetails ? saveTripFromDetails() : saveTrip();
                 }}
               />
-            </View>
-          </Modal>
-          <Modal isVisible={citiesmodalVisible}
-            onBackdropPress={() => {
-              setCitiesModalVisible(false);
-            }}>
-            <View style={{ width: windowWidth * 0.9, height: windowHeight * 0.56, backgroundColor: Color.white }}>
-              <CustomText isBold style={{
-                fontSize: moderateScale(20, 0.6),
-                color: Color.black,
-                textAlign: 'center',
-                marginTop: moderateScale(10, 0.6)
-              }}>
-                Select Cities
-              </CustomText>
-              <FlatList
-                data={cites}
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => {
-                  return (
-                    <>
-                      <TouchableOpacity onPress={() => {
-                        setSelectedCities(item)
-                        setCitiesModalVisible(false)
-                      }} style={{
-                        width: windowWidth * 0.86,
-                        height: moderateScale(45, 0.6),
-                        backgroundColor: '	#E5E4E2',
-                        paddingHorizontal: moderateScale(10, 0.6),
-                        alignItems: "flex-start",
-                        justifyContent: "center",
-                        borderRadius: moderateScale(10, 0.6),
-                        marginTop: moderateScale(10, 0.6),
-                        alignSelf: 'center'
-                      }}>
-                        <CustomText style={{
-                          fontSize: moderateScale(15, 0.6)
-                        }}>{item}</CustomText>
-                      </TouchableOpacity>
-                    </>
-                  )
-                }}
-              />
-              <View st />
             </View>
           </Modal>
           <Modal
@@ -1217,22 +1079,6 @@ const NotepadDesign = props => {
               />
             </View>
           </Modal>
-          <Modal isVisible={false}>
-            <View style={styles.cities_card}>
-              <CustomText isBold style={styles.heading}>Select Cities</CustomText>
-              <FlatList
-                data={cites}
-                // ListEmptyComponent={<CustomText style={styles.emphty_text}>please select country first</CustomText>}
-                renderItem={(item, index) => {
-                  return (
-                    <TouchableOpacity style={styles.cites_btn}>
-                      <CustomText style={styles.text}>{item}</CustomText>
-                    </TouchableOpacity>
-                  )
-                }}
-              />
-            </View>
-          </Modal>
         </View>
       </LinearGradient>
       <ImagePickerModal
@@ -1243,6 +1089,7 @@ const NotepadDesign = props => {
           type == 'trip' ? setTripModalVisibe : setNoteModalVisible
         }
         fromNotePad={true}
+      // type={type}
       />
     </ScreenBoiler>
   );
@@ -1286,64 +1133,7 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
   },
-  heading: {
-    fontSize: moderateScale(22, 0.6),
-    width: windowWidth * 0.8,
-    textAlign: 'center',
-    marginBottom: moderateScale(10, 0.6)
-  },
-  cities_card: {
-    width: windowWidth * 0.9,
-    height: windowHeight * 0.45,
-    backgroundColor: Color.white,
-    borderRadius: moderateScale(20, 0.6),
-    justifyContent: 'flex-start',
-    alignItems: "flex-start",
-    paddingHorizontal: moderateScale(10, 0.6),
-    paddingVertical: moderateScale(20, 0.6)
-  },
-  cites_btn: {
-    backgroundColor: 'red',
-    width: windowWidth * 0.83,
-    paddingVertical: moderateScale(10, 0.6),
-    borderRadius: moderateScale(10, 0.6),
-    paddingHorizontal: moderateScale(10, 0.6),
-    marginBottom: moderateScale(10, 0.6),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: "center"
-  },
-  text: {
-    fontSize: moderateScale(15, 0.6)
-  },
-  birthday: {
-    width: windowWidth * 0.75,
-    height: windowHeight * 0.06,
-    marginTop: moderateScale(10, 0.3),
-    borderRadius: moderateScale(10, 0.6),
-    borderWidth: 1,
-    backgroundColor: 'white',
-    borderColor: Color.lightGrey,
-    flexDirection: 'row',
-    paddingHorizontal: moderateScale(10, 0.6),
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: Color.themeColor,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
-  },
-  emphty_text: {
-    width: windowWidth * 0.8,
-    textAlign: 'center',
-    fontSize: moderateScale(14, 0.6),
-    color: Color.red,
-    marginTop: moderateScale(10, 0.6)
-  },
+
   edit: {
     backgroundColor: Color.themeColor1,
     width: moderateScale(25, 0.3),
@@ -1378,7 +1168,4 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
-
-
 });
