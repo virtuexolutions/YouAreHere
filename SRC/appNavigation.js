@@ -33,6 +33,7 @@ import Profile from './Screens/Profile';
 import CitiesScreen from './Screens/CitiesScreen';
 import CountryScreen from './Screens/CountryScreen';
 import CitiesNoteScreen from './Screens/CitiesNoteScreen';
+import AddTripScreen from './Screens/AddTripScreen';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -76,6 +77,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="CitiesNoteScreen" component={CitiesNoteScreen} />
           {/* <RootNav.Screen name="Filters" component={Filters} /> */}
           <RootNav.Screen name="NotepadDesign" component={NotepadDesign} />
+          <RootNav.Screen name="AddTripScreen" component={AddTripScreen} />
         </RootNav.Navigator>
       </NavigationContainer>
     );

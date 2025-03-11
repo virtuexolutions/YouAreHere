@@ -47,9 +47,7 @@ const CountryCard = ({ uri, name, onPress, citiesCount }) => {
             <View style={styles.image}>
                 <CustomImage
                     source={
-                        {
-                            uri: uri
-                        }
+                        { uri: uri }
                     }
                     style={{
                         width: '100%',

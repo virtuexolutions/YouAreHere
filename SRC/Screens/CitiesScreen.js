@@ -155,13 +155,13 @@ const CitiesScreen = props => {
                         style={styles.Rounded}
                         onPress={() => {
                             console.log('Toggle drawer');
-                            // navigation.toggleDrawer();
+                            navigation.goBack();
                         }}>
                         <Icon
                             onPress={() => {
                                 //   console.log('Toggle drawer'); navigation.toggleDrawer();
                             }}
-                            name="menu"
+                            name="chevron-back"
                             as={Ionicons}
                             size={moderateScale(25, 0.6)}
                             color={Color.black}
@@ -222,7 +222,6 @@ const CitiesScreen = props => {
                             />
                         )
                     }}
-
                 />
             </LinearGradient>
             <Modal isVisible={citiesmodalVisible} onBackButtonPress={() => {

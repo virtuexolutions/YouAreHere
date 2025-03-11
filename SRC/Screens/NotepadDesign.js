@@ -300,6 +300,7 @@ const Stories = [
 
 const NotepadDesign = props => {
   let Notedata = props?.route?.params;
+  console.log("🚀 ~ Notedata:", Notedata)
   const user = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
   const isFocused = useIsFocused();
@@ -321,8 +322,10 @@ const NotepadDesign = props => {
   const [noteModalVisible, setNoteModalVisible] = useState(false);
   const [type, setType] = useState('trip');
   const [searchData, setSearchData] = useState({})
+  console.log("🚀 ~ searchData:", searchData)
   const [selectedStory, setSelectedStory] = useState({});
   const [country, setCountry] = useState('');
+  console.log("🚀 ~ country:", country)
   const [imagePicker, setImagePicker] = useState(false);
   const [currentLocation, setCurrentLocation] = useState({})
   const [countryCode, setcountryCode] = useState({})
@@ -330,7 +333,6 @@ const NotepadDesign = props => {
   const saveTripFromDetails = async () => {
     //  return console.log('here from details')
     const url = 'auth/trip';
-
     var imageForServer = null;
     try {
       const response = await fetch(image?.uri);
@@ -385,27 +387,34 @@ const NotepadDesign = props => {
   const saveTrip = async () => {
     const url = 'auth/trip';
     const body = {
-      title: country,
+      location_name: country,
       user_id: user?.id,
-      location: searchData,
+      // location_name: searchData?.location?.name,
+      lat: searchData?.location?.lat,
+      lng: searchData?.location?.lng,
+      city: Notedata?.data?.name,
+      country: Notedata?.data?.country?.name,
+      flag: Notedata?.data?.country?.uri,
+      image: image?.uri,
+      // title : 
     };
-    if (Object.keys(image).length > 0) {
-      const imageForServer = await RNFetchBlob.fs.readFile(
-        Platform.OS == 'android'
-          ? image?.uri
-          : image?.uri.replace('file://', ''),
-        'base64',
-      );
-      console.log(imageForServer);
+    // if (Object.keys(image).length > 0) {
+    //   const imageForServer = await RNFetchBlob.fs.readFile(
+    //     Platform.OS == 'android'
+    //       ? image?.uri
+    //       : image?.uri.replace('file://', ''),
+    //     'base64',
+    //   );
+    //   console.log(imageForServer);
 
-      body.image = `data:application/octet-stream;base64,${imageForServer}`;
-    }
+    //   body.image = `data:application/octet-stream;base64,${imageForServer}`;
+    // }
     if (country == '') {
       return Platform.OS == 'android'
         ? ToastAndroid.show('Please add country name', ToastAndroid.SHORT)
         : Alert.alert('Please add country name');
     }
-
+    console.log("🚀 ~ saveTrip ~ body:", body)
     setIsLoading(true);
     const responseData = await Post(url, body, apiHeader(token));
     setIsLoading(false);
@@ -426,9 +435,10 @@ const NotepadDesign = props => {
 
   const getTrips = async () => {
     console.log('fasdasd asd ad asd d asd d  sdasd');
-    const url = `auth/trip/index/${user?.id}`;
+    const url = `auth/trip/index/${user?.id}?country=${Notedata?.data?.country?.name}`;
     setTripLoading(true);
     const response = await Get(url, token);
+    console.log("🚀 ~ getTrips ~ response:", response?.data)
     setTripLoading(false);
     if (response != undefined) {
       setTrips(response?.data?.Trip);
@@ -452,7 +462,6 @@ const NotepadDesign = props => {
       // image: image,
       place_id: selectedStory?.id,
     };
-
     for (let key in body) {
       if (body[key] == '') {
         return Platform.OS == 'android'
@@ -565,16 +574,16 @@ const NotepadDesign = props => {
           style={styles.Rounded}
           onPress={() => {
             console.log('Toggle drawer');
-            navigation.toggleDrawer();
+            navigation.goBack();
           }}>
           <Icon
             onPress={() => {
-              console.log('Toggle drawer');
-              navigation.toggleDrawer();
+              navigation.goBack();
+              //   console.log('Toggle drawer'); navigation.toggleDrawer();
             }}
-            name="menu"
+            name="chevron-back"
             as={Ionicons}
-            size={moderateScale(25)}
+            size={moderateScale(25, 0.6)}
             color={Color.black}
           />
         </TouchableOpacity>

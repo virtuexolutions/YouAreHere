@@ -1,64 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { FlatList, Icon, ScrollView } from 'native-base';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Linking,
+  Platform,
+  RefreshControl,
+  ToastAndroid,
+  TouchableOpacity,
+  View
+} from 'react-native';
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import GetLocation from 'react-native-get-location';
+import LinearGradient from 'react-native-linear-gradient';
+import { check, PERMISSIONS, request } from 'react-native-permissions';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import Entypo from 'react-native-vector-icons/Entypo';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import { Get } from '../Axios/AxiosInterceptorFunction';
+import CustomText from '../Components/CustomText';
+import NearPlacesCard from '../Components/NearPlacesCard';
+import PlacesCard from '../Components/PlacesCard';
+import ScreenBoiler from '../Components/ScreenBoiler';
+import WelcomeCard from '../Components/WelcomeCard';
 import {
   requestLocationPermission,
   windowHeight,
   windowWidth,
 } from '../Utillity/utils';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
-import ScreenBoiler from '../Components/ScreenBoiler';
-import LinearGradient from 'react-native-linear-gradient';
-import {
-  View,
-  ActivityIndicator,
-  TouchableOpacity,
-  RefreshControl,
-  Platform,
-  ToastAndroid,
-  Alert,
-  Linking,
-  share,
-} from 'react-native';
-import CustomText from '../Components/CustomText';
-import SearchContainer from '../Components/SearchContainer';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Geocoder from 'react-native-geocoding';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { FlatList, Icon, ScrollView } from 'native-base';
-import PlacesCard from '../Components/PlacesCard';
-import WelcomeCard from '../Components/WelcomeCard';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { Get } from '../Axios/AxiosInterceptorFunction';
-import { useSelector } from 'react-redux';
-import navigationService from '../navigationService';
-import GetLocation from 'react-native-get-location';
-import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import FiltersModal from './FiltersModal';
-import axios from 'axios';
-import OptionsMenu from 'react-native-options-menu';
-import CustomImage from '../Components/CustomImage';
-import NearPlacesCard from '../Components/NearPlacesCard';
-import { PERMISSIONS, check, request } from 'react-native-permissions';
 
-import Share from 'react-native-share';
-import AddPlacesModal from '../Components/AddPlacesModal';
-import WelcomeModal from '../Components/WelcomeModal';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import PreferenceModal from '../Components/PreferenceModal';
+import AddPlacesModal from '../Components/AddPlacesModal';
+import SelectFilterModal from '../Components/FilterModal';
+import WelcomeModal from '../Components/WelcomeModal';
+import AddTripsModal from '../Components/AddTripsModal';
+
 const HomeScreen = props => {
-  // const
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
   const userPreferences = useSelector(state => state.commonReducer.prefrences);
   const favouriteplaces = useSelector(
     state => state.commonReducer.favouriteLocation,
-  );
-  console.log(
-    '00000000000000 00 0 0 0 00 0 0 0 0 0 00 0 0 0 0 0 0 ',
-    favouriteplaces,
   );
   const filteredUserPreference = userPreferences?.map(
     item => item?.preferences,
@@ -76,8 +66,9 @@ const HomeScreen = props => {
   const [searchData, setSearchData] = useState('');
   const [placesData, setplacesData] = useState([]);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
-  console.log('iVis', isVisibleModal);
-  const [preferences, setPreferences] = useState(false);
+  const [preferences, setPreferences] = useState(null);
+  const [preferencesModalVisible, setPreferencesModalVisible] = useState(false);
+  // const [userPreferences, setuserPreferences] = useState(false);
   const [selectedLocation, setSelectedLoacation] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [searchedPlaces, setSearchedPlaces] = useState([]);
@@ -85,6 +76,9 @@ const HomeScreen = props => {
   const [locationName, setLocationName] = useState('');
   const [foundLocation, setFoundLocation] = useState({});
   const [countryCode, setCountryCode] = useState('')
+  const [search, setSearch] = useState('');
+  const [currentItem, setCurrentItem] = useState({});
+
   // console.log(
   //   '[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]] ,,,,,,,,, >>>>>>>>> <<<<<<<<<<<<< ',
   //   customLocation,
@@ -197,6 +191,7 @@ const HomeScreen = props => {
 
     setIsLoading(true);
     const response = await Get(url, token);
+    console.log("🚀 ~ response:", response?.data)
     setIsLoading(false);
     if (response != undefined) {
       setplacesData(response?.data?.places);
@@ -220,6 +215,7 @@ const HomeScreen = props => {
     try {
       setIsLoading(true);
       const response = await axios.get(url);
+      console.log("🚀 ~ response:", response?.data)
       setIsLoading(false);
       if (response != undefined) {
         setplacesData(response?.data?.results);
@@ -372,7 +368,6 @@ const HomeScreen = props => {
         console.warn(code, message);
       });
   };
-
 
 
   const getCountryCode = async (latitude, longitude) => {
@@ -678,11 +673,33 @@ const HomeScreen = props => {
                 }
               }}
             />
-            <TouchableOpacity style={styles.menuIcon} onPress={() => setPreferences(true)}>
+            <TouchableOpacity style={styles.menuIcon} onPress={() => setPreferencesModalVisible(true)}>
               <Icon name='filter' as={Ionicons} color={Color.white}
                 size={moderateScale(28, 0.6)} />
             </TouchableOpacity>
           </View>
+          {preferences != null && (
+            <View style={{
+              width: windowWidth * 0.25,
+              height: windowHeight * 0.035,
+              backgroundColor: Color.white,
+              marginLeft: moderateScale(15, 0.6),
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              borderRadius: moderateScale(20, 0.6),
+              flexDirection: 'row',
+              paddingHorizontal:moderateScale(10,0.6)
+            }}>
+              <CustomText
+                style={{ fontSize: moderateScale(8, 0.6), textTransform: "capitalize", color: Color.black, marginRight: moderateScale(10, 0.6) }}
+                isBold>
+                {preferences?.name}
+              </CustomText>
+              <Icon onPress={() => setPreferences(null)} name={'cross'} as={Entypo} color={Color.orange} size={moderateScale(18, 0.6)}
+              />
+            </View>
+          )
+          }
           <View
             style={{ flexDirection: 'row', marginTop: moderateScale(10, 0.3) }}>
             <FlatList
@@ -771,11 +788,28 @@ const HomeScreen = props => {
             item={currentLocation}
             locationName={locationName}
           />
-          <PreferenceModal
-            modalIsVisible={preferences}
-            search
-            setModalIsVisible={setPreferences}
+          <SelectFilterModal
+            show={preferencesModalVisible}
+            setShow={setPreferencesModalVisible}
+            onPressButton={(data) => {
+              console.log('helllllllllllo', data)
+              setPreferences(data),
+                setPreferencesModalVisible(false)
+            }
+            }
           />
+          {/* <AddTripsModal
+            isVisible={true}
+          /> */}
+          {/* <PreferenceModal
+            modalIsVisible={preferences}
+            search={search}
+            setSearch={setSearch}
+            setModalIsVisible={setPreferences}
+            selectedType={currentItem}
+            // setUserPreferences={setUserPreferences}
+            userPreferences={userPreferences}
+          /> */}
         </ScrollView>
       </LinearGradient>
     </ScreenBoiler>

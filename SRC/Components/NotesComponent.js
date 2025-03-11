@@ -81,7 +81,6 @@ const NotesComponent = ({item, setSelectedNote, selectedStory}) => {
             style={{width: '100%', height: '100%'}}
           />
         </View>
-
         <View
           style={{
             marginLeft: moderateScale(20, 0.3),

@@ -89,6 +89,7 @@ const TextInputWithTitle = props => {
           props.iconName && !props.LeftIcon && {
             paddingLeft: moderateScale(60, 0.3),
           },
+          props.style
         ]}
       >
         {props.iconName && (

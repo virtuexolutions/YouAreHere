@@ -9,32 +9,31 @@ import {
   ActivityIndicator,
   ToastAndroid,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import React, { useState, useRef, useEffect } from 'react';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import CustomText from './CustomText';
 import CustomImage from './CustomImage';
-import {moderateScale} from 'react-native-size-matters';
-import {Icon, Divider, Radio, Button} from 'native-base';
+import { moderateScale } from 'react-native-size-matters';
+import { Icon, Divider, Radio, Button } from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RatingComponent from './RatingComponent';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import Modal from 'react-native-modal';
 import CustomButton from './CustomButton';
 import ModalReview from './ModalReview';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {Alert} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { Alert } from 'react-native';
 import navigationService from '../navigationService';
 import Share from 'react-native-share';
+import AddTripsModal from './AddTripsModal';
 
-const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
-  console.log('hello from near places card')
-    console.log('🚀 ~ NearPlacesCard ~ item==========>:', JSON.stringify(item,null ,2));
+const NearPlacesCard = ({ item, fromWishList, setIds, ids, fromHome }) => {
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
@@ -47,6 +46,7 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
   const [reviewData, setReviewData] = useState([]);
   const [isLoading2, setIsLoading2] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setIsModdalVisible] = useState(false);
 
   const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
 
@@ -57,7 +57,7 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
     setIsLoading(false);
 
     if (response != undefined) {
-    //   console.log('🚀 ~ getData ~ response:', response?.data);
+      //   console.log('🚀 ~ getData ~ response:', response?.data);
       setReviewData(response?.data?.reviews);
     }
   };
@@ -73,34 +73,33 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
       rating: item?.rating,
       totalRatings: item?.user_ratings_total,
       openNow: item?.opening_hours?.open_now,
-      image: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
-        item?.photos[0]?.photo_reference
-      }&key=${apiKey}`,
+      image: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
+        }&key=${apiKey}`,
       latitude: item?.geometry?.location?.lat,
       longitude: item?.geometry?.location?.lng,
-      sub_category : true
+      sub_category: true
     };
 
     setIsLoading2(true);
     const response = await Post(url, body, apiHeader(token));
     setIsLoading2(false);
     if (response?.data?.success) {
-       console.log('pro here ==========> ',response?.data);
+      console.log('pro here ==========> ', response?.data);
       Platform.OS == 'android'
         ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
         : Alert.alert('Added To Wishlist');
     }
   };
-  const sharePlace = () =>{
-   
-  //   Share.open({url: `${item?.geometry?.location?.lat},${item?.geometry?.location?.lng}`})
-  // .then((res) => {
-  //   console.log(res);
-  // })
-  // .catch((err) => {
-  //   err && console.log(err);
-  // });
-  // const navigateToMap = () => {
+  const sharePlace = () => {
+
+    //   Share.open({url: `${item?.geometry?.location?.lat},${item?.geometry?.location?.lng}`})
+    // .then((res) => {
+    //   console.log(res);
+    // })
+    // .catch((err) => {
+    //   err && console.log(err);
+    // });
+    // const navigateToMap = () => {
     const scheme = Platform.select({
       ios: 'maps://0,0?q=',
       android: 'geo:0,0?q=',
@@ -113,7 +112,7 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
     });
     return console.log(url)
 
- Share.open({url : url})
+    Share.open({ url: url })
   };
   // }
 
@@ -178,10 +177,9 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
               ['', undefined, null].includes(item?.photos)
                 ? require('../Assets/Images/errorimage.png')
                 : {
-                    uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
-                      item?.photos[0]?.photo_reference
+                  uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
                     }&key=${apiKey}`,
-                  }
+                }
             }
             style={{
               width: '100%',
@@ -190,9 +188,9 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
             resizeMode={'cover'}
           />
         </View>
-        <View style={{width: windowWidth * 0.45}}>
+        <View style={{ width: windowWidth * 0.45 }}>
           <CustomText
-            style={{fontSize: moderateScale(13, 0.6), color: Color.black}}
+            style={{ fontSize: moderateScale(13, 0.6), color: Color.black }}
             numberOfLines={1}
             isBold>
             {item?.name}
@@ -281,7 +279,7 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
             overflow: 'hidden',
           },
         }}>
-        <View style={{height: windowHeight, width: windowWidth}}>
+        <View style={{ height: windowHeight, width: windowWidth }}>
           <View
             style={{
               height: windowHeight * 0.3,
@@ -296,12 +294,11 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
                 ['', undefined, null].includes(item?.photos)
                   ? require('../Assets/Images/errorimage.png')
                   : {
-                      uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
-                        item?.photos[0]?.photo_reference
+                    uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
                       }&key=${apiKey}`,
-                    }
+                  }
               }
-              style={{width: '100%', height: '100%', backgroundColor: 'white'}}
+              style={{ width: '100%', height: '100%', backgroundColor: 'white' }}
               resizeMode={'stretch'}
             />
           </View>
@@ -396,29 +393,32 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
                 justifyContent: 'center',
               }}
               onPress={() => {
-                ref.close();
-                navigationService.navigate('NotepadDesign', {
-                  item: {
-                    uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
-                      item?.photos[0]?.photo_reference
-                    }&key=${apiKey}`,
-                    name: item?.name,
-                  },
-                  fromDetails: true,
-                });
+                // ref.close();
+                // setIsModdalVisible(true)
+                navigationService.navigate('AddTripScreen', { data: item })
+
+                // navigationService.navigate('NotepadDesign', {
+                //   item: {
+                //     uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
+                //       }&key=${apiKey}`,
+                //     name: item?.name,
+                //   },
+                //   fromDetails: true,
+                // });
               }}>
               <Icon
                 onPress={() => {
-                  ref.close();
-                  navigationService.navigate('NotepadDesign', {
-                    item: {
-                      uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
-                        item?.photos[0]?.photo_reference
-                      }&key=${apiKey}`,
-                      name: item?.name,
-                    },
-                    fromDetails: true,
-                  });
+                  navigationService.navigate('AddTripScreen', { data: item })
+                  // ref.close();
+                  // setIsModdalVisible(true)
+                  // navigationService.navigate('NotepadDesign', {
+                  //   item: {
+                  //     uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
+                  //       }&key=${apiKey}`,
+                  //     name: item?.name,
+                  //   },
+                  //   fromDetails: true,
+                  // });
                 }}
                 name="note-edit-outline"
                 as={MaterialCommunityIcons}
@@ -428,8 +428,7 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
             </TouchableOpacity>
           </View>
 
-          <Divider my="2" _light={{bg: 'muted.300'}} />
-
+          <Divider my="2" _light={{ bg: 'muted.300' }} />
           <View
             style={{
               flexDirection: 'row',
@@ -512,10 +511,10 @@ const NearPlacesCard = ({item, fromWishList, setIds, ids, fromHome}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onPress={()=>{
-sharePlace()
+              onPress={() => {
+                sharePlace()
               }}
-              >
+            >
               <Icon
                 name="share-google"
                 as={EvilIcons}
@@ -525,7 +524,7 @@ sharePlace()
             </TouchableOpacity>
           </View>
 
-          <Divider my="2" _light={{bg: 'muted.300'}} style={{marginTop: 20}} />
+          <Divider my="2" _light={{ bg: 'muted.300' }} style={{ marginTop: 20 }} />
 
           <View
             style={{
@@ -602,7 +601,11 @@ sharePlace()
             </CustomText>
           </View>
         </View>
-
+        <AddTripsModal
+          setisVisible={setIsModdalVisible}
+          isVisible={modalVisible}
+          data={item}
+        />
         <Modal
           isVisible={isModalVisible}
           onBackdropPress={() => {
@@ -632,7 +635,7 @@ sharePlace()
               Review
             </CustomText>
 
-            <Divider my="2" _light={{bg: 'muted.400'}} style={{marginTop: 5}} />
+            <Divider my="2" _light={{ bg: 'muted.400' }} style={{ marginTop: 5 }} />
             {isLoading ? (
               <View
                 style={{
@@ -657,7 +660,7 @@ sharePlace()
                   paddingBottom: moderateScale(50, 0.6),
                 }}
                 data={reviewData}
-                renderItem={({item, index}) => {
+                renderItem={({ item, index }) => {
                   return <ModalReview item={item} />;
                 }}
               />

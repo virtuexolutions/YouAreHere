@@ -7,16 +7,7 @@ import { moderateScale } from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
 
 const StoriesComponent = ({ item, setSelectedStory, selectedStory }) => {
-  // console.log("🚀 ~ file: StoriesComponent.js:10 ~ StoriesComponent ~ item:", item)
-  // console.log(
-  //   '🚀 ~ file: StoriesComponent.js:9 ~ StoriesComponent ~ item:',
-  //   item,
-  // );
-  // console.log(
-  //   '🚀 ~ file: StoriesComponent.js:9 ~ StoriesComponent ~ selectedStory:',
-  //   selectedStory,
-  // );
-
+  console.log("🚀 ~ StoriesComponent ~ item:", item)
   return (
     <TouchableOpacity
       onPress={() => {
@@ -49,7 +40,9 @@ const StoriesComponent = ({ item, setSelectedStory, selectedStory }) => {
             setSelectedStory(item);
           }}
           resizeMode={'cover'}
-          source={item?.flag ? { uri: `https://flagcdn.com/w320/${item?.flag.toLowerCase()}.png` } : require('../Assets/Images/15.jpg')}
+          source={item?.image ? { uri: item?.image }
+            //  { uri: `https://flagcdn.com/w320/${item?.flag.toLowerCase()}.png` }
+            : require('../Assets/Images/15.jpg')}
           style={{ width: '100%', height: '100%' }}
         />
       </View>
@@ -64,7 +57,7 @@ const StoriesComponent = ({ item, setSelectedStory, selectedStory }) => {
           marginTop: moderateScale(5, 0.3),
         }}
         isBold>
-        {item?.country}
+        {item?.location_name}
       </CustomText>
       <CustomText style={{
         fontSize: moderateScale(9, 0.6)
