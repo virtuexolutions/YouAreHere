@@ -938,11 +938,12 @@ const NotepadDesign = props => {
                       width: windowWidth * 0.8,
                       marginLeft: moderateScale(5, 0.6),
                       borderColor: Color.veryLightGray,
-                      height: windowHeight * 0.3
+                      height: windowHeight * 0.3,
                     },
-
                     description: {
                       color: '#5d5d5d',
+                      fontSize: moderateScale(9, 0.6),
+                      numberOfLines: 2
                     },
                   }}
                 />
@@ -1113,7 +1114,6 @@ const styles = StyleSheet.create({
     borderRadius: (windowWidth * 0.1) / 1,
     borderWidth: 1,
     borderColor: Color.white,
-    overflow: 'hidden',
   },
   Profile1: {
     width: windowWidth * 0.3,

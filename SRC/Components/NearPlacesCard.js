@@ -79,9 +79,10 @@ const NearPlacesCard = ({ item, fromWishList, setIds, ids, fromHome }) => {
       longitude: item?.geometry?.location?.lng,
       sub_category: true
     };
-
+    console.log("🚀 ~ saveCard ~ body:", body)
     setIsLoading2(true);
     const response = await Post(url, body, apiHeader(token));
+    console.log("🚀 ~ saveCard ~ response:", response?.data)
     setIsLoading2(false);
     if (response?.data?.success) {
       console.log('pro here ==========> ', response?.data);
@@ -90,6 +91,7 @@ const NearPlacesCard = ({ item, fromWishList, setIds, ids, fromHome }) => {
         : Alert.alert('Added To Wishlist');
     }
   };
+
   const sharePlace = () => {
 
     //   Share.open({url: `${item?.geometry?.location?.lat},${item?.geometry?.location?.lng}`})
