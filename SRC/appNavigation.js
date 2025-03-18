@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import navigationService from './navigationService';
-import {useSelector} from 'react-redux';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { useSelector } from 'react-redux';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import LoginScreen from './Screens/loginScreen';
 import EnterPhone from './Screens/EnterPhone';
 import VerifyNumber from './Screens/VerifyNumber';
@@ -19,7 +19,7 @@ import LogoScreen from './Screens/LogoScreen';
 import PaymentScreen from './Screens/PaymentScreen';
 import SubscriptionScreen from './Screens/SubscriptionScreen';
 import GetStarted from './Screens/GetStarted';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import Drawer from './drawer/Drawer';
 import Color from './Assets/Utilities/Color';
 import NotePad from './Screens/NotePad';
@@ -30,6 +30,10 @@ import WhishListScreen from './Screens/WhishListScreen';
 import NotepadDesign from './Screens/NotepadDesign';
 import LoginScreen from './Screens/LoginScreen';
 import Profile from './Screens/Profile';
+import CitiesScreen from './Screens/CitiesScreen';
+import CountryScreen from './Screens/CountryScreen';
+import CitiesNoteScreen from './Screens/CitiesNoteScreen';
+import AddTripScreen from './Screens/AddTripScreen';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -44,14 +48,14 @@ const AppNavigator = () => {
       token != null
         ? 'MyDrawer'
         : walkThrough == true
-        ? 'GetStarted'
-        : 'WalkThroughScreen';
+          ? 'GetStarted'
+          : 'WalkThroughScreen';
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
         <RootNav.Navigator
           initialRouteName={firstScreen}
-          screenOptions={{headerShown: false}}>
+          screenOptions={{ headerShown: false }}>
           <RootNav.Screen
             name="WalkThroughScreen"
             component={WalkThroughScreen}
@@ -69,7 +73,11 @@ const AppNavigator = () => {
           <RootNav.Screen name="NotePad" component={NotePad} />
           {/* <RootNav.Screen name="Profile" component={Profile} /> */}
           <RootNav.Screen name="AssetScreen" component={AssetScreen} />
+          <RootNav.Screen name="CitiesScreen" component={CitiesScreen} />
+          <RootNav.Screen name="CitiesNoteScreen" component={CitiesNoteScreen} />
           {/* <RootNav.Screen name="Filters" component={Filters} /> */}
+          <RootNav.Screen name="NotepadDesign" component={NotepadDesign} />
+          <RootNav.Screen name="AddTripScreen" component={AddTripScreen} />
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -105,7 +113,7 @@ export const MyDrawer = () => {
         component={WhishListScreen}
       />
       <DrawerNavigation.Screen name="Profile" component={Profile} />
-      <DrawerNavigation.Screen name="NotepadDesign" component={NotepadDesign} />
+      <DrawerNavigation.Screen name="CountryScreen" component={CountryScreen} />
     </DrawerNavigation.Navigator>
   );
 };

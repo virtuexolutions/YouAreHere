@@ -1,22 +1,17 @@
-import {View, TouchableOpacity} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import CustomText from './CustomText';
-// import Constants from "../Assets/Utilities/Constants";
-import Color from '../Assets/Utilities/Color';
-import TextInputWithTitle from './TextInputWithTitle';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Icon} from 'native-base';
-import {GestureHandlerRootView, TextInput} from 'react-native-gesture-handler';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import CustomImage from './CustomImage';
+import { Icon } from 'native-base';
+import React from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import { GestureHandlerRootView, TextInput } from 'react-native-gesture-handler';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch, useSelector } from 'react-redux';
+import Color from '../Assets/Utilities/Color';
 import { setCustomLocation } from '../Store/slices/common';
-// import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { windowWidth } from '../Utillity/utils';
+import CustomImage from './CustomImage';
+import CustomText from './CustomText';
 
 const SearchContainer = ({
   width,
@@ -31,43 +26,46 @@ const SearchContainer = ({
   inputStyle,
   placeHolder,
   rightIcon,
+  countryCode,
+  currentLocation
 }) => {
+  console.log("🚀 ~ currentLocation:", currentLocation)
   const dispatch = useDispatch()
-  const customLocation = useSelector(state=>state.commonReducer.customLocation)
+  const customLocation = useSelector(state => state.commonReducer.customLocation)
   return (
     <GestureHandlerRootView>
       <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
         <View
           style={[
             styles.container,
-            width && {width: width},
-            input && {padding: 0},
+            width && { width: width },
+            input && { padding: 0 },
             style && style,
           ]}>
           {text && (
             <>
-            {
-               !['' , null , undefined].includes(placeHolder) ?
-               <CustomText
-               style={[{
-                 fontSize: moderateScale(8, 0.6),
-                 color: Color.veryLightGray,
-                 // lineHeight: moderateScale(20, 0.3),
-               },textStyle && textStyle]}>{placeHolder} </CustomText>
-               :
-            
-              <CustomText
-                style={[{
-                  fontSize: moderateScale(12, 0.6),
-                  color: Color.black,
-                  // lineHeight: moderateScale(20, 0.3),
-                },textStyle && textStyle]}>
-                {'Where to? \n'}
-                <CustomText style={{fontSize: moderateScale(10, 0.6) , color : Color.veryLightGray}}>
-                  Anytime anyWhere
-                </CustomText>
-              </CustomText>
-}
+              {
+                !['', null, undefined].includes(placeHolder) ?
+                  <CustomText
+                    style={[{
+                      fontSize: moderateScale(8, 0.6),
+                      color: Color.veryLightGray,
+                      // lineHeight: moderateScale(20, 0.3),
+                    }, textStyle && textStyle]}>{placeHolder} </CustomText>
+                  :
+
+                  <CustomText
+                    style={[{
+                      fontSize: moderateScale(12, 0.6),
+                      color: Color.black,
+                      // lineHeight: moderateScale(20, 0.3),
+                    }, textStyle && textStyle]}>
+                    {'Where to? \n'}
+                    <CustomText style={{ fontSize: moderateScale(10, 0.6), color: Color.veryLightGray }}>
+                      Anytime anyWhere
+                    </CustomText>
+                  </CustomText>
+              }
               <View
                 style={{
                   height: windowWidth * 0.09,
@@ -84,45 +82,61 @@ const SearchContainer = ({
                   },
                   shadowOpacity: 0.32,
                   shadowRadius: 5.46,
-                  
+
                   elevation: 9
                 }}>
-              <Icon
-                name={Object.keys(customLocation).length > 0 ? 'close' : "search"}
-                as={Object.keys(customLocation).length > 0 ? AntDesign:FontAwesome}
-                size={moderateScale(22)}
-                style={{alignSelf: 'center'}}
-                color={'#fbb824'}
-                onPress={()=>{
-                  Object.keys(customLocation).length > 0 ? dispatch(setCustomLocation({})) : onPress()
-                }}
-              />
+                <Icon
+                  name={Object.keys(customLocation).length > 0 ? 'close' : "search"}
+                  as={Object.keys(customLocation).length > 0 ? AntDesign : FontAwesome}
+                  size={moderateScale(22)}
+                  style={{ alignSelf: 'center' }}
+                  color={'#fbb824'}
+                  onPress={() => {
+                    Object.keys(customLocation).length > 0 ? dispatch(setCustomLocation({})) : onPress()
+                  }}
+                />
               </View>
             </>
           )}
           {places && (
-          <GooglePlacesAutocomplete
-            placeholder={placeHolder ? placeHolder :"Enter location"}
-            fetchDetails={true}
-            onPress={(data, details = null) => {
-              // 'details' is provided when fetchDetails = true
-              let lat = details?.geometry?.location?.lat;
-              let lng = details?.geometry?.location?.lng;
-              console.log(lat, lng);
-              setData({ latitute: lat, longitute: lng });
-            }}
-            query={{
-              
-              key: "AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc",
-              // key : 'AIzaSyAsJQ2w7vW2D7_d92Mg3TI1yojbJC64wso',
-              language: "en",
-            }}
-            // styles={{
-            //   height :20,
-            // }}
-
+            // <GooglePlacesAutocomplete
+            //   placeholder={placeHolder ? placeHolder : "Enter location"}
+            //   fetchDetails={true}
+            //   onPress={(data, details = null) => {
+            //     // 'details' is provided when fetchDetails = true
+            //     let lat = details?.geometry?.location?.lat;
+            //     let lng = details?.geometry?.location?.lng;
+            //     console.log(lat, lng);
+            //     setData({ latitute: lat, longitute: lng });
+            //   }}
+            //   query={{
+            //     key: "AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc",
+            //     language: "en",
+            //     components: `country:${countryCode}`,
+            //   }}
+            // />
+            <GooglePlacesAutocomplete
+              placeholder={placeHolder ? placeHolder : "Enter location"}
+              fetchDetails={true}
+              onPress={(data, details = null) => {
+                let lat = details?.geometry?.location?.lat;
+                let lng = details?.geometry?.location?.lng;
+                console.log(lat, lng);
+                setData({ latitude: lat, longitude: lng });
+              }}
+              query={{
+                // key: "AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc",
+                // language: "en",
+                // components: `country:PK`,
+                key: "AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc",
+                language: "en",
+                components: `country:${countryCode}`,
+                location: `${currentLocation?.latitude},${currentLocation?.longitude}`,
+                radius: 50000,
+              }}
             />
-            )}
+
+          )}
 
           {input && (
             <>
@@ -131,7 +145,7 @@ const SearchContainer = ({
                 as={FontAwesome}
                 size={moderateScale(17, 0.3)}
                 color={'#E7DFDC'}
-                // style={{backgroundColor : 'red'}}
+              // style={{backgroundColor : 'red'}}
               />
 
               <TextInput
@@ -162,8 +176,8 @@ const SearchContainer = ({
               color={'#FF6E2E'}
               // style={{backgroundColor : 'red'}}
               /> */}
-
               <View
+
                 style={{
                   height: windowWidth * 0.09,
                   width: windowWidth * 0.09,
@@ -175,7 +189,7 @@ const SearchContainer = ({
                 }}>
                 <CustomImage
                   source={require('../Assets/Images/filter.png')}
-                  style={{height: '100%', width: '100%'}}
+                  style={{ height: '100%', width: '100%' }}
                 />
               </View>
             </>

@@ -71,9 +71,10 @@ const user = useSelector(state => state.commonReducer.userData)
       iconType: MaterialCommunityIcons,
     },
     {
-      name: 'Saved Notes',
+      name: 'Saved Trips',
       onPress: () => {
-        navigation.navigate('NotepadDesign');
+        // navigation.navigate('NotepadDesign');
+        navigation.navigate('CountryScreen')
       },
       iconName: 'note-edit-outline',
       iconType: MaterialCommunityIcons,

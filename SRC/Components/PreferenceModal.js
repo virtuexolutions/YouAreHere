@@ -7,21 +7,21 @@ import {
   ToastAndroid,
   Platform,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-native-modal';
 import CustomText from './CustomText';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {Icon} from 'native-base';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { Icon } from 'native-base';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import TextInputWithTitle from './TextInputWithTitle';
 import Color from '../Assets/Utilities/Color';
 import PreferenceModalListItem from './PreferenceModalListItem';
 import axios from 'axios';
 import CustomImage from './CustomImage';
-import {setUserData} from '../Store/slices/common';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
+import { setUserData } from '../Store/slices/common';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
 const PreferenceModal = ({
   modalIsVisible,
   setModalIsVisible,
@@ -84,11 +84,11 @@ const PreferenceModal = ({
             : placesDetails(filteredPredictions[0]?.place_id);
         } else {
           Platform.OS == 'android' ?
-          ToastAndroid.show(
-            'No place Found,kindly enter right place or corrent your spellinig',
-            ToastAndroid.SHORT,
-          ) :
-          alert('No place Found,kindly enter right place or corrent your spellinig')
+            ToastAndroid.show(
+              'No place Found,kindly enter right place or corrent your spellinig',
+              ToastAndroid.SHORT,
+            ) :
+            alert('No place Found,kindly enter right place or corrent your spellinig')
         }
       }
       // setSearch('');
@@ -167,7 +167,7 @@ const PreferenceModal = ({
               justifyContent: 'center',
             }}>
             {Object.keys(item).length == 0 &&
-              userPreferences[index]?.preferences.length == 0 && (
+              userPreferences?.[index]?.preferences.length == 0 && (
                 <>
                   <View
                     style={{
@@ -177,7 +177,7 @@ const PreferenceModal = ({
                       overflow: 'hidden',
                     }}>
                     <CustomImage
-                      style={{width: '100%', height: '100%'}}
+                      style={{ width: '100%', height: '100%' }}
                       source={require('../Assets/Images/fallback.png')}
                     />
                   </View>
@@ -193,8 +193,8 @@ const PreferenceModal = ({
               )}
           </View>
           <View style={styles.list}>
-            {userPreferences[index]?.preferences.length > 0 &&
-              userPreferences[index]?.preferences.map(
+            {userPreferences?.[index]?.preferences.length > 0 &&
+              userPreferences?.[index]?.preferences.map(
                 (preferenceItem, preferenceindex) => {
                   return (
                     <PreferenceModalListItem

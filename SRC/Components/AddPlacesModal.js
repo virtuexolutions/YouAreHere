@@ -1,6 +1,6 @@
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useRef, useState} from 'react';
-import {moderateScale} from 'react-native-size-matters';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { moderateScale } from 'react-native-size-matters';
 import {
   requestLocationPermission,
   windowHeight,
@@ -9,15 +9,14 @@ import {
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CustomText from './CustomText';
 import Color from '../Assets/Utilities/Color';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {Icon} from 'native-base';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { Icon } from 'native-base';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
-import SearchContainer from './SearchContainer';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import SearchLocationModal from './SearchLocationModal';
-import {useSelector, useDispatch} from 'react-redux';
-import {setDeletFavLocation, setFavouriteLocaion} from '../Store/slices/common';
+import { useSelector, useDispatch } from 'react-redux';
+import { setDeletFavLocation, setFavouriteLocaion } from '../Store/slices/common';
 
 const AddPlacesModal = ({
   item,
@@ -28,6 +27,7 @@ const AddPlacesModal = ({
   // favouriteLocation,
   setLabel,
   label,
+  countryCode,
 }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -87,7 +87,7 @@ const AddPlacesModal = ({
 
         <View style={styles.container}>
           <View style={styles.mapcontainer}>
-           
+
             <MapView
               ref={mapRef}
               style={styles.map}
@@ -118,7 +118,7 @@ const AddPlacesModal = ({
             marginVertical: moderateScale(15, 0.6),
           }}
           data={favouriteplaces}
-          renderItem={({item, index}) => {
+          renderItem={({ item, index }) => {
             return (
               <TouchableOpacity
                 onPress={() => {
@@ -130,10 +130,10 @@ const AddPlacesModal = ({
                   // backgroundColor : 'red' ,
                   width: '80%',
                 }}>
-              
+
                 <View>
                   <CustomText style={styles.FlatListtxt}>
-                    {item?.label} 
+                    {item?.label}
                   </CustomText>
 
                   <CustomText
@@ -185,8 +185,9 @@ const AddPlacesModal = ({
           label={label}
           setIsModalVisible={setModalIsVisible}
           isModalVisible={modalIsVisible}
-          // address={favouriteLocation}
-          // setAddress={setFavouriteLocaion}
+          countryCode={countryCode}
+        // address={favouriteLocation}
+        // setAddress={setFavouriteLocaion}
         />
       </View>
     </RBSheet>

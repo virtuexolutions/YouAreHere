@@ -9,23 +9,23 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../Components/CustomText';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Icon} from 'native-base';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { Icon } from 'native-base';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import PlacesCard from '../Components/PlacesCard';
-import {useSelector} from 'react-redux';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import NearPlacesCard from '../Components/NearPlacesCard';
 
-const WhishListScreen = ({item}) => {
+const WhishListScreen = ({ item }) => {
   const isFocused = useIsFocused();
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const token = useSelector(state => state.authReducer.token);
@@ -87,8 +87,8 @@ const WhishListScreen = ({item}) => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         colors={Color.themeBgColor}>
         <View
           style={{
@@ -98,7 +98,7 @@ const WhishListScreen = ({item}) => {
             paddingVertical: moderateScale(10, 0.6),
           }}>
           <CustomText
-            style={{fontSize: moderateScale(18, 0.6), color: Color.black}}
+            style={{ fontSize: moderateScale(18, 0.6), color: Color.black }}
             isBold>
             Trips
           </CustomText>
@@ -128,7 +128,7 @@ const WhishListScreen = ({item}) => {
               marginVertical: moderateScale(10, 0.3),
             }}>
             <CustomText
-              style={{color: 'black', fontSize: moderateScale(14, 0.6)}}
+              style={{ color: 'black', fontSize: moderateScale(14, 0.6) }}
               isBold>
               {ids.length} Selected
             </CustomText>
@@ -138,7 +138,7 @@ const WhishListScreen = ({item}) => {
               }}
               as={Ionicons}
               name={'trash-outline'}
-              style={{color: 'red'}}
+              style={{ color: 'red' }}
               size={moderateScale(20, 0.6)}
             />
           </View>
@@ -168,13 +168,13 @@ const WhishListScreen = ({item}) => {
               marginTop: moderateScale(10, 0.3),
               marginBottom: moderateScale(20, 0.3),
             }}
-            renderItem={({item, index}) => {
-              return  <PlacesCard
-              item={item}
-              fromWishList={true}
-              setIds={setIds}
-              ids={ids}
-            /> 
+            renderItem={({ item, index }) => {
+              return <PlacesCard
+                item={item}
+                fromWishList={true}
+                setIds={setIds}
+                ids={ids}
+              />
               // return  item?.sub_category == true ? (
               //   <NearPlacesCard
               //     item={item}
