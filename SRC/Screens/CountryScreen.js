@@ -35,6 +35,7 @@ const CountryScreen = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [countriesList, setCountriesList] = useState(null);
     const token = useSelector(state => state.authReducer.token);
+
     const onSelect = country => {
         setCountryCode(country.cca2);
         setCountry(country);
@@ -162,7 +163,7 @@ const CountryScreen = () => {
                                         citiesCount={`No of cities added = ${item?.city_count}`}
                                         name={item?.name}
                                         uri={item?.uri}
-                                        onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
+                                    onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
                                     />
                                 </>
                             )

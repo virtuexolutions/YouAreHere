@@ -27,6 +27,7 @@ const AddPlacesModal = ({
   // favouriteLocation,
   setLabel,
   label,
+  countryCode,
 }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -184,6 +185,7 @@ const AddPlacesModal = ({
           label={label}
           setIsModalVisible={setModalIsVisible}
           isModalVisible={modalIsVisible}
+          countryCode={countryCode}
         // address={favouriteLocation}
         // setAddress={setFavouriteLocaion}
         />

@@ -7,7 +7,7 @@ import {
   ToastAndroid,
   Alert,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import LinearGradient from 'react-native-linear-gradient';
@@ -35,6 +35,7 @@ import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import RNFetchBlob from 'rn-fetch-blob';
 import axios from 'axios';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const Stories = [
   {
@@ -299,13 +300,13 @@ const Stories = [
 ];
 
 const NotepadDesign = props => {
-  let Notedata = props?.route?.params;
-  console.log("🚀 ~ Notedata:", Notedata)
+  let Notedata = props?.route?.params?.data;
+  console.log("🚀 ~ Notedata:", Notedata?.country?.uri)
   const user = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
-
+  const mapRef = useRef(null);
   // const stories = useSelector(state => state.commonReducer.notePadData);
   const [isLoading, setIsLoading] = useState(false);
   const [trips, setTrips] = useState([]);
@@ -328,7 +329,8 @@ const NotepadDesign = props => {
   console.log("🚀 ~ country:", country)
   const [imagePicker, setImagePicker] = useState(false);
   const [currentLocation, setCurrentLocation] = useState({})
-  const [countryCode, setcountryCode] = useState({})
+  const [countryCode, setcountryCode] = useState('')
+  console.log("🚀 ~ countryCode:", countryCode)
 
   const saveTripFromDetails = async () => {
     //  return console.log('here from details')
@@ -523,7 +525,7 @@ const NotepadDesign = props => {
 
 
   useEffect(() => {
-    getLatLngFromCity('USA')
+    getLatLngFromCity(Notedata?.name)
   }, [])
 
   const getLatLngFromCity = async (city) => {
@@ -799,6 +801,7 @@ const NotepadDesign = props => {
           )}
           <Modal
             isVisible={tripModalVisibe}
+            // isVisible={true}
             onBackdropPress={() => {
               setTripModalVisibe(false);
               setImage({});
@@ -948,7 +951,36 @@ const NotepadDesign = props => {
                   }}
                 />
               </View>
-
+              {/* {Object.keys(searchData)?.length > 0 ? (
+                <View style={{
+                  width: windowWidth * 0.82,
+                  height: windowHeight * 0.3,
+                }}>
+                  <MapView
+                    ref={mapRef}
+                    provider={PROVIDER_GOOGLE}
+                    style={styles.map}
+                    initialRegion={{
+                      latitude: parseInt(searchData?.location?.lat),
+                      longitude: parseInt(searchData?.location?.lng),
+                      latitudeDelta: 0.005,
+                      longitudeDelta: 0.005
+                    }}
+                  >
+                    <Marker
+                      coordinate={{
+                        latitude: parseFloat(searchData?.location?.lat),
+                        longitude: parseFloat(searchData?.location?.lng),
+                      }}
+                      title={country}
+                      pinColor={Color.red}
+                    />
+                  </MapView>
+                </View>
+              ) : (
+                <ActivityIndicator size={'small'} color={'white'} />
+              )
+              } */}
               <CustomButton
                 text={
                   isLoading ? (
@@ -967,6 +999,7 @@ const NotepadDesign = props => {
                 // alignSelf={'flex-end'}
                 marginTop={moderateScale(20, 0.3)}
                 onPress={() => {
+                  setTripModalVisibe(false)
                   Notedata?.fromDetails ? saveTripFromDetails() : saveTrip();
                 }}
               />
@@ -1114,6 +1147,9 @@ const styles = StyleSheet.create({
     borderRadius: (windowWidth * 0.1) / 1,
     borderWidth: 1,
     borderColor: Color.white,
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
   Profile1: {
     width: windowWidth * 0.3,

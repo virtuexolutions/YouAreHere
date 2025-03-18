@@ -38,6 +38,7 @@ const CitiesScreen = props => {
     console.log("🚀 ~ citiesList:", citiesList)
     const [cityName, setCityName] = useState('')
     const [image, setImage] = useState(null)
+    const [countryCode, setCountryCode] = useState(null)
     console.log("🚀 ~ cityName:", cityName)
     const token = useSelector(state => state.authReducer.token);
     console.log("🚀 ~ token:", token)
@@ -54,7 +55,9 @@ const CitiesScreen = props => {
     };
 
     useEffect(() => {
-        fetchCities()
+        fetchCities();
+        const countryCode = data.uri.split("/").pop().split(".")[0].toUpperCase();
+        setCountryCode(countryCode)
     }, [])
 
     useEffect(() => {

@@ -76,6 +76,7 @@ const HomeScreen = props => {
   const [locationName, setLocationName] = useState('');
   const [foundLocation, setFoundLocation] = useState({});
   const [countryCode, setCountryCode] = useState('')
+  console.log("🚀 ~ countryCode:", countryCode)
   const [search, setSearch] = useState('');
   const [currentItem, setCurrentItem] = useState({});
 
@@ -84,10 +85,12 @@ const HomeScreen = props => {
   //   customLocation,
   //   locationName,
   // );
+
   const currentLocation2 = {
     latitude: 24.8598186,
     longitude: 67.06233019999999,
   };
+
   // console.log(
   //   'currentLocation   ',
   //   // currentLocation,
@@ -96,6 +99,7 @@ const HomeScreen = props => {
   //   favouriteplaces[1],
   // );
   // const [welcomeModal ,setWelcomeModal ] =useState(true)
+
   const [rbRef, setRbRef] = useState(null);
   const places = [
     {
@@ -199,7 +203,8 @@ const HomeScreen = props => {
   };
 
   const findNearestMcDonalds = async location => {
-    const radius = 50000; // Search radius in meters (adjust as needed)
+    console.log(customLocation, location, 'customLocation location')
+    const radius = 50000;
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
     const longitude = 66.98806;
@@ -210,7 +215,7 @@ const HomeScreen = props => {
       },${Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
         : location?.lng
-      }&rankby=distance&keyword=${preferences?.name}`;
+      }&rankby=distance&keyword=${preferences?.name ? preferences?.name : 'All'}`;
     // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&keyword=${keyword}&key=${apiKey}`;
     try {
       setIsLoading(true);
@@ -225,8 +230,6 @@ const HomeScreen = props => {
     }
   };
 
-
-
   // ye abhi comment  kiya ha
   useEffect(() => {
     // console.log(
@@ -234,6 +237,7 @@ const HomeScreen = props => {
     //   currentLocation,
     //   JSON.stringify(favouriteplaces, null, 2),
     // )
+    findNearestMcDonalds(currentLocation)
     console.log('hello1');
     if (Object.keys(customLocation).length > 0 && isFocused) {
       console.log('hello');
@@ -420,6 +424,7 @@ const HomeScreen = props => {
       );
     }
   }, []);
+
   // const fetchAddress = async () => {
   //   try {
   //     // Validate latitude and longitude
@@ -459,6 +464,7 @@ const HomeScreen = props => {
   // }}
 
   // />
+
   const feedBackForm = async () => {
     const url = Platform.select({
       ios: `https://forms.gle/edJ3QPvb6B1awqvi6`,
@@ -636,7 +642,6 @@ const HomeScreen = props => {
               placeholder="Search"
               textInputProps={{
                 placeholderTextColor: '#5d5d5d',
-                // returnKeyType: "search"
               }}
               onPress={(data, details = null) => {
                 console.log('hello hereeeee ========  >>>>>>>>>', { name: data?.description, location: details?.geometry?.location });
@@ -664,10 +669,17 @@ const HomeScreen = props => {
                   borderRadius: moderateScale(20, 0.6),
                 },
                 listView: {
+                  position: 'absolute',
+                  top: 50,
+                  zIndex: 10,
                   width: windowWidth * 0.8,
-                  marginLeft: moderateScale(5, 0.6),
-                  borderColor: Color.veryLightGray,
+                  backgroundColor: 'white',
                 },
+                // listView: {
+                //   width: windowWidth * 0.8,
+                //   marginLeft: moderateScale(5, 0.6),
+                //   borderColor: Color.veryLightGray,
+                // },
                 description: {
                   color: '#5d5d5d',
                 }
@@ -688,7 +700,7 @@ const HomeScreen = props => {
               alignItems: 'center',
               borderRadius: moderateScale(20, 0.6),
               flexDirection: 'row',
-              paddingHorizontal:moderateScale(10,0.6)
+              paddingHorizontal: moderateScale(10, 0.6)
             }}>
               <CustomText
                 style={{ fontSize: moderateScale(8, 0.6), textTransform: "capitalize", color: Color.black, marginRight: moderateScale(10, 0.6) }}
@@ -723,7 +735,13 @@ const HomeScreen = props => {
               isBold>
               Places
             </CustomText>
-            {!isLoading && (
+            <TouchableOpacity style={[styles.menuIcon, {
+              backgroundColor: 'transparent',
+            }]} onPress={() => setPreferencesModalVisible(true)}>
+              <Icon name='filter' as={Ionicons} color={Color.white}
+                size={moderateScale(28, 0.6)} />
+            </TouchableOpacity>
+            {/* {!isLoading && (
               <CustomText
                 isBold
                 onPress={() => { }}
@@ -734,7 +752,7 @@ const HomeScreen = props => {
                 }}>
                 Searched count : {placesData?.length}
               </CustomText>
-            )}
+            )} */}
           </View>
           {isLoading ? (
             <View
@@ -787,6 +805,7 @@ const HomeScreen = props => {
             rbRef={rbRef}
             item={currentLocation}
             locationName={locationName}
+            countryCode={countryCode}
           />
           <SelectFilterModal
             show={preferencesModalVisible}
