@@ -301,9 +301,11 @@ const Stories = [
 
 const NotepadDesign = props => {
   let Notedata = props?.route?.params?.data;
-  console.log("🚀 ~ Notedata:", Notedata?.country?.uri)
-  const user = useSelector(state => state.commonReducer.userData);
+  let Country = props?.route?.params?.country;
+  console.log("🚀 ~ Country:", Country)
+  console.log("🚀 ~ Notedata:", Notedata?.country)
   const token = useSelector(state => state.authReducer.token);
+  console.log(token, 'tokeeeeeeeeeeeeeeen')
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
   const mapRef = useRef(null);
@@ -331,6 +333,7 @@ const NotepadDesign = props => {
   const [currentLocation, setCurrentLocation] = useState({})
   const [countryCode, setcountryCode] = useState('')
   console.log("🚀 ~ countryCode:", countryCode)
+  const user = useSelector(state => state.commonReducer.userData);
 
   const saveTripFromDetails = async () => {
     //  return console.log('here from details')
@@ -394,8 +397,8 @@ const NotepadDesign = props => {
       // location_name: searchData?.location?.name,
       lat: searchData?.location?.lat,
       lng: searchData?.location?.lng,
-      city: Notedata?.data?.name,
-      country: Notedata?.data?.country?.name,
+      city: Notedata?.name,
+      country: Country,
       flag: Notedata?.data?.country?.uri,
       image: image?.uri,
       // title : 
@@ -437,8 +440,9 @@ const NotepadDesign = props => {
 
   const getTrips = async () => {
     console.log('fasdasd asd ad asd d asd d  sdasd');
-    const url = `auth/trip/index/${user?.id}?country=${Notedata?.data?.country?.name}`;
+    const url = `auth/trip/index/${user?.id}?country=${Country}`;
     setTripLoading(true);
+    console.log("🚀 ~ getTrips ~ url:", url)
     const response = await Get(url, token);
     console.log("🚀 ~ getTrips ~ response:", response?.data)
     setTripLoading(false);

@@ -45,6 +45,7 @@ import AddTripsModal from '../Components/AddTripsModal';
 const HomeScreen = props => {
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ token:", token)
   const user = useSelector(state => state.commonReducer.userData);
   const userPreferences = useSelector(state => state.commonReducer.prefrences);
   const favouriteplaces = useSelector(
@@ -65,8 +66,10 @@ const HomeScreen = props => {
   // const [favouriteLocation, setFavouriteLocaion] = useState([]);
   const [searchData, setSearchData] = useState('');
   const [placesData, setplacesData] = useState([]);
+  console.log("🚀 ~ placesData:", placesData)
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [preferences, setPreferences] = useState(null);
+  console.log("🚀 ~ preferences:", preferences?.name)
   const [preferencesModalVisible, setPreferencesModalVisible] = useState(false);
   // const [userPreferences, setuserPreferences] = useState(false);
   const [selectedLocation, setSelectedLoacation] = useState();
@@ -191,11 +194,12 @@ const HomeScreen = props => {
       }&longitude=${Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
         : location?.lng
-      }&place[]=${preferences?.name != undefined ? preferences?.name : 'all'}`;
+      }&place[]=${preferences?.name != undefined ? preferences?.name : 'All'}`;
+    console.log("🚀 ~ url:", url)
 
     setIsLoading(true);
     const response = await Get(url, token);
-    console.log("🚀 ~ response:", response?.data)
+    console.log("🚀 ~ response: is wali api ka", response?.data)
     setIsLoading(false);
     if (response != undefined) {
       setplacesData(response?.data?.places);
@@ -215,12 +219,12 @@ const HomeScreen = props => {
       },${Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
         : location?.lng
-      }&rankby=distance&keyword=${preferences?.name ? preferences?.name : 'All'}`;
+      }&rankby=distance&keyword=${preferences?.name ? preferences?.name : 'all'}`;
     // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&keyword=${keyword}&key=${apiKey}`;
     try {
       setIsLoading(true);
       const response = await axios.get(url);
-      console.log("🚀 ~ response:", response?.data)
+      console.log("🚀 ~ response: findNearestMcDonalds", response?.data)
       setIsLoading(false);
       if (response != undefined) {
         setplacesData(response?.data?.results);
@@ -237,7 +241,7 @@ const HomeScreen = props => {
     //   currentLocation,
     //   JSON.stringify(favouriteplaces, null, 2),
     // )
-    findNearestMcDonalds(currentLocation)
+    // findNearestMcDonalds(cU)
     console.log('hello1');
     if (Object.keys(customLocation).length > 0 && isFocused) {
       console.log('hello');
@@ -359,12 +363,13 @@ const HomeScreen = props => {
         setCurrentLocation(location);
         getCountryCode()
         getAddressFromCoordinates(location?.latitude, location?.longitude);
-        preferences?.label == 'All' || preferences?.label == undefined
-          ? getData({ lat: location?.latitude, lng: location?.longitude })
-          : findNearestMcDonalds({
-            lat: location?.latitude,
-            lng: location?.longitude,
-          });
+        // preferences?.label == 'All' || preferences?.label == undefined
+        //   ? getData({ lat: location?.latitude, lng: location?.longitude })
+        // : 
+        findNearestMcDonalds({
+          lat: location?.latitude,
+          lng: location?.longitude,
+        });
       })
       .catch(error => {
         setIsLoading(false);
