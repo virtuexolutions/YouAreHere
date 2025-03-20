@@ -42,6 +42,8 @@ const CitiesScreen = props => {
     console.log("🚀 ~ cityName:", cityName)
     const token = useSelector(state => state.authReducer.token);
     console.log("🚀 ~ token:", token)
+    const user = useSelector(state => state.commonReducer.userData);
+    console.log("🚀 ~ user:", user?.id)
 
     const fetchCities = async (countryName) => {
         try {
@@ -221,7 +223,7 @@ const CitiesScreen = props => {
                             <CountryCard
                                 name={item?.name}
                                 uri={item?.image}
-                                onPress={() => navigation.navigate('NotepadDesign', { data: item })}
+                                onPress={() => navigation.navigate('NotepadDesign', { data: item, country: data?.name })}
                             />
                         )
                     }}

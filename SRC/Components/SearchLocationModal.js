@@ -9,7 +9,6 @@ import Color from '../Assets/Utilities/Color';
 import Modal from 'react-native-modal';
 import CustomText from './CustomText';
 import { moderateScale } from 'react-native-size-matters';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 // import 'react-native-get-random-values';
 import CustomButton from './CustomButton';
 import { setFavouriteLocation } from '../Store/slices/common';
@@ -17,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import { setDropoffLocation } from '../Store/slices/common';
 import TextInputWithTitle from './TextInputWithTitle';
 import DropDownSingleSelect from './DropDownSingleSelect';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const SearchLocationModal = ({
   isModalVisible,
@@ -42,6 +42,8 @@ const SearchLocationModal = ({
   return (
     <Modal
       hasBackdrop={true}
+      transparent={true}
+      animationType="slide"
       style={{
         justifyContent: 'center',
         alignItems: 'center',
@@ -93,9 +95,8 @@ const SearchLocationModal = ({
 
             marginTop: moderateScale(15, 0.3),
           }}
-
         />
-        <GooglePlacesAutocomplete
+        {/* <GooglePlacesAutocomplete
           onFail={error => console.error(error, 'errrrrrorrrr')}
           placeholder="Enter Your Address"
           textInputProps={{
@@ -143,8 +144,8 @@ const SearchLocationModal = ({
               color: 'black',
             },
           }}
-        />
-        {/* <GooglePlacesAutocomplete
+        /> */}
+        <GooglePlacesAutocomplete
           onFail={error => console.error(error, 'errrrrrorrrr')}
           placeholder="Enter Your Address"
           textInputProps={{
@@ -157,9 +158,8 @@ const SearchLocationModal = ({
               lat: details?.geometry?.location?.lat,
               lng: details?.geometry?.location?.lng,
             });
-            // setIsModalVisible(false);
             const newFave = {
-              id:Math.random(),
+              id: Math.random(),
               name: data?.description,
               lat: details?.geometry?.location?.lat,
               lng: details?.geometry?.location?.lng,
@@ -175,6 +175,7 @@ const SearchLocationModal = ({
           }}
           isRowScrollable={true}
           fetchDetails={true}
+          keepResultsAfterBlur={true}
           styles={{
             textInputContainer: {
               width: windowWidth * 0.8,
@@ -187,7 +188,7 @@ const SearchLocationModal = ({
               borderWidth: 0.5,
               borderColor: Color.themeColor,
               borderRadius: moderateScale(38, 0.6),
-              marginVertical: moderateScale(15, 0.3), 
+              marginVertical: moderateScale(15, 0.3),
             },
             listView: {
               width: windowWidth * 0.8,
@@ -198,7 +199,8 @@ const SearchLocationModal = ({
               color: 'black',
             },
           }}
-        /> */}
+        />
+
         {/* {Object.keys(address)?.length > 0 && ( */}
         <View
           style={{

@@ -135,7 +135,6 @@ const SearchContainer = ({
                 radius: 50000,
               }}
             />
-
           )}
 
           {input && (
