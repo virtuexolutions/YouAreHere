@@ -113,6 +113,7 @@ const initialState = {
   currentLocation: {},
   selectedRole: '',
   favouriteLocation: [],
+  savedTrips: []
 };
 
 const CommonSlice = createSlice({
@@ -153,7 +154,6 @@ const CommonSlice = createSlice({
     setCustomLocation(state, action) {
       state.customLocation = action.payload;
     },
-
     setNotePadData(state, action) {
       console.log('here paylaod=========>>>>>>>>>>>>>', action.payload);
       state.notePadData = [
