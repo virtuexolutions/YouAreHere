@@ -9,26 +9,26 @@ import {
   ActivityIndicator,
   ToastAndroid,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import React, { useState, useRef, useEffect } from 'react';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import CustomText from './CustomText';
 import CustomImage from './CustomImage';
-import {moderateScale} from 'react-native-size-matters';
-import {Icon, Divider, Radio, Button} from 'native-base';
+import { moderateScale } from 'react-native-size-matters';
+import { Icon, Divider, Radio, Button } from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import RatingComponent from './RatingComponent';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import Modal from 'react-native-modal';
 import CustomButton from './CustomButton';
 import ModalReview from './ModalReview';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {Alert} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { Alert } from 'react-native';
 import navigationService from '../navigationService';
 import Share from 'react-native-share';
 
@@ -40,6 +40,8 @@ const PlacesCard = ({
   onPressSave,
   fromHome,
   isLoading2,
+  style,
+  isshownSave = true
 }) => {
   console.log('🚀 ~ item:', item?.place_id);
   // console.log('hello from places card')
@@ -126,7 +128,7 @@ const PlacesCard = ({
     });
     console.log(url);
 
-    const shareResponse = await Share.open({url: url});
+    const shareResponse = await Share.open({ url: url });
   };
 
   const navigateToMap = () => {
@@ -155,6 +157,7 @@ const PlacesCard = ({
               ? '#E0FFFF'
               : 'white',
           },
+          style
         ]}
         onLongPress={() => {
           !fromHome &&
@@ -179,7 +182,7 @@ const PlacesCard = ({
             source={
               ['', undefined, null].includes(item?.image)
                 ? require('../Assets/Images/errorimage.png')
-                : {uri: item?.image}
+                : { uri: item?.image }
             }
             style={{
               width: '100%',
@@ -188,9 +191,9 @@ const PlacesCard = ({
             resizeMode={'cover'}
           />
         </View>
-        <View style={{width: windowWidth * 0.45}}>
+        <View style={{ width: windowWidth * 0.45 }}>
           <CustomText
-            style={{fontSize: moderateScale(13, 0.6), color: Color.black}}
+            style={{ fontSize: moderateScale(13, 0.6), color: Color.black }}
             numberOfLines={1}
             isBold>
             {item?.name}
@@ -204,7 +207,6 @@ const PlacesCard = ({
             {item?.address}
           </CustomText>
         </View>
-
         <TouchableOpacity
           activeOpacity={0.8}
           style={{
@@ -228,41 +230,42 @@ const PlacesCard = ({
             }}
           />
         </TouchableOpacity>
-
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => {
-            fromWishList
-              ? Platform?.OS == 'android'
-                ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
-                : Alert.alert('Already added')
-              : onPressSave();
-            // saveCard();
-          }}
-          style={{
-            height: windowWidth * 0.09,
-            width: windowWidth * 0.09,
-            borderRadius: (windowWidth * 0.09) / 2,
-            backgroundColor: '#1a73e8',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: 5,
-          }}>
-          <Icon
-            name={isLoading2 ? 'reload-sharp' : 'bookmark-outline'}
-            as={Ionicons}
-            size={moderateScale(18, 0.3)}
-            color={'white'}
+        {isshownSave &&
+          <TouchableOpacity
+            activeOpacity={0.8}
             onPress={() => {
               fromWishList
                 ? Platform?.OS == 'android'
                   ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
                   : Alert.alert('Already added')
                 : onPressSave();
-              //  saveCard();
+              // saveCard();
             }}
-          />
-        </TouchableOpacity>
+            style={{
+              height: windowWidth * 0.09,
+              width: windowWidth * 0.09,
+              borderRadius: (windowWidth * 0.09) / 2,
+              backgroundColor: '#1a73e8',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 5,
+            }}>
+            <Icon
+              name={isLoading2 ? 'reload-sharp' : 'bookmark-outline'}
+              as={Ionicons}
+              size={moderateScale(18, 0.3)}
+              color={'white'}
+              onPress={() => {
+                fromWishList
+                  ? Platform?.OS == 'android'
+                    ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                    : Alert.alert('Already added')
+                  : onPressSave();
+                //  saveCard();
+              }}
+            />
+          </TouchableOpacity>
+        }
       </TouchableOpacity>
       {/* <Modal isVisible={true} onBackdropPress={() => {
         setModalVisible(!isModalVisible);
@@ -288,7 +291,7 @@ const PlacesCard = ({
             overflow: 'hidden',
           },
         }}>
-        <View style={{height: windowHeight, width: windowWidth}}>
+        <View style={{ height: windowHeight, width: windowWidth }}>
           <View
             style={{
               height: windowHeight * 0.3,
@@ -302,9 +305,9 @@ const PlacesCard = ({
               source={
                 ['', undefined, null].includes(item?.image)
                   ? require('../Assets/Images/errorimage.png')
-                  : {uri: item?.image}
+                  : { uri: item?.image }
               }
-              style={{width: '100%', height: '100%', backgroundColor: 'white'}}
+              style={{ width: '100%', height: '100%', backgroundColor: 'white' }}
               resizeMode={'stretch'}
             />
           </View>
@@ -400,7 +403,7 @@ const PlacesCard = ({
               onPress={() => {
                 ref.close();
                 navigationService.navigate('NotepadDesign', {
-                  item: {uri: item?.image, name: item?.name},
+                  item: { uri: item?.image, name: item?.name },
                   fromDetails: true,
                 });
               }}>
@@ -408,7 +411,7 @@ const PlacesCard = ({
                 onPress={() => {
                   ref.close();
                   navigationService.navigate('NotepadDesign', {
-                    item: {uri: item?.image, name: item?.name},
+                    item: { uri: item?.image, name: item?.name },
                     fromDetails: true,
                   });
                 }}
@@ -420,7 +423,7 @@ const PlacesCard = ({
             </TouchableOpacity>
           </View>
 
-          <Divider my="2" _light={{bg: 'muted.300'}} />
+          <Divider my="2" _light={{ bg: 'muted.300' }} />
 
           <View
             style={{
@@ -435,16 +438,16 @@ const PlacesCard = ({
               style={{
                 color:
                   ['', null, undefined].includes(item?.openNow) &&
-                  item.openNow &&
-                  item.openNow.toLowerCase() == 'yes'
+                    item.openNow &&
+                    item.openNow.toLowerCase() == 'yes'
                     ? 'green'
                     : 'red',
 
                 // item?.openNow.toLowerCase() == 'yes' ? 'green' : 'red',
               }}>
               {['', null, undefined].includes(item?.openNow) &&
-              item.openNow &&
-              item.openNow.toLowerCase() == 'yes'
+                item.openNow &&
+                item.openNow.toLowerCase() == 'yes'
                 ? 'Open Now'
                 : 'Closed'}
               {/* {item?.openNow.toLowerCase() == 'yes' ? 'Open Now' : 'Closed'} */}
@@ -526,7 +529,7 @@ const PlacesCard = ({
             </TouchableOpacity>
           </View>
 
-          <Divider my="2" _light={{bg: 'muted.300'}} style={{marginTop: 20}} />
+          <Divider my="2" _light={{ bg: 'muted.300' }} style={{ marginTop: 20 }} />
 
           <View
             style={{
@@ -632,7 +635,7 @@ const PlacesCard = ({
               Review
             </CustomText>
 
-            <Divider my="2" _light={{bg: 'muted.400'}} style={{marginTop: 5}} />
+            <Divider my="2" _light={{ bg: 'muted.400' }} style={{ marginTop: 5 }} />
             {isLoading ? (
               <View
                 style={{
@@ -657,7 +660,7 @@ const PlacesCard = ({
                   paddingBottom: moderateScale(50, 0.6),
                 }}
                 data={reviewData}
-                renderItem={({item, index}) => {
+                renderItem={({ item, index }) => {
                   return <ModalReview item={item} />;
                 }}
               />

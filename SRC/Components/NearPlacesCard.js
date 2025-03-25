@@ -30,10 +30,13 @@ import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Alert } from 'react-native';
 import navigationService from '../navigationService';
+
 import Share from 'react-native-share';
 import AddTripsModal from './AddTripsModal';
 
-const NearPlacesCard = ({ item, fromWishList, setIds, ids, fromHome }) => {
+const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome, style,
+  isshownSave = true }) => {
+  console.log(":", item)
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
@@ -71,8 +74,8 @@ const NearPlacesCard = ({ item, fromWishList, setIds, ids, fromHome }) => {
       address: item?.vicinity,
       types: item?.types,
       rating: item?.rating,
-      totalRatings: item?.user_ratings_total,
-      openNow: item?.opening_hours?.open_now,
+      totalRatings: item?.rating,
+      openNow: item?.opening_hours?.openNow,
       image: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
         }&key=${apiKey}`,
       latitude: item?.geometry?.location?.lat,
@@ -154,6 +157,7 @@ const NearPlacesCard = ({ item, fromWishList, setIds, ids, fromHome }) => {
               ? '#E0FFFF'
               : 'white',
           },
+          style
         ]}
         onLongPress={() => {
           !fromHome &&
@@ -231,39 +235,42 @@ const NearPlacesCard = ({ item, fromWishList, setIds, ids, fromHome }) => {
             }}
           />
         </TouchableOpacity>
-
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => {
-            fromWishList
-              ? Platform?.OS == 'android'
-                ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
-                : Alert.alert('Already added')
-              : saveCard();
-          }}
-          style={{
-            height: windowWidth * 0.09,
-            width: windowWidth * 0.09,
-            borderRadius: (windowWidth * 0.09) / 2,
-            backgroundColor: '#1a73e8',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: 5,
-          }}>
-          <Icon
-            name={isLoading2 ? 'reload-sharp' : 'bookmark-outline'}
-            as={Ionicons}
-            size={moderateScale(18, 0.3)}
-            color={'white'}
+        {isshownSave &&
+          <TouchableOpacity
+            activeOpacity={0.8}
             onPress={() => {
               fromWishList
                 ? Platform?.OS == 'android'
                   ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
                   : Alert.alert('Already added')
-                : saveCard();
+                : onPressSave()
+              // saveCard();?
             }}
-          />
-        </TouchableOpacity>
+            style={{
+              height: windowWidth * 0.09,
+              width: windowWidth * 0.09,
+              borderRadius: (windowWidth * 0.09) / 2,
+              backgroundColor: '#1a73e8',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 5,
+            }}>
+            <Icon
+              name={isLoading2 ? 'reload-sharp' : 'bookmark-outline'}
+              as={Ionicons}
+              size={moderateScale(18, 0.3)}
+              color={'white'}
+              onPress={() => {
+                fromWishList
+                  ? Platform?.OS == 'android'
+                    ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
+                    : Alert.alert('Already added')
+                  : onPressSave()
+                // saveCard();
+              }}
+            />
+          </TouchableOpacity>
+        }
       </TouchableOpacity>
 
       <RBSheet
@@ -477,7 +484,8 @@ const NearPlacesCard = ({ item, fromWishList, setIds, ids, fromHome }) => {
                   ? Platform?.OS == 'android'
                     ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
                     : Alert.alert('Already added')
-                  : saveCard();
+                  : onPressSave()
+                // saveCard();
               }}
               activeOpacity={0.5}
               style={{
@@ -498,7 +506,8 @@ const NearPlacesCard = ({ item, fromWishList, setIds, ids, fromHome }) => {
                     ? Platform?.OS == 'android'
                       ? ToastAndroid.show('Already added', ToastAndroid.SHORT)
                       : Alert.alert('Already added')
-                    : saveCard();
+                    : onPressSave()
+                  //  saveCard();
                 }}
               />
             </TouchableOpacity>

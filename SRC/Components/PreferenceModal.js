@@ -35,7 +35,6 @@ const PreferenceModal = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [item, setItem] = useState({});
-  console.log("🚀 ~ item:", item)
   const [index, setIndex] = useState(
     userPreferences?.findIndex(data => data?.id == selectedType?.id),
   );
