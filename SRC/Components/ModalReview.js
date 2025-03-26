@@ -10,7 +10,6 @@ import RatingComponent from './RatingComponent';
 import {Divider} from 'native-base';
 
 const ModalReview = ({item}) => {
-  console.log('item?. rating', item?.rating);
   return (
     <View
       style={{

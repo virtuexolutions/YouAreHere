@@ -34,6 +34,7 @@ const CountryScreen = () => {
     const [loading, setLoading] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [countriesList, setCountriesList] = useState(null);
+    console.log("🚀 ~ CountryScreen ~ countriesList:", countriesList)
     const token = useSelector(state => state.authReducer.token);
 
     const onSelect = country => {
@@ -48,6 +49,7 @@ const CountryScreen = () => {
     const getCountries = async () => {
         const url = 'auth/countries'
         const response = await Get(url, token)
+        console.log("🚀 ~ getCountries ~ response:", response?.data)
         setIsLoading(true)
         if (response != undefined) {
             setIsLoading(false)
@@ -162,8 +164,8 @@ const CountryScreen = () => {
                                     <CountryCard
                                         citiesCount={`No of cities added = ${item?.city_count}`}
                                         name={item?.name}
-                                        uri={item?.uri}
-                                    onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
+                                        uri={`https://flagcdn.com/w320/${country?.cca2.toLowerCase()}.png`}
+                                        onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
                                     />
                                 </>
                             )
@@ -310,7 +312,8 @@ const CountryScreen = () => {
                                 setCountry({ cca2: 'US', name: 'USA' })
                                 setCountryCode('US')
                                 addCountry({
-                                    name: country?.name, uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
+                                    name: country?.name,
+                                    uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
                                     city_count: 1
                                 })
                             }

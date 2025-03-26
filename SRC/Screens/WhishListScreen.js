@@ -149,7 +149,7 @@ const WhishListScreen = ({ item }) => {
           <CustomText
             style={{ fontSize: moderateScale(18, 0.6), color: Color.black }}
             isBold>
-            Trips List 
+            Trips List
           </CustomText>
           <TouchableOpacity
             activeOpacity={0.8}
@@ -241,7 +241,8 @@ const WhishListScreen = ({ item }) => {
                     <CustomText
                       style={{
                         fontSize: moderateScale(13, 0.6), color: Color.black,
-                        textTransform: "capitalize"
+                        textTransform: "capitalize",
+                        marginLeft: moderateScale(10, 0.6)
                       }}
                       numberOfLines={1}
                       isBold

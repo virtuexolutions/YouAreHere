@@ -18,7 +18,6 @@ const CustomDropDownMultiSelect = ({min, max, item, setItem, array, title , maxH
       <MultiSelect
         items={array}
         onSelectedItemsChange={selectedItems => {
-          console.log(selectedItems);
           setItem(selectedItems);
         }}
         selectedItems={item}

@@ -43,7 +43,6 @@ const PlacesCard = ({
   style,
   isshownSave = true
 }) => {
-  console.log('🚀 ~ item:', item?.place_id);
   // console.log('hello from places card')
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);

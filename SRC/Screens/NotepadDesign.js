@@ -440,7 +440,7 @@ const NotepadDesign = props => {
 
   const getTrips = async () => {
     console.log('fasdasd asd ad asd d asd d  sdasd');
-    const url = `auth/trip/index/${user?.id}?country=${Country}`;
+    const url = `auth/trip/index/${user?.id}?country=${Country}&city=${Notedata?.name}`;
     setTripLoading(true);
     console.log("🚀 ~ getTrips ~ url:", url)
     const response = await Get(url, token);
@@ -450,6 +450,7 @@ const NotepadDesign = props => {
       setTrips(response?.data?.Trip);
     }
   };
+
   const getTripNotes = async () => {
     const url = `auth/notes/index?place_id=${selectedStory?.id}`;
     setNotesLoading(true);

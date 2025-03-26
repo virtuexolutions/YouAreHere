@@ -92,6 +92,7 @@ const TripDetailsLocation = props => {
                     ) : (
                         <>
                             {playListData.map((item) => {
+                                console.log("🚀 ~ {playListData.map ~ item:", item)
                                 return (
                                     <FlatList
                                         data={item?.detail}
@@ -136,4 +137,7 @@ const styles = StyleSheet.create({
         top: 10,
         right: 10,
     },
+    card: {
+        height: windowHeight * 0.10,
+    }
 })

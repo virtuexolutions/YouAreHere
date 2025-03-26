@@ -47,6 +47,7 @@ import AddTripsModal from '../Components/AddTripsModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import CustomButton from '../Components/CustomButton';
 import { G } from 'react-native-svg';
+import navigationService from '../navigationService';
 
 const HomeScreen = props => {
   const isFocused = useIsFocused();
@@ -92,15 +93,8 @@ const HomeScreen = props => {
   const [addTripLoading, setAddTripLoading] = useState(false);
   const [tripList, setTripList] = useState([]);
   const [selectedItem, setSelectedItem] = useState({});
-  console.log("🚀 ~  ============================ selectedItem:", selectedItem)
   const [issaveLoading, setSaveIsLoading] = useState(false);
-  const [WhishListId, setWhishListId] = useState(null);
-  console.log(WhishListId, 'whishlistId');
-  // console.log(
-  //   '[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]] ,,,,,,,,, >>>>>>>>> <<<<<<<<<<<<< ',
-  //   customLocation,
-  //   locationName,
-  // );
+  const [whishlistdata, setwhishlistdata] = useState(null);
 
   const currentLocation2 = {
     latitude: 24.8598186,
@@ -217,7 +211,6 @@ const HomeScreen = props => {
   };
 
   const findNearestMcDonalds = async location => {
-    console.log(customLocation, location, 'customLocation location');
     const radius = 50000;
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
@@ -251,9 +244,7 @@ const HomeScreen = props => {
     //   JSON.stringify(favouriteplaces, null, 2),
     // )
     // findNearestMcDonalds(cU)
-    console.log('hello1');
     if (Object.keys(customLocation).length > 0 && isFocused) {
-      console.log('hello');
       favouriteplaces.some(
         (item, index) =>
           item?.lat == customLocation?.location?.lat &&
@@ -402,7 +393,6 @@ const HomeScreen = props => {
 
         if (country) {
           setCountryCode(country.short_name);
-          console.log('Country Code: ', country.short_name);
           return country.short_name;
         }
       }
@@ -494,7 +484,6 @@ const HomeScreen = props => {
     setGetTripLoading(true);
     const response = await Get(url, token);
     setGetTripLoading(false);
-    console.log(response?.data, '======================>');
     if (response?.data != undefined) {
       setGetTripLoading(false);
       setTripList(response?.data?.data);
@@ -509,7 +498,6 @@ const HomeScreen = props => {
     };
     settripLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    console.log(response?.data, '======================>');
     settripLoading(false);
     if (response?.data != undefined) {
       settripLoading(false);
@@ -521,16 +509,15 @@ const HomeScreen = props => {
   const onPressAddTrip = async (id) => {
     const url = `auth/playlists_detail/${id}`;
     const body = {
-      wishlist_id: WhishListId,
+      wishlist_id: whishlistdata?.id,
     };
-    //  return    console.log("bodddddddy ===================================", body)
     setAddTripLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setAddTripLoading(false);
-    console.log(response?.data, '=============================>');
     if (response?.data != undefined) {
       setAddTripLoading(false);
       setSaveModalVisible(false);
+      navigationService.navigate('AddTripScreen', { data: whishlistdata })
       Platform?.OS == 'android'
         ? ToastAndroid.show('Added Successfully', ToastAndroid.SHORT)
         : Alert.alert('Added Successfully');
@@ -554,15 +541,12 @@ const HomeScreen = props => {
       longitude: item?.location?.lng || item?.geometry?.location?.lat,
       sub_category: false,
     };
-    console.log('🚀 ~ saveCard ~ body:', body);
     setSaveIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    console.log(response?.data?.data, 'respomse?.data?.data');
     setSaveIsLoading(false);
     if (response?.data != undefined) {
-      console.log(response?.data);
       setSaveModalVisible(true);
-      setWhishListId(response?.data?.data?.id);
+      setwhishlistdata(response?.data?.data);
       getTripList()
       Platform.OS == 'android'
         ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
@@ -741,10 +725,6 @@ const HomeScreen = props => {
                 placeholderTextColor: '#5d5d5d',
               }}
               onPress={(data, details = null) => {
-                console.log('hello hereeeee ========  >>>>>>>>>', {
-                  name: data?.description,
-                  location: details?.geometry?.location,
-                });
                 setSearchData({
                   name: data?.description,
                   location: details?.geometry?.location,
@@ -944,7 +924,6 @@ const HomeScreen = props => {
             show={preferencesModalVisible}
             setShow={setPreferencesModalVisible}
             onPressButton={data => {
-              console.log('helllllllllllo', data);
               setPreferences(data), setPreferencesModalVisible(false);
             }}
           />
@@ -965,136 +944,139 @@ const HomeScreen = props => {
                   alignSelf: 'flex-end',
                   marginBottom: moderateScale(10, 0.6)
                 }} />
-                <View style={styles.text_view}>
-                  <CustomText
-                    isBold
-                    style={{
-                      fontSize: moderateScale(20, 0.6),
-                    }}>
-                    Save Trip to
-                  </CustomText>
-                  <TouchableOpacity
-                    onPress={() => setCreateNewTrip(true)}
-                    style={[
-                      styles.text_view,
-                      {
-                        backgroundColor: Color.lightGrey,
-                        paddingHorizontal: moderateScale(9, 0.6),
-                        paddingVertical: moderateScale(7, 0.6),
-                        borderRadius: moderateScale(10, 0.5),
-                      },
-                    ]}>
-                    <Icon
-                      name={'plus'}
-                      as={AntDesign}
-                      size={moderateScale(18, 0.6)}
-                      color={Color.yellow}
-                    />
+                <ScrollView>
+                  <View style={styles.text_view}>
                     <CustomText
+                      isBold
                       style={{
-                        fontSize: moderateScale(14, 0.6),
-                        color: Color.yellow,
-                        marginLeft: moderateScale(7, 0.6),
+                        fontSize: moderateScale(20, 0.6),
                       }}>
-                      Create new Trip
+                      Save Trip to
                     </CustomText>
-                  </TouchableOpacity>
-                </View>
-                {isCreateNewTrip === true && (
-                  <View style={styles.trip_list_view}>
-                    <CustomText>Create New Trip List</CustomText>
-                    <TextInputWithTitle
-                      setText={setlistName}
-                      value={listName}
-                      viewHeight={0.06}
-                      viewWidth={0.75}
-                      inputWidth={0.86}
-                      // border={1}
-                      // borderColor={Color.black}
-                      marginTop={moderateScale(10, 0.3)}
-                      color={Color.black}
-                      placeholderColor={Color.black}
-                      backgroundColor={Color.lightGrey}
-                      placeholder={'Enter List Name Here'}
-                      placeholderTextColor={Color.darkGray}
-                    />
-                    <CustomButton
-                      onPress={() => onPressCreate()}
-                      text={
-                        tripLoading ? (
-                          <ActivityIndicator size="small" color={Color.white} />
-                        ) : (
-                          'Create'
-                        )
-                      }
-                      textColor={Color.white}
-                      height={windowHeight * 0.05}
-                      width={windowWidth * 0.6}
-                      bgColor={Color.themeColor}
-                      paddingHorizontal={moderateScale(14, 0.6)}
-                      fontSize={moderateScale(10, 0.6)}
-                      marginTop={moderateScale(10, 0.6)}
-                    />
-                  </View>
-                )}
-                {gettripLoading ? (
-                  <ActivityIndicator style={{
-                    marginTop: moderateScale(10, 0.6)
-                  }} size="small" color={Color.themeColor} />
-                ) : (
-                  <FlatList
-                    data={tripList}
-                    ListEmptyComponent={() => {
+                    <TouchableOpacity
+                      onPress={() => setCreateNewTrip(true)}
+                      style={[
+                        styles.text_view,
+                        {
+                          backgroundColor: Color.lightGrey,
+                          paddingHorizontal: moderateScale(9, 0.6),
+                          paddingVertical: moderateScale(7, 0.6),
+                          borderRadius: moderateScale(10, 0.5),
+                        },
+                      ]}>
+                      <Icon
+                        name={'plus'}
+                        as={AntDesign}
+                        size={moderateScale(18, 0.6)}
+                        color={Color.yellow}
+                      />
                       <CustomText
                         style={{
-                          fontSize: moderateScale(11, 0.6),
-                          color: Color.red,
+                          fontSize: moderateScale(14, 0.6),
+                          color: Color.yellow,
+                          marginLeft: moderateScale(7, 0.6),
                         }}>
-                        no data found
+                        Create new Trip
                       </CustomText>
-                    }}
-                    showsVerticalScrollIndicator={false}
-                    renderItem={({ item }) => {
-                      return (
-                        <TouchableOpacity
-                          onPress={() => {
-                            setSelectedItem(item);
-                            onPressAddTrip(item?.id);
-                          }}
-                          style={{
-                            width: windowWidth * 0.83,
-                            height: moderateScale(50, 0.6),
-                            backgroundColor: '#EEEEEEEE',
-                            marginTop: moderateScale(10, 0.6),
-                            borderRadius: moderateScale(10, 0.6),
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            paddingHorizontal: moderateScale(10, 0.6),
-                            borderWidth: 1.5,
-                            borderColor:
-                              item?.id === selectedItem?.id
-                                ? Color.themeColor
-                                : '#EEEEEEEE',
-                          }}>
-                          {
-                            selectedItem?.id === item?.id && addTripLoading ? <ActivityIndicator style={{
-                              marginTop: moderateScale(10, 0.6)
-                            }} size="small" color={Color.themeColor} /> : <CustomText
-                              style={{
-                                fontSize: moderateScale(14, 0.6),
-                                textTransform: 'capitalize',
-                                width: '100%',
-                                textAlign: 'left',
-                              }}>
-                              {item?.name}
-                            </CustomText>
-                          }
+                    </TouchableOpacity>
+                  </View>
+                  {isCreateNewTrip === true && (
+                    <View style={styles.trip_list_view}>
+                      <CustomText>Create New Trip List</CustomText>
+                      <TextInputWithTitle
+                        setText={setlistName}
+                        value={listName}
+                        viewHeight={0.06}
+                        viewWidth={0.75}
+                        inputWidth={0.86}
+                        // border={1}
+                        // borderColor={Color.black}
+                        marginTop={moderateScale(10, 0.3)}
+                        color={Color.black}
+                        placeholderColor={Color.black}
+                        backgroundColor={Color.lightGrey}
+                        placeholder={'Enter List Name Here'}
+                        placeholderTextColor={Color.darkGray}
+                      />
+                      <CustomButton
+                        onPress={() => onPressCreate()}
+                        text={
+                          tripLoading ? (
+                            <ActivityIndicator size="small" color={Color.white} />
+                          ) : (
+                            'Create'
+                          )
+                        }
+                        textColor={Color.white}
+                        height={windowHeight * 0.05}
+                        width={windowWidth * 0.6}
+                        bgColor={Color.themeColor}
+                        paddingHorizontal={moderateScale(14, 0.6)}
+                        fontSize={moderateScale(10, 0.6)}
+                        marginTop={moderateScale(10, 0.6)}
+                      />
 
-                        </TouchableOpacity>
-                      );
-                    }}
-                  />
-                )}
+                    </View>
+                  )}
+                  {gettripLoading ? (
+                    <ActivityIndicator style={{
+                      marginTop: moderateScale(10, 0.6)
+                    }} size="small" color={Color.themeColor} />
+                  ) : (
+                    <FlatList
+                      data={tripList}
+                      ListEmptyComponent={() => {
+                        <CustomText
+                          style={{
+                            fontSize: moderateScale(11, 0.6),
+                            color: Color.red,
+                          }}>
+                          no data found
+                        </CustomText>
+                      }}
+                      showsVerticalScrollIndicator={false}
+                      renderItem={({ item }) => {
+                        return (
+                          <TouchableOpacity
+                            onPress={() => {
+                              setSelectedItem(item);
+                              onPressAddTrip(item?.id);
+                            }}
+                            style={{
+                              width: windowWidth * 0.83,
+                              height: moderateScale(50, 0.6),
+                              backgroundColor: '#EEEEEEEE',
+                              marginTop: moderateScale(10, 0.6),
+                              borderRadius: moderateScale(10, 0.6),
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              paddingHorizontal: moderateScale(10, 0.6),
+                              borderWidth: 1.5,
+                              borderColor:
+                                item?.id === selectedItem?.id
+                                  ? Color.themeColor
+                                  : '#EEEEEEEE',
+                            }}>
+                            {
+                              selectedItem?.id === item?.id && addTripLoading ? <ActivityIndicator style={{
+                                marginTop: moderateScale(10, 0.6)
+                              }} size="small" color={Color.themeColor} /> : <CustomText
+                                style={{
+                                  fontSize: moderateScale(14, 0.6),
+                                  textTransform: 'capitalize',
+                                  width: '100%',
+                                  textAlign: 'left',
+                                }}>
+                                {item?.name}
+                              </CustomText>
+                            }
+
+                          </TouchableOpacity>
+                        );
+                      }}
+                    />
+                  )}
+                </ScrollView>
               </View>
             </View>
           </Modal>

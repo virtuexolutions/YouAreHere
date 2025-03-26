@@ -628,16 +628,10 @@ const SelectFilterModal = ({ show, onPressButton, setShow }) => {
             return;
         }
 
-        console.log('🚀 ~ sendPrefrences ~ body:', JSON.stringify(body, null, 2));
         setIsLoading(true);
         const response = await Post(url, body, apiHeader(token));
         setIsLoading(false);
         if (response != undefined) {
-            console.log(
-                '🚀 ~ sendPrefrences ~ response:',
-                JSON.stringify(response?.data?.user, null, 2),
-            );
-
             dispatch(setUserData(response?.data?.user));
             dispatch(setPrefrences([]));
             dispatch(setPrefrences(response?.data?.user?.preferences));

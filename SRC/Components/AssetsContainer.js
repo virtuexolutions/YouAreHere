@@ -1,42 +1,37 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Color from '../Assets/Utilities/Color';
 import { useDispatch } from 'react-redux';
 import { setPrefrences } from '../Store/slices/common';
 // import { setPrefrences } from '../Store/slices/common';
 
-const AssetsContainer = ({item, preferences, setPreferences , index}) => {
-  console.log("🚀 ~ file: AssetsContainer.js:12 ~ AssetsContainer ~ preferences:", preferences)
+const AssetsContainer = ({ item, preferences, setPreferences, index }) => {
   const [activetab, setActiveTab] = useState(false);
   const dispatch = useDispatch()
-  
+
   return (
-    <TouchableOpacity 
-    activeOpacity={0.8}
-    onPress={() => {
-      setActiveTab(!activetab);
-      console.log('item name==========', item?.name)
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => {
+        setActiveTab(!activetab);
 
-      // dispatch(setPrefrences(item?.name))
+        // dispatch(setPrefrences(item?.name))
 
-      if(preferences.includes(item?.name)){
-        console.log('Condition 1 ')
-        setPreferences(preferences.filter(asset=> asset != item?.name ))
+        if (preferences.includes(item?.name)) {
+          setPreferences(preferences.filter(asset => asset != item?.name))
 
-      }else{
-        console.log('Condition 2')
+        } else {
+          setPreferences(prev => [...prev, item?.name])
+        }
 
-        setPreferences(prev => [...prev, item?.name])
-      }
-
-    }}
-    style={styles.main}>
+      }}
+      style={styles.main}>
       <View
         style={{
           width: windowWidth * 0.08,
@@ -48,7 +43,7 @@ const AssetsContainer = ({item, preferences, setPreferences , index}) => {
         }}>
         <CustomImage
           source={item.Image}
-          style={{width: '100%', height: '100%'}}
+          style={{ width: '100%', height: '100%' }}
         />
       </View>
 
@@ -57,17 +52,11 @@ const AssetsContainer = ({item, preferences, setPreferences , index}) => {
       <TouchableOpacity
         onPress={() => {
           setActiveTab(!activetab);
-          console.log('item name==========', item?.name)
-
           // dispatch(setPrefrences(item?.name))
+          if (preferences.includes(item?.name)) {
+            setPreferences(preferences.filter(asset => asset != item?.name))
 
-          if(preferences.includes(item?.name)){
-            console.log('Condition 1 ')
-            setPreferences(preferences.filter(asset=> asset != item?.name ))
-
-          }else{
-            console.log('Condition 2')
-    
+          } else {
             setPreferences(prev => [...prev, item?.name])
           }
 
@@ -86,18 +75,15 @@ const AssetsContainer = ({item, preferences, setPreferences , index}) => {
           onPress={() => {
             setActiveTab(!activetab);
             // dispatch(setPrefrences(item?.name))
-            
-            if(preferences.includes(item?.name)){
-              console.log('Condition 1 ')
-              setPreferences(preferences.filter(asset=> asset != item?.name ))
-  
-            }else{
-              console.log('Condition 2')
-  
+
+            if (preferences.includes(item?.name)) {
+              setPreferences(preferences.filter(asset => asset != item?.name))
+
+            } else {
+
               setPreferences(prev => [...prev, item?.name])
             }
 
-            console.log('DATA', activetab);
           }}
           name="check"
           as={AntDesign}

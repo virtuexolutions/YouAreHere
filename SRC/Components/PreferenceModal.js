@@ -38,7 +38,6 @@ const PreferenceModal = ({
   const [index, setIndex] = useState(
     userPreferences?.findIndex(data => data?.id == selectedType?.id),
   );
-  console.log('🚀 ~ index:', index);
 
   const placesDetails = async placeId => {
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';

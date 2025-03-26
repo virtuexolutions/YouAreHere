@@ -10,7 +10,6 @@ import navigationService from '../navigationService';
 import moment from 'moment';
 
 const NotesComponent = ({item, setSelectedNote, selectedStory}) => {
-  console.log('🚀 ~ file: NotesComponent.js:12 ~ NotesComponent ~ item:', item);
   // console.log('DATA=========>>>>', item.image?.uri);
   return (
     <TouchableOpacity
