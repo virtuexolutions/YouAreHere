@@ -35,6 +35,7 @@ import CountryScreen from './Screens/CountryScreen';
 import CitiesNoteScreen from './Screens/CitiesNoteScreen';
 import AddTripScreen from './Screens/AddTripScreen';
 import AddNewAdress from './Screens/AddNewAdress';
+import TripDetailsLocation from './Screens/TripDetailsLocation';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -80,6 +81,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="NotepadDesign" component={NotepadDesign} />
           <RootNav.Screen name="AddTripScreen" component={AddTripScreen} />
           <RootNav.Screen name="AddNewAdress" component={AddNewAdress} />
+          <RootNav.Screen name="TripDetailsLocation" component={TripDetailsLocation} />
         </RootNav.Navigator>
       </NavigationContainer>
     );

@@ -24,6 +24,7 @@ import Modal from 'react-native-modal';
 
 const AddTripScreen = props => {
     const { data } = props?.route?.params
+    const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const navigation = useNavigation()
     const token = useSelector(state => state.authReducer.token);
     const user = useSelector(state => state.commonReducer.userData);
@@ -34,12 +35,14 @@ const AddTripScreen = props => {
     const [cities, setCities] = useState([])
     const [withFilter, setFilter] = useState(true);
     const [selectedCities, setSelectedCities] = useState('');
+    const [citiesWithImage, setCitiesWithImage] = useState(null)
     const [title, setTitle] = useState('');
     const [imagePicker, setImagePicker] = useState(false);
     const [image, setImage] = useState({})
+    const [cityimage, setCityImage] = useState()
+    console.log("🚀 ~ cityimage:", cityimage)
     const [searchQuery, setSearchQuery] = useState('')
     const [filteredCities, setFilteredCities] = useState([])
-    console.log("🚀 ~ image:", image)
     const [loading, setLoading] = useState(false)
     const [description, setDescription] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -53,7 +56,6 @@ const AddTripScreen = props => {
             const response = await axios.post('https://countriesnow.space/api/v0.1/countries/cities', {
                 country: country?.name,
             });
-            console.log("🚀 ~ fetchCities ~ response.data.data:", response.data.data)
             setCities(response.data.data);
         } catch (error) {
             console.log('Error fetching cities', error);
@@ -61,7 +63,8 @@ const AddTripScreen = props => {
     };
 
     useEffect(() => {
-        fetchCities()
+        fetchCities();
+        getCityDetails()
     }, [country?.name])
 
 
@@ -72,6 +75,36 @@ const AddTripScreen = props => {
     }, [searchQuery])
 
 
+
+    const getCityDetails = async () => {
+        const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
+        let fetchedData = [];
+        // for (const city of selectedCities) {
+        try {
+            const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=famous+landmarks+in+${selectedCities}&key=${apiKey}`;
+            const response = await axios.get(placesUrl);
+
+            if (response.data.results.length > 0) {
+                const photoReference = response.data.results[0]?.photos?.[0]?.photo_reference;
+
+                if (photoReference) {
+                    const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
+                    fetchedData.push({ name: selectedCities, uri: photoUrl });
+                } else {
+                    fetchedData.push({ name: selectedCities, uri: null });
+                }
+            } else {
+                fetchedData.push({ name: selectedCities, uri: null });
+            }
+        } catch (error) {
+            console.error(`Error fetching image for ${selectedCities}:`, error);
+            fetchedData.push({ name: selectedCities, uri: null });
+        }
+        // } 
+        const firstUri = fetchedData.length > 0 ? fetchedData[0].uri : null;
+        setCitiesWithImage(fetchedData);
+    }
+
     const onPressSubmit = async () => {
         const url = 'auth/trip_notes'
         const body = {
@@ -79,13 +112,17 @@ const AddTripScreen = props => {
             description: description,
             image: null,
             location_name: data?.name,
-            lat: data?.geometry?.location?.lat,
-            lng: data?.geometry?.location?.lng,
-            country: country?.name,
-            city: selectedCities,
-            flag: country?.cca2,
+            lat: data?.geometry?.location?.lat || data?.latitude,
+            lng: data?.geometry?.location?.lng || data?.longitude,
+            country_name: country,
+            city_name: selectedCities,
+            flag: `https://flagcdn.com/w320/${countryCode.toLowerCase()}.png`,
             user_id: user?.id,
+            country_uri: `https://flagcdn.com/w320/${countryCode.toLowerCase()}.png`,
+            country_city_count: 1,
+            city_image: citiesWithImage?.uri || cityimage,
         }
+        console.log("🚀 ~ onPressSubmit ~ body:", body)
         setLoading(true)
         const response = await Post(url, body, apiHeader(token))
         setLoading(false)
@@ -97,6 +134,66 @@ const AddTripScreen = props => {
             navigation.goBack()
         }
     }
+
+    useEffect(() => {
+        console.log('chk asjhda')
+        getCityAndCountry()
+    }, [])
+
+    const getCityAndCountry = async () => {
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(data?.address)}&key=${apiKey}`;
+
+        try {
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if (result.status !== "OK") {
+                console.error("Error fetching location data:", result.error_message || result.status);
+                return;
+            }
+
+            if (result.results.length > 0) {
+                const components = result.results[0].address_components;
+                let city = "", country = "", countryCode = "", placeId = "";
+
+                components.forEach(component => {
+                    if (component.types.includes("locality")) {
+                        city = component.long_name;
+                    }
+                    if (component.types.includes("country")) {
+                        country = component.long_name;
+                        countryCode = component.short_name;
+                    }
+                });
+
+                placeId = result.results[0].place_id;
+                setSelectedCities(city);
+                setCountryCode(countryCode);
+                setCountry(country);
+
+                const placeDetailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=photo&key=${apiKey}`;
+                const placeResponse = await fetch(placeDetailsUrl);
+                console.log("🚀 ~ getCityAndCountry ~ placeResponse:", placeResponse)
+                console.log("🚀 ~ getCityAndCountry ~ placeDetailsUrl:", placeDetailsUrl)
+                const placeResult = await placeResponse.json();
+                console.log("🚀 ~ placeResult:", placeResult);
+                if (placeResult.result && placeResult.result.photos && placeResult.result.photos.length > 0) {
+                    const photoReference = placeResult.result.photos[0].photo_reference;
+                    console.log("🚀 ~ getCityAndCountry ~ photoReference:", photoReference);
+                    const cityImageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
+                    setCityImage(cityImageUrl != undefined ? cityImageUrl : null);
+                    console.log("🚀 ~ getCityAndCountry ~ cityImageUrl:", cityImageUrl);
+                } else {
+                    console.warn("No photos found for this place.");
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching location data:", error);
+        }
+    };
+
+
+
 
     return (
         <ScreenBoiler
@@ -141,7 +238,7 @@ const AddTripScreen = props => {
                             <CustomText isBold style={{
                                 fontSize: moderateScale(12, 0.6),
                                 color: Color.black
-                            }}>Select Country</CustomText>
+                            }}>{country ? country : ' Select Country'}</CustomText>
                             <TouchableOpacity
                                 onPress={() => {
                                     setVisible(true);
@@ -166,15 +263,15 @@ const AddTripScreen = props => {
                                         (false);
                                     }}
                                 />
-
                                 {country && (
                                     <CustomText
                                         style={{
                                             fontSize: moderateScale(15, 0.6),
                                             color: '#5E5E5E',
-                                        }}>{country?.name ? `${country?.name}` : 'Select Country'}</CustomText>
+                                        }}>
+                                        {country ? country : 'Select Country'}
+                                    </CustomText>
                                 )}
-
                                 <Icon
                                     name={'angle-down'}
                                     as={FontAwesome}

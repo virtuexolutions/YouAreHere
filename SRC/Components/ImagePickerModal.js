@@ -44,7 +44,6 @@ const requestCameraPermission = async () => {
 
 const ImagePickerModal = props => {
   let { show, setShow, setFileObject, setMultiImages, crop, type, setTripModalVisibe ,fromNotePad} = props;
-  console.log('fromNotePad',fromNotePad)
 
   const openGallery = () => {
     let options = {
@@ -118,7 +117,6 @@ const ImagePickerModal = props => {
       }
     }
     launchCamera(options, response => {
-      console.log('images === >>> ' , response?.assets)
       if (Platform.OS == 'ios') {
         setShow(false);
        

@@ -33,7 +33,6 @@ const AddTripsModal = ({ isVisible, setisVisible, data }) => {
     const [countryCode, setCountryCode] = useState("US");
     const [country, setCountry] = useState([])
     const [cities, setCities] = useState([])
-    console.log(country?.name, 'countryyyyyyyyy')
     const [withFilter, setFilter] = useState(true);
     const [selectedCities, setSelectedCities] = useState('');
     const [title, setTitle] = useState('');
@@ -41,7 +40,6 @@ const AddTripsModal = ({ isVisible, setisVisible, data }) => {
     const [image, setImage] = useState({})
     const [loading, setLoading] = useState(false)
     const [description, setDescription] = useState('')
-    console.log("🚀 ~ AddTripsModal ~ image:", image)
 
     const onSelect = country => {
         setCountryCode(country.cca2);
@@ -53,7 +51,6 @@ const AddTripsModal = ({ isVisible, setisVisible, data }) => {
             const response = await axios.post('https://countriesnow.space/api/v0.1/countries/cities', {
                 country: country?.name,
             });
-            console.log('reposennnnnne', response?.data?.data)
             setCities(response.data.data);
         } catch (error) {
             console.log('Error fetching cities', error);
@@ -79,10 +76,8 @@ const AddTripsModal = ({ isVisible, setisVisible, data }) => {
             flag: country?.cca2,
             user_id: user?.id,
         }
-        console.log("🚀 ~ onPressSubmit ~ body:", body)
         setLoading(true)
         const response = await Post(url, body, apiHeader(token))
-        console.log("🚀 ~ onPressSubmit ~ response:", response?.data)
         setLoading(false)
         if (response != undefined) {
             setLoading(false)
@@ -122,7 +117,6 @@ const AddTripsModal = ({ isVisible, setisVisible, data }) => {
                         <TouchableOpacity
                             onPress={() => {
                                 setVisible(true);
-                                console.log('first');
                             }}
                             activeOpacity={0.9}
                             style={[

@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   userData: {},
@@ -113,6 +113,8 @@ const initialState = {
   currentLocation: {},
   selectedRole: '',
   favouriteLocation: [],
+  savedTrips: [],
+  trips: [],
 };
 
 const CommonSlice = createSlice({
@@ -153,12 +155,11 @@ const CommonSlice = createSlice({
     setCustomLocation(state, action) {
       state.customLocation = action.payload;
     },
-
     setNotePadData(state, action) {
       console.log('here paylaod=========>>>>>>>>>>>>>', action.payload);
       state.notePadData = [
         ...state.notePadData,
-        {...action.payload, id: state.notePadData.length + 1},
+        { ...action.payload, id: state.notePadData.length + 1 },
       ];
     },
     setFiles(state, action) {
@@ -213,8 +214,28 @@ const CommonSlice = createSlice({
       console.log('=====================,action.payload', action.payload);
       state.favouriteLocation.push(action.payload)
     },
-    setDeletFavLocation(state,action){
-      state.favouriteLocation = state.favouriteLocation.filter(item=>item?.id != action.payload.id)
+    setDeletFavLocation(state, action) {
+      state.favouriteLocation = state.favouriteLocation.filter(item => item?.id != action.payload.id)
+    },
+    addTrip: (state, action) => {
+      state.trips.push({ id: Date.now(), name: action.payload, locations: [] });
+    },
+    deleteTrip: (state, action) => {
+      state.trips = state.trips.filter(trip => trip.id !== action.payload);
+    },
+    saveLocationToTrip: (state, action) => {
+      const { tripId, location } = action.payload;
+      const trip = state.trips.find(t => t.id === tripId);
+      if (trip) {
+        trip.locations.push(location);
+      }
+    },
+    removeLocationFromTrip: (state, action) => {
+      const { tripId, locationId } = action.payload;
+      const trip = state.trips.find(t => t.id === tripId);
+      if (trip) {
+        trip.locations = trip.locations.filter(loc => loc.id !== locationId);
+      }
     }
   },
 });
