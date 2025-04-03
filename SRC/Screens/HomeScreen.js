@@ -227,6 +227,7 @@ const HomeScreen = props => {
     try {
       setIsLoading(true);
       const response = await axios.get(url);
+      console.log("🚀 ~ response?.data?.results:", response?.data?.results)
       setIsLoading(false);
       if (response != undefined) {
         setplacesData(response?.data?.results);
@@ -889,6 +890,7 @@ const HomeScreen = props => {
                 //   height: windowHeight * 0.25,
               }}
               renderItem={({ item, index }) => {
+              console.log("🚀 ~ item:", item?.photos)
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard

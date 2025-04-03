@@ -43,7 +43,6 @@ const PlacesCard = ({
   style,
   isshownSave = true
 }) => {
-  // console.log('hello from places card')
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
@@ -176,17 +175,16 @@ const PlacesCard = ({
             ref.open();
           }
         }}>
-        <View style={styles.image}>
+        <View style={styles.imageContainer}>
           <CustomImage
             source={
-              ['', undefined, null].includes(item?.image)
-                ? require('../Assets/Images/errorimage.png')
-                : { uri: item?.image }
+              item?.photos
+                ? { uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${item?.photos[0]?.photo_reference}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc` }
+                : ['', undefined, null].includes(item?.image)
+                  ? require('../Assets/Images/errorimage.png')
+                  : { uri: item?.image }
             }
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
+            style={styles.image}
             resizeMode={'cover'}
           />
         </View>

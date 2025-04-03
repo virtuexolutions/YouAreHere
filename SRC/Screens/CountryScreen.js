@@ -159,12 +159,13 @@ const CountryScreen = () => {
                             )
                         }}
                         renderItem={({ item, index }) => {
+                            console.log("🚀 ~ CountryScreen ~ item:", item)
                             return (
                                 <>
                                     <CountryCard
-                                        citiesCount={`No of cities added = ${item?.city_count}`}
+                                        // citiesCount={`No of cities added = ${item?.city_count}`}
                                         name={item?.name}
-                                        uri={`https://flagcdn.com/w320/${country?.cca2.toLowerCase()}.png`}
+                                        uri={item?.uri}
                                         onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
                                     />
                                 </>

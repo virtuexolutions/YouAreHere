@@ -32,7 +32,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
 import CustomButton from './CustomButton';
 
-const SelectFilterModal = ({ show, onPressButton, setShow }) => {
+const SelectFilterModal = ({ show, onPressButton, setShow, pickMultiple = false }) => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const token = useSelector(state => state.authReducer.token);
@@ -47,7 +47,8 @@ const SelectFilterModal = ({ show, onPressButton, setShow }) => {
     const [userPreferences, setUserPreferences] = useState(
         filteredUserPreference?.length > 0 ? filteredUserPreference : [],
     );
-    const [currentItem, setCurrentItem] = useState({});
+    const [currentItem, setCurrentItem] = useState(pickMultiple ? [] : {});
+    console.log("🚀 ~ SelectFilterModal ~ currentItem:", currentItem)
     const [isLoading, setIsLoading] = useState(false);
     const [types, setTypes] = useState([
         {
@@ -640,6 +641,7 @@ const SelectFilterModal = ({ show, onPressButton, setShow }) => {
                 : alert('Preference updated');
         }
     };
+
     return (
         <Modal isVisible={show}
             swipeDirection="up"

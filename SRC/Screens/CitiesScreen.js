@@ -30,6 +30,7 @@ const CitiesScreen = props => {
     const [cities, setCities] = useState([])
     const [citiesmodalVisible, setCitiesModalVisible] = useState(false)
     const [selectedCities, setSelectedCities] = useState([])
+    console.log("🚀 ~ selectedCities:", selectedCities)
     const [searchQuery, setSearchQuery] = useState('')
     const [citiesWithImage, setCitiesWithImage] = useState(null)
     const [filteredCities, setFilteredCities] = useState([])
@@ -97,10 +98,12 @@ const CitiesScreen = props => {
 
             if (response.data.results.length > 0) {
                 const photoReference = response.data.results[0]?.photos?.[0]?.photo_reference;
+                console.log("🚀 ~ getCityDetails ~ photoReference:", photoReference)
 
                 if (photoReference) {
                     const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
                     fetchedData.push({ name: cityName, uri: photoUrl });
+                    console.log("🚀 ~ getCityDetails ~ photoUrl:", photoUrl)
                 } else {
                     fetchedData.push({ name: cityName, uri: null });
                 }
@@ -128,6 +131,7 @@ const CitiesScreen = props => {
         console.log("🚀 ~ onPressSave ~ body:", body)
         setIsLoading(false)
         const response = await Post(url, body, apiHeader(token))
+        console.log("🚀 ~ onPressSave ~ response:", response?.data)
         setIsLoading(false)
         if (response != undefined) {
             setIsLoading(false)
@@ -142,7 +146,6 @@ const CitiesScreen = props => {
         <ScreenBoiler
             statusBarBackgroundColor={'white'}
             statusBarContentStyle={'dark-content'}
-
         >
             <LinearGradient
                 style={{
@@ -262,18 +265,21 @@ const CitiesScreen = props => {
                         data={searchQuery != '' ? filteredCities : cities}
                         // ListEmptyComponent={<CustomText style={styles.emphty_text}>please select country first</CustomText>}
                         renderItem={({ item, index }) => {
+                            console.log("🚀 ~ item:", selectedCities === item)
                             return (
-                                <TouchableOpacity style={styles.cites_btn} onPress={() => {
+                                <TouchableOpacity style={[styles.cites_btn, {
+                                    backgroundColor: selectedCities === item ? Color.themeColor : 'white',
+
+                                }]} onPress={() => {
                                     if (selectedCities.includes(item)) {
                                         Platform.OS == 'android' ? ToastAndroid.show('City already added', ToastAndroid.SHORT) : alert('City already added')
                                     }
                                     else {
                                         getCityDetails()
-                                        // setSelectedCities(prev => [...prev, item])
                                         setSelectedCities(item)
                                         setCityName(item)
-                                        // setCitiesModalVisible(false)
                                         setSearchQuery('')
+                                        onPressSave()
                                     }
                                 }}>
                                     <CustomText style={styles.text}>{item}</CustomText>
@@ -281,7 +287,7 @@ const CitiesScreen = props => {
                             )
                         }}
                     />
-                    <CustomButton
+                    {/* <CustomButton
                         text={
                             isLoading ? (
                                 <ActivityIndicator size={'small'} color={'white'} />
@@ -298,7 +304,7 @@ const CitiesScreen = props => {
                         fontSize={moderateScale(11, 0.6)}
                         borderRadius={moderateScale(5, 0.3)}
                         marginTop={moderateScale(20, 0.3)}
-                    />
+                    /> */}
                 </View>
             </Modal>
 
@@ -340,7 +346,6 @@ const styles = ScaledSheet.create({
         paddingVertical: moderateScale(20, 0.6)
     },
     cites_btn: {
-        backgroundColor: 'white',
         width: windowWidth * 0.83,
         paddingVertical: moderateScale(10, 0.6),
         borderRadius: moderateScale(10, 0.6),
