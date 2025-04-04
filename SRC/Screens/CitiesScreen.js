@@ -29,18 +29,19 @@ const CitiesScreen = props => {
     const navigation = useNavigation()
     const [cities, setCities] = useState([])
     const [citiesmodalVisible, setCitiesModalVisible] = useState(false)
-    const [selectedCities, setSelectedCities] = useState([])
-    console.log("🚀 ~ selectedCities:", selectedCities)
+    // const [cityData?.name, setSelectedCities] = useState([])
+    // console.log("🚀 ~ selectedCities:", selectedCities)
     const [searchQuery, setSearchQuery] = useState('')
-    const [citiesWithImage, setCitiesWithImage] = useState(null)
+    // const [citiesWithImage, setCitiesWithImage] = useState(null)
     const [filteredCities, setFilteredCities] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [citiesList, setCitiesList] = useState([])
     console.log("🚀 ~ citiesList:", citiesList)
-    const [cityName, setCityName] = useState('')
-    const [image, setImage] = useState(null)
+    // const [cityName, setCityName] = useState('')
+    const [cityData, setCityData] = useState({})
+    console.log('cxcxzc',cityData);
     const [countryCode, setCountryCode] = useState(null)
-    console.log("🚀 ~ cityName:", cityName)
+    // console.log("🚀 ~ cityName:", cityName)
     const token = useSelector(state => state.authReducer.token);
     console.log("🚀 ~ token:", token)
     const user = useSelector(state => state.commonReducer.userData);
@@ -69,31 +70,33 @@ const CitiesScreen = props => {
         }
     }, [searchQuery])
 
-    useEffect(() => {
-        getCityDetails();
-    }, [selectedCities])
+    // useEffect(() => {
+    //     getCityDetails();
+    // }, [selectedCities])
 
     useEffect(() => {
         getCities()
-    }, [cities])
+    }, [])
 
     const getCities = async () => {
         const url = `auth/cities?country_id=${data?.id}`
         const response = await Get(url, token)
-        console.log("🚀 ~ getCities ~ response:", response?.data)
+        setIsLoading(true)
         if (response != undefined) {
+            console.log("🚀 ~ getCities ~ response:", response?.data)
+        setIsLoading(false)
             setCitiesList(response?.data?.data)
         } else {
             setIsLoading(false)
         }
     }
 
-    const getCityDetails = async () => {
+    const getCityDetails = async (item) => {
         const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
         let fetchedData = [];
         // for (const city of selectedCities) {
         try {
-            const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=famous+landmarks+in+${cityName}&key=${apiKey}`;
+            const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=famous+landmarks+in+${item}&key=${apiKey}`;
             const response = await axios.get(placesUrl);
 
             if (response.data.results.length > 0) {
@@ -102,44 +105,49 @@ const CitiesScreen = props => {
 
                 if (photoReference) {
                     const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
-                    fetchedData.push({ name: cityName, uri: photoUrl });
+                    fetchedData.push({ name: item, uri: photoUrl });
                     console.log("🚀 ~ getCityDetails ~ photoUrl:", photoUrl)
                 } else {
-                    fetchedData.push({ name: cityName, uri: null });
+                    fetchedData.push({ name: item, uri: null });
                 }
             } else {
-                fetchedData.push({ name: cityName, uri: null });
+                fetchedData.push({ name: item, uri: null });
             }
         } catch (error) {
-            console.error(`Error fetching image for ${cityName}:`, error);
-            fetchedData.push({ name: cityName, uri: null });
+            console.error(`Error fetching image for ${item}:`, error);
+            fetchedData.push({ name: item, uri: null });
         }
         // } 
         const firstUri = fetchedData.length > 0 ? fetchedData[0].uri : null;
-        setCitiesWithImage(fetchedData);
-        setImage(firstUri)
+        // setCitiesWithImage(fetchedData);
+        setCityData({name : item , image : firstUri , id : data?.id})
     }
 
     const onPressSave = async () => {
         const url = 'auth/cities'
-        const firstItem = selectedCities[0];
+        // const firstItem = selectedCities[0];
         const body = {
-            country_id: data?.id,
-            name: cityName,
-            image: image
+            country_id: cityData?.id,
+            name: cityData?.name,
+            image: cityData?.image
         }
-        console.log("🚀 ~ onPressSave ~ body:", body)
+    //    return console.log("🚀 ~ onPressSave ~ body:", body)
         setIsLoading(false)
         const response = await Post(url, body, apiHeader(token))
-        console.log("🚀 ~ onPressSave ~ response:", response?.data)
+      
         setIsLoading(false)
         if (response != undefined) {
-            setIsLoading(false)
+            setCitiesList((prev)=> [...prev , 
+                {
+                    country_id: cityData?.id,
+                    name: cityData?.name,
+                    image: cityData?.image
+                }
+            ])
+            // getCities()
+            setCityData({})
             setCitiesModalVisible(false)
-            getCities()
-        } else {
-            setIsLoading(false)
-        }
+        } 
     }
 
     return (
@@ -167,6 +175,7 @@ const CitiesScreen = props => {
                         }}>
                         <Icon
                             onPress={() => {
+                                navigation.goBack();
                                 //   console.log('Toggle drawer'); navigation.toggleDrawer();
                             }}
                             name="chevron-back"
@@ -264,24 +273,27 @@ const CitiesScreen = props => {
                     <FlatList
                         data={searchQuery != '' ? filteredCities : cities}
                         renderItem={({ item, index }) => {
-                            console.log("🚀 ~ item:", selectedCities === item)
+                            // console.log("🚀 ~ item:", selectedCities === item)
                             return (
                                 <TouchableOpacity style={[styles.cites_btn, {
-                                    backgroundColor: selectedCities === item ? Color.themeColor : 'white',
-
+                                    backgroundColor: cityData?.name === item ? Color.themeColor : 'white',
                                 }]} onPress={() => {
-                                    if (selectedCities.includes(item)) {
+                                    if (citiesList.findIndex(item1 => item1?.name == item) != -1) {
                                         Platform.OS == 'android' ? ToastAndroid.show('City already added', ToastAndroid.SHORT) : alert('City already added')
                                     }
                                     else {
-                                        getCityDetails()
-                                        setSelectedCities(item)
-                                        setCityName(item)
+                                        getCityDetails(item)
+                                        // setSelectedCities(item)
+                                        // setCityName(item)
                                         setSearchQuery('')
-                                        onPressSave()
+                                        // onPressSave()
                                     }
                                 }}>
-                                    <CustomText style={styles.text}>{item}</CustomText>
+                                    {cityData?.name === item && isLoading ? (
+                                        <ActivityIndicator/>
+                                    ) :(
+                                        <CustomText style={styles.text}>{item}</CustomText>
+                                    )}
                                 </TouchableOpacity>
                             )
                         }}

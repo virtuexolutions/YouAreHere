@@ -69,7 +69,6 @@ const HomeScreen = props => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [label, setLabel] = useState('');
-  // const [favouriteLocation, setFavouriteLocaion] = useState([]);
   const [searchData, setSearchData] = useState('');
   const [placesData, setplacesData] = useState([]);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
@@ -252,7 +251,7 @@ const HomeScreen = props => {
           item?.lng == customLocation?.location?.lng,
       ) &&
         (setFoundLocation(
-          favouriteplaces.find(
+          favouriteplaces?.find(
             (item, index) =>
               item?.lat == customLocation?.location?.lat &&
               item?.lng == customLocation?.location?.lng,
@@ -333,8 +332,6 @@ const HomeScreen = props => {
       Platform.OS == 'android'
         ? await requestLocationPermission()
         : await requestLocationPermissionIOS();
-
-    // return console.log('result == >', permissionResult);
     if (permissionResult == false) {
       return Platform.OS == 'android'
         ? ToastAndroid.show(
@@ -359,8 +356,6 @@ const HomeScreen = props => {
       timeout: 60000,
     })
       .then(async location => {
-        // console.log('test================>', location);
-        // fetchAddress(location);
         setCurrentLocation(location);
         getCountryCode();
         getAddressFromCoordinates(location?.latitude, location?.longitude);
@@ -412,7 +407,7 @@ const HomeScreen = props => {
       const response = await fetch(url);
       const data = await response.json();
       if (data.status === 'OK') {
-        const givenaddress = data.results[0].formatted_address;
+        const givenaddress = data?.results[0].formatted_address;
         setLocationName(givenaddress);
       } else {
         console.log('No address found');
@@ -425,8 +420,8 @@ const HomeScreen = props => {
   useEffect(() => {
     if (currentLocation) {
       getAddressFromCoordinates(
-        currentLocation.latitude,
-        currentLocation.longitude,
+        currentLocation?.latitude,
+        currentLocation?.longitude,
       );
     }
     getTripList();
@@ -563,7 +558,6 @@ const HomeScreen = props => {
         style={{
           width: windowWidth,
           height: windowHeight,
-          //   justifyContent:'center'
         }}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -574,38 +568,6 @@ const HomeScreen = props => {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
-          {/* <View style={{
-              backgroundColor : 'white', 
-              width : windowWidth*0.95,
-              borderRadius : 20,
-              marginVertical :moderateScale(5,.3) ,
-              flexDirection : 'row',
-                paddingVertical :moderateScale(8.6),
-              marginHorizontal :moderateScale(10,.3)
-            }}>
-            <CustomText
-   
-            style={{
-              fontSize: moderateScale(12, 0.6),
-              // paddingTop: moderateScale(10, 0.6),
-              paddingHorizontal: moderateScale(5, 0.6),
-              color: Color.darkGray,
-              paddingLeftt: moderateScale(5,.6)
-            }}>
-            we value your input :
-          </CustomText>
-          <CustomText
-            onPress={() => {
-              console.log('----------------------')
-              feedBackForm()
-            }}
-            style={{
-              fontSize: moderateScale(12, 0.6),
-              color: 'blue',
-            }}>
-            `https://forms.gle/edJ3QPvb6B1awqvi6`
-          </CustomText>
-            </View> */}
           <View style={styles.welView}>
             <CustomText style={styles.weltxt}>
               hello ,<CustomText style={styles.weltxt}>{user?.name}</CustomText>
@@ -648,7 +610,7 @@ const HomeScreen = props => {
                     <OptionsMenu
                       customButton={
                         <View
-                          key={item.id}
+                          key={item?.id}
                           style={[
                             styles.sectionInnerItem,
                             {
@@ -667,7 +629,7 @@ const HomeScreen = props => {
                                   : Color.themeColor,
                               fontSize: moderateScale(12, 0.1),
                             }}>
-                            {item.label}
+                            {item?.label}
                           </CustomText>
                         </View>
                       }
@@ -741,7 +703,7 @@ const HomeScreen = props => {
               fetchDetails={true}
               styles={{
                 textInputContainer: {
-                  width: windowWidth * 0.72,
+                  width: windowWidth * 0.7,
                   marginLeft: moderateScale(5, 0.6),
                 },
                 textInput: {
@@ -772,6 +734,23 @@ const HomeScreen = props => {
             <TouchableOpacity
               style={styles.menuIcon}
               onPress={() => setPreferencesModalVisible(true)}>
+               {preferences != null &&
+                <View style={{
+                  position : 'absolute',
+                  right :1,
+                  top : -7,
+                  width : moderateScale(15,0.6),
+                  height : moderateScale(15,0.6),
+                  borderRadius : moderateScale(7.5,0.6),
+                  backgroundColor : 'red',
+                  justifyContent : 'center',
+                  alignItems : 'center',
+                }}>
+                  <CustomText style={{
+                    color : 'white'
+                  }}>1</CustomText>
+                </View>
+}
               <Icon
                 name="filter"
                 as={Ionicons}
@@ -780,38 +759,38 @@ const HomeScreen = props => {
               />
             </TouchableOpacity>
           </View>
-          {preferences != null && (
-            <View
-              style={{
-                width: windowWidth * 0.25,
-                height: windowHeight * 0.035,
-                backgroundColor: Color.white,
-                marginLeft: moderateScale(15, 0.6),
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                borderRadius: moderateScale(20, 0.6),
-                flexDirection: 'row',
-                paddingHorizontal: moderateScale(10, 0.6),
-              }}>
-              <CustomText
-                style={{
-                  fontSize: moderateScale(8, 0.6),
-                  textTransform: 'capitalize',
-                  color: Color.black,
-                  marginRight: moderateScale(10, 0.6),
-                }}
-                isBold>
-                {preferences?.name}
-              </CustomText>
-              <Icon
-                onPress={() => setPreferences(null)}
-                name={'cross'}
-                as={Entypo}
-                color={Color.orange}
-                size={moderateScale(18, 0.6)}
-              />
-            </View>
-          )}
+          {/* {preferences != null && ( 
+             <View
+            //   style={{
+            //     width: windowWidth * 0.25,
+            //     height: windowHeight * 0.035,
+            //     backgroundColor: Color.white,
+            //     marginLeft: moderateScale(15, 0.6),
+            //     justifyContent: 'space-between',
+            //     alignItems: 'center',
+            //     borderRadius: moderateScale(20, 0.6),
+            //     flexDirection: 'row',
+            //     paddingHorizontal: moderateScale(10, 0.6),
+            //   }}>
+            //   <CustomText
+            //     style={{
+            //       fontSize: moderateScale(8, 0.6),
+            //       textTransform: 'capitalize',
+            //       color: Color.black,
+            //       marginRight: moderateScale(10, 0.6),
+            //     }}
+            //     isBold>
+            //     {preferences?.name}
+            //   </CustomText>
+            //   <Icon
+            //     onPress={() => setPreferences(null)}
+            //     name={'cross'}
+            //     as={Entypo}
+            //     color={Color.orange}
+            //     size={moderateScale(18, 0.6)}
+            //   />
+            // </View>
+          // )}*/}
           <View
             style={{ flexDirection: 'row', marginTop: moderateScale(10, 0.3) }}>
             <FlatList
@@ -883,11 +862,8 @@ const HomeScreen = props => {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
                 paddingBottom: 50,
-                //   alignItems: 'center',
                 marginTop: moderateScale(10, 0.3),
                 marginBottom: moderateScale(20, 0.3),
-                //   backgroundColor:'black',
-                //   height: windowHeight * 0.25,
               }}
               renderItem={({ item, index }) => {
               console.log("🚀 ~ item:", item?.photos)
@@ -914,8 +890,6 @@ const HomeScreen = props => {
           <AddPlacesModal
             setLabel={setLabel}
             label={label}
-            // favouriteLocation={favouriteLocation}
-            // setFavouriteLocaion={setFavouriteLocaion}
             setRef={setRbRef}
             rbRef={rbRef}
             item={currentLocation}
@@ -1031,7 +1005,7 @@ const HomeScreen = props => {
                         <CustomText
                           style={{
                             fontSize: moderateScale(11, 0.6),
-                            color: Color.red,
+                            // color: Color.red,
                           }}>
                           no data found
                         </CustomText>
@@ -1096,13 +1070,14 @@ const HomeScreen = props => {
           /> */}
         </ScrollView>
       </LinearGradient>
+
+    
     </ScreenBoiler>
   );
 };
 
 const styles = ScaledSheet.create({
   container: {
-    // alignItems: "center",
     justifyContent: 'center',
     height: windowHeight,
     width: windowWidth,
@@ -1110,7 +1085,6 @@ const styles = ScaledSheet.create({
   },
   weltxt: {
     fontSize: moderateScale(18, 0.6),
-    // backgroundColor :'reds'
     textTransform: 'capitalize',
     color: Color.white,
   },
@@ -1124,7 +1098,6 @@ const styles = ScaledSheet.create({
     paddingHorizontal: moderateScale(6, 6),
     paddingVertical: moderateScale(5, 0.6),
     justifyContent: 'space-between',
-    // backgroundColor :'red'
   },
   text_view: {
     flexDirection: 'row',
@@ -1135,15 +1108,12 @@ const styles = ScaledSheet.create({
     width: windowWidth * 0.5,
   },
   sectionInnerItem: {
-    // width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
     gap: 4,
     margin: moderateScale(6, 0.6),
     padding: moderateScale(6, 0.5),
-    // borderWidth:0.5,
-    // borderColor: Color.red,
     borderRadius: moderateScale(25, 0.2),
     overflow: 'hidden',
     paddingHorizontal: 8,
@@ -1194,11 +1164,9 @@ const styles = ScaledSheet.create({
     borderRadius: moderateScale(15, 0.6),
     paddingHorizontal: moderateScale(10, 0.6),
     paddingVertical: moderateScale(7, 0.6),
-    // backgroundColor:'green',
     textAlign: 'center',
     alignSelf: 'center',
     overflow: 'hidden',
-
     margin: moderateScale(3, 0.3),
     backgroundColor: Color.white,
     fontSize: moderateScale(12, 0.6),
@@ -1213,7 +1181,7 @@ const styles = ScaledSheet.create({
     borderRadius: (windowWidth * 0.11) / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: moderateScale(5, 0.3),
+    // marginRight: moderateScale(5, 0.3),
   },
 
   textContainer: {
@@ -1231,25 +1199,41 @@ const styles = ScaledSheet.create({
   },
   search: {
     flexDirection: 'row',
-    justifyContent: 'center',
+     paddingHorizontal: moderateScale(2, 0.6),
     alignItems: 'center',
+    justifyContent : 'space-between',
     marginTop: moderateScale(10, 0.6),
+    // backgroundColor : 'red'
   },
   placesContainer: {
-    // backgroundColor:'white',
-    // height:windowHeight*0.2,
     flexDirection: 'row',
     gap: moderateScale(5, 0.25),
     marginTop: moderateScale(10, 0.3),
     justifyContent: 'flex-start',
     paddingHorizontal: moderateScale(10, 0.3),
-    // backgroundColor:'red',
   },
   welView: {
     flexDirection: 'row',
     width: '100%',
     paddingTop: moderateScale(15.6),
     paddingHorizontal: moderateScale(17, 0.6),
+  },
+  filterIcon: {
+    backgroundColor: Color.themeColor,
+    width: windowWidth * 0.11,
+    height: windowWidth * 0.11,
+    borderRadius: (windowWidth * 0.11) / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: moderateScale(5, 0.3),
+    textAlign: 'center',
+  },
+  modal: {
+    borderRadius: 20,
+    width: windowWidth * 0.4,
+    height: windowHeight * 0.25,
+    backgroundColor: 'white',
+    justifyContent: 'flex-end',
   },
 });
 

@@ -33,7 +33,7 @@ const WhishListScreen = ({ item }) => {
   const isFocused = useIsFocused();
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const token = useSelector(state => state.authReducer.token);
-
+console.log('tokeeeeeennnnn',token)
   const navigationN = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [wishListData, setWishListData] = useState([]);
@@ -80,7 +80,7 @@ const WhishListScreen = ({ item }) => {
 
 
   const getTripList = async () => {
-    const url = 'auth/playlists '
+    const url = 'auth/playlists'
     setTripListLoading(true)
     const response = await Get(url, token)
     setTripListLoading(false)
@@ -122,9 +122,8 @@ const WhishListScreen = ({ item }) => {
   }
 
   useEffect(() => {
-    getWishListData();
+    // getWishListData();
     getTripList()
-    // removeCard();
   }, [isFocused]);
 
   return (
