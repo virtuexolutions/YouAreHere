@@ -179,6 +179,9 @@ const PlacesCard = ({
         <View style={styles.image}>
           <CustomImage
             source={
+              item?.photos ? 
+              { uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${item?.photos[0]?.photo_reference}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc`}
+:
               ['', undefined, null].includes(item?.image)
                 ? require('../Assets/Images/errorimage.png')
                 : { uri: item?.image }

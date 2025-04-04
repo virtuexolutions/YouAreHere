@@ -702,7 +702,7 @@ const HomeScreen = props => {
               fetchDetails={true}
               styles={{
                 textInputContainer: {
-                  width: windowWidth * 0.72,
+                  width: windowWidth * 0.7,
                   marginLeft: moderateScale(5, 0.6),
                 },
                 textInput: {
@@ -733,6 +733,23 @@ const HomeScreen = props => {
             <TouchableOpacity
               style={styles.menuIcon}
               onPress={() => setPreferencesModalVisible(true)}>
+               {preferences != null &&
+                <View style={{
+                  position : 'absolute',
+                  right :1,
+                  top : -7,
+                  width : moderateScale(15,0.6),
+                  height : moderateScale(15,0.6),
+                  borderRadius : moderateScale(7.5,0.6),
+                  backgroundColor : 'red',
+                  justifyContent : 'center',
+                  alignItems : 'center',
+                }}>
+                  <CustomText style={{
+                    color : 'white'
+                  }}>1</CustomText>
+                </View>
+}
               <Icon
                 name="filter"
                 as={Ionicons}
@@ -741,38 +758,38 @@ const HomeScreen = props => {
               />
             </TouchableOpacity>
           </View>
-          {preferences != null && (
-            <View
-              style={{
-                width: windowWidth * 0.25,
-                height: windowHeight * 0.035,
-                backgroundColor: Color.white,
-                marginLeft: moderateScale(15, 0.6),
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                borderRadius: moderateScale(20, 0.6),
-                flexDirection: 'row',
-                paddingHorizontal: moderateScale(10, 0.6),
-              }}>
-              <CustomText
-                style={{
-                  fontSize: moderateScale(8, 0.6),
-                  textTransform: 'capitalize',
-                  color: Color.black,
-                  marginRight: moderateScale(10, 0.6),
-                }}
-                isBold>
-                {preferences?.name}
-              </CustomText>
-              <Icon
-                onPress={() => setPreferences(null)}
-                name={'cross'}
-                as={Entypo}
-                color={Color.orange}
-                size={moderateScale(18, 0.6)}
-              />
-            </View>
-          )}
+          {/* {preferences != null && ( 
+             <View
+            //   style={{
+            //     width: windowWidth * 0.25,
+            //     height: windowHeight * 0.035,
+            //     backgroundColor: Color.white,
+            //     marginLeft: moderateScale(15, 0.6),
+            //     justifyContent: 'space-between',
+            //     alignItems: 'center',
+            //     borderRadius: moderateScale(20, 0.6),
+            //     flexDirection: 'row',
+            //     paddingHorizontal: moderateScale(10, 0.6),
+            //   }}>
+            //   <CustomText
+            //     style={{
+            //       fontSize: moderateScale(8, 0.6),
+            //       textTransform: 'capitalize',
+            //       color: Color.black,
+            //       marginRight: moderateScale(10, 0.6),
+            //     }}
+            //     isBold>
+            //     {preferences?.name}
+            //   </CustomText>
+            //   <Icon
+            //     onPress={() => setPreferences(null)}
+            //     name={'cross'}
+            //     as={Entypo}
+            //     color={Color.orange}
+            //     size={moderateScale(18, 0.6)}
+            //   />
+            // </View>
+          // )}*/}
           <View
             style={{ flexDirection: 'row', marginTop: moderateScale(10, 0.3) }}>
             <FlatList
@@ -986,7 +1003,7 @@ const HomeScreen = props => {
                         <CustomText
                           style={{
                             fontSize: moderateScale(11, 0.6),
-                            color: Color.red,
+                            // color: Color.red,
                           }}>
                           no data found
                         </CustomText>
@@ -1162,7 +1179,7 @@ const styles = ScaledSheet.create({
     borderRadius: (windowWidth * 0.11) / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: moderateScale(5, 0.3),
+    // marginRight: moderateScale(5, 0.3),
   },
 
   textContainer: {
@@ -1180,9 +1197,11 @@ const styles = ScaledSheet.create({
   },
   search: {
     flexDirection: 'row',
-    paddingHorizontal: moderateScale(10, 0.6),
+     paddingHorizontal: moderateScale(2, 0.6),
     alignItems: 'center',
+    justifyContent : 'space-between',
     marginTop: moderateScale(10, 0.6),
+    // backgroundColor : 'red'
   },
   placesContainer: {
     flexDirection: 'row',

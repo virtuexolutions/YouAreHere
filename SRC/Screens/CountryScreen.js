@@ -18,23 +18,24 @@ import CountryCard from '../Components/CountryCard'
 import navigationService from '../navigationService'
 import { Get, Post } from '../Axios/AxiosInterceptorFunction'
 import { useSelector } from 'react-redux'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation , useIsFocused } from '@react-navigation/native'
 
 const CountryScreen = () => {
+    const focused = useIsFocused()
     const navigation = useNavigation()
     const [countryModalVisible, setCountryModalVisible] = useState(false)
-    const [country, setCountry] = useState({ cca2: 'US', name: 'United States' });
-    console.log("🚀 ~ CountryScreen ~ country:", country)
+    const [country, setCountry] = useState({"callingCode": ["1"], "cca2": "US", "currency": ["USD"], "flag": "flag-us", "name": "United States", "region": "Americas", "subregion": "North America"});
+    console.log("🚀 ~ CountryScreen ~ counf4try:", country)
     const [visible, setVisible] = useState(false)
     const [countryCode, setCountryCode] = useState("US");
-    console.log("🚀 ~ CountryScreen ~ countryCode:", countryCode)
+    // console.log("🚀 ~ CountryScreen ~ countryCode:", countryCode)
     const [withFilter, setFilter] = useState(true);
     const [countries, setCountries] = useState([])
-    console.log("🚀 ~ CountryScreen ~ countries:", countries)
+    // console.log("🚀 ~ CountryScreen ~ countries:", countries)
     const [loading, setLoading] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [countriesList, setCountriesList] = useState(null);
-    console.log("🚀 ~ CountryScreen ~ countriesList:", countriesList)
+    const [countriesList, setCountriesList] = useState([]);
+    // console.log("🚀 ~ CountryScreen ~ countriesList:", countriesList)
     const token = useSelector(state => state.authReducer.token);
 
     const onSelect = country => {
@@ -42,35 +43,34 @@ const CountryScreen = () => {
         setCountry(country);
     };
 
-    useEffect(() => {
-        getCountries()
-    }, [countries])
-
     const getCountries = async () => {
         const url = 'auth/countries'
-        const response = await Get(url, token)
-        console.log("🚀 ~ getCountries ~ response:", response?.data)
         setIsLoading(true)
+        const response = await Get(url, token)
+        setIsLoading(false)
         if (response != undefined) {
-            setIsLoading(false)
+            console.log("🚀 ~ getCountries ~ response:", JSON.stringify(response?.data , null , 2) )
             setCountriesList(response?.data?.data)
-        } else {
-            setIsLoading(false)
-        }
+        } 
     }
 
     const addCountry = async (data) => {
         console.log("🚀 ~ addCountry ~ data:", data)
         const url = 'auth/countries'
-        const response = await Post(url, data, apiHeader(token))
         setLoading(true)
-        console.log("🚀 ~ addCountry ~ response:", response?.data?.data)
+        const response = await Post(url, data, apiHeader(token))
+        setLoading(false)
         if (response != undefined) {
-            setLoading(false)
-        } else {
-            setLoading(false)
+            console.log("🚀 ~ addCountry ~ response:", response?.data?.data)
+            getCountries()
         }
     }
+
+    useEffect(() => {
+        getCountries()
+    }, [focused])
+
+   
 
     return (
         <ScreenBoiler
@@ -97,6 +97,7 @@ const CountryScreen = () => {
                         }}>
                         <Icon
                             onPress={() => {
+                                navigation.toggleDrawer();
                                 //   console.log('Toggle drawer'); navigation.toggleDrawer();
                             }}
                             name="menu"
@@ -127,13 +128,22 @@ const CountryScreen = () => {
                     />
 
                 </View>
-                {countriesList === null ? (
+                {isLoading ? (
+                    <View style ={{
+                        width : windowWidth,
+                        height : windowHeight * 0.4,
+                        alignItems : 'center',
+                        justifyContent : 'center',
+                    }}>
+
                     <ActivityIndicator
                         style={styles.indicatorStyle}
                         size="small"
                         color={Color.white}
-                    />
+                        />
+                        </View>
                 ) : (
+                    <>
                     <FlatList
                         showsVerticalScrollIndicator={false}
                         style={{
@@ -164,14 +174,28 @@ const CountryScreen = () => {
                                     <CountryCard
                                         citiesCount={`No of cities added = ${item?.city_count}`}
                                         name={item?.name}
-                                        uri={`https://flagcdn.com/w320/${country?.cca2.toLowerCase()}.png`}
+                                        uri={item?.uri}
                                         onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
                                     />
                                 </>
                             )
                         }}
+                        // ListFooterComponent={()=>{
+                        //     return(
+                        //         countries ? 
+                        //         <CountryCard
+                        //         citiesCount={`No of cities added = 0`}
+                        //         name={country?.name}
+                        //         uri={`https://flagcdn.com/w320/${country?.cca2.toLowerCase()}.png`}
+                        //             //   onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
+                        //           />
+                        //           : <></>
+                        //     )
+                        // }}
 
                     />
+                  
+                    </>
                 )
                 }
                 < View style={{ marginBottom: moderateScale(20, 0.6) }} />
@@ -181,7 +205,7 @@ const CountryScreen = () => {
                 onBackdropPress={() => {
                     setCountryModalVisible(false);
                     //   setImage({});
-                    setCountry([])
+                    setCountry({})
                 }}>
                 <View
                     style={{
@@ -299,22 +323,22 @@ const CountryScreen = () => {
                         // alignSelf={'flex-end'}
                         marginTop={moderateScale(20, 0.3)}
                         onPress={() => {
-                            if (countries.findIndex(item => item?.name == country?.name) != -1) {
+                            if (countriesList.findIndex(item => item?.name == country?.name) != -1) {
                                 Platform.OS == 'android' ? ToastAndroid.show('country already added', ToastAndroid.SHORT) : alert('country already added')
                             }
                             else {
-                                setCountries(prev => [...prev,
-                                {
-                                    name: country?.name, uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
-                                    city_count: 0
-                                }]),
+                                // setCountriesList(prev => [...prev,
+                                // {
+                                //     name: country?.name, uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
+                                //     city_count: 0
+                                // }]),
                                     setCountryModalVisible(false)
-                                setCountry({ cca2: 'US', name: 'USA' })
-                                setCountryCode('US')
+                                // setCountry({ cca2: 'US', name: 'United States'})
+                                // setCountryCode('US')
                                 addCountry({
                                     name: country?.name,
                                     uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
-                                    city_count: 1
+                                    // city_count: 0
                                 })
                             }
                         }
@@ -325,6 +349,9 @@ const CountryScreen = () => {
         </ScreenBoiler>
     )
 }
+
+
+
 
 export default CountryScreen
 

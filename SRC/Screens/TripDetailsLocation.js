@@ -13,9 +13,11 @@ import CustomText from '../Components/CustomText'
 import { Get } from '../Axios/AxiosInterceptorFunction'
 import { useSelector } from 'react-redux'
 import NearPlacesCard from '../Components/NearPlacesCard'
+import { useNavigation } from '@react-navigation/native'
 
 const TripDetailsLocation = props => {
     const { id } = props?.route?.params
+    const navigation = useNavigation()
     console.log("🚀 ~ id:", id)
     const [playListDataLoading, setplayListDataLoading] = useState(false);
     const [playListData, setplayListData] = useState([]);
@@ -68,11 +70,11 @@ const TripDetailsLocation = props => {
                         activeOpacity={0.8}
                         style={styles.Rounded}
                         onPress={() => {
-                            navigationN.toggleDrawer();
+                            navigation.toggleDrawer();
                         }}>
                         <Icon
                             onPress={() => {
-                                navigationN.toggleDrawer();
+                                navigation.toggleDrawer();
                             }}
                             name="menu"
                             as={Ionicons}
