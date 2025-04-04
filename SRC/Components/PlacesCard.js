@@ -31,6 +31,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Alert } from 'react-native';
 import navigationService from '../navigationService';
 import Share from 'react-native-share';
+import axios from 'axios';
 
 const PlacesCard = ({
   item,
@@ -43,10 +44,11 @@ const PlacesCard = ({
   style,
   isshownSave = true
 }) => {
+  console.log("🚀 ~ ids:", ids)
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
-
+  const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const refRBSheet = useRef();
@@ -55,7 +57,9 @@ const PlacesCard = ({
   const [reviewData, setReviewData] = useState([]);
   // const [isLoading2, setIsLoading2] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [place_id, setPlaceId] = useState('')
+  const [details, setDetails] = useState({})
+  console.log("🚀 ~ details:", details)
   const getData = async () => {
     const url = `auth/review_detail/${item.id}`;
     setIsLoading(true);
@@ -66,6 +70,10 @@ const PlacesCard = ({
       setReviewData(response?.data?.reviews);
     }
   };
+
+  useEffect(() => {
+    getPlaceDetails()
+  }, [place_id])
 
   // const saveCard = async () => {
   //   const url = 'auth/wishlist';
@@ -144,6 +152,19 @@ const PlacesCard = ({
     Linking.openURL(url);
   };
 
+
+  const getPlaceDetails = async () => {
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&key=${apiKey}&fields=name,formatted_address,formatted_phone_number,opening_hours,website,plus_code`;
+    try {
+      const response = await axios.get(url);
+      console.log("Place Details:", response?.data?.result);
+      setDetails(response?.data?.result)
+      // return response?.data?.result;
+    } catch (error) {
+      console.error("Error fetching place details:", error);
+    }
+  };
+
   return (
     <>
       <TouchableOpacity
@@ -151,9 +172,10 @@ const PlacesCard = ({
         style={[
           styles.container,
           {
-            backgroundColor: ids?.some(data => data == item?.id)
-              ? '#E0FFFF'
-              : 'white',
+            backgroundColor:
+              ids?.some(data => data == item?.id)
+                ? '#E0FFFF'
+                : 'white',
           },
           style
         ]}
@@ -163,6 +185,7 @@ const PlacesCard = ({
             setIds(prev => [...prev, item?.id]);
         }}
         onPress={() => {
+          setPlaceId(item?.place_id)
           if (!fromHome) {
             if (ids.length > 0) {
               !ids?.some(data => data == item?.id)
@@ -300,9 +323,11 @@ const PlacesCard = ({
             }}>
             <CustomImage
               source={
-                ['', undefined, null].includes(item?.image)
-                  ? require('../Assets/Images/errorimage.png')
-                  : { uri: item?.image }
+                item?.photos
+                  ? { uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${item?.photos[0]?.photo_reference}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc` }
+                  : ['', undefined, null].includes(item?.image)
+                    ? require('../Assets/Images/errorimage.png')
+                    : { uri: item?.image }
               }
               style={{ width: '100%', height: '100%', backgroundColor: 'white' }}
               resizeMode={'stretch'}
@@ -367,7 +392,7 @@ const PlacesCard = ({
                 fontSize: moderateScale(13, 0.6),
                 color: Color.themeDarkGray,
               }}>
-              {` (${item?.totalRatings})`}
+              {` (${item?.totalRatings})` || `(${item?.user_ratings_total})`}
             </CustomText>
           </View>
 
@@ -548,7 +573,7 @@ const PlacesCard = ({
                 color: Color.black,
                 width: windowWidth * 0.85,
               }}>
-              {item?.address}
+              {item?.address || details?.formatted_address}
             </CustomText>
           </View>
           <View
@@ -573,7 +598,7 @@ const PlacesCard = ({
                 width: windowWidth * 0.85,
                 color: 'blue',
               }}>
-              www.xyz.com
+              {details?.website}
             </CustomText>
           </View>
           <View
@@ -598,11 +623,9 @@ const PlacesCard = ({
                 width: windowWidth * 0.85,
                 color: 'blue',
               }}>
-              +1-123456789
-            </CustomText>
+              {details?.formatted_phone_number}</CustomText>
           </View>
         </View>
-
         <Modal
           isVisible={isModalVisible}
           onBackdropPress={() => {

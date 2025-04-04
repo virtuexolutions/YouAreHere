@@ -263,7 +263,6 @@ const CitiesScreen = props => {
                     />
                     <FlatList
                         data={searchQuery != '' ? filteredCities : cities}
-                        // ListEmptyComponent={<CustomText style={styles.emphty_text}>please select country first</CustomText>}
                         renderItem={({ item, index }) => {
                             console.log("🚀 ~ item:", selectedCities === item)
                             return (
