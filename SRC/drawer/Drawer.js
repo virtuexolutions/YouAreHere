@@ -1,24 +1,24 @@
-import {StyleSheet, Text, View, TouchableOpacity, Platform} from 'react-native';
-import React, {useState, useRef} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Platform } from 'react-native';
+import React, { useState, useRef } from 'react';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { windowHeight, windowWidth } from '../Utillity/utils';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomText from '../Components/CustomText';
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserLogoutAuth } from '../Store/slices/auth';
 import { setCustomLocation, setUserLogOut } from '../Store/slices/common';
 
 const Drawer = () => {
-const user = useSelector(state => state.commonReducer.userData)
+  const user = useSelector(state => state.commonReducer.userData)
   const navigation = useNavigation();
   const dispatch = useDispatch()
 
@@ -31,7 +31,14 @@ const user = useSelector(state => state.commonReducer.userData)
       iconName: 'home',
       iconType: Feather,
     },
-
+    {
+      name: 'Explore',
+      onPress: () => {
+        navigation.navigate('Explore');
+      }, 
+      iconName: 'save',
+      iconType: AntDesign,
+    },
     {
       name: 'Subscription ',
       onPress: () => {
@@ -44,9 +51,9 @@ const user = useSelector(state => state.commonReducer.userData)
       name: 'Preferences',
       onPress: () => {
         navigation.navigate('Filters',
-       {
-                fromDrawer : true 
-      }   
+          {
+            fromDrawer: true
+          }
         );
       },
       iconName: 'room-preferences',
@@ -71,7 +78,7 @@ const user = useSelector(state => state.commonReducer.userData)
       iconType: MaterialCommunityIcons,
     },
     {
-      name: 'Saved Trips',
+      name: 'Trip List',
       onPress: () => {
         // navigation.navigate('NotepadDesign');
         navigation.navigate('CountryScreen')
@@ -87,6 +94,7 @@ const user = useSelector(state => state.commonReducer.userData)
       iconName: 'heart',
       iconType: MaterialCommunityIcons,
     },
+
     {
       name: 'Change Password',
       onPress: () => {
@@ -101,13 +109,13 @@ const user = useSelector(state => state.commonReducer.userData)
         dispatch(setUserLogoutAuth());
         dispatch(setUserLogOut());
         dispatch(setCustomLocation(''))
-        
+
       },
       iconName: 'logout',
       iconType: AntDesign,
     },
   ];
- 
+
   return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
@@ -117,8 +125,8 @@ const user = useSelector(state => state.commonReducer.userData)
           // width: windowWidth *0.72,
           height: windowHeight,
         }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         colors={Color.themeBgColor}>
         <View
           style={{
@@ -126,19 +134,19 @@ const user = useSelector(state => state.commonReducer.userData)
             marginTop: moderateScale(20, 0.3),
             alignItems: 'center',
             marginLeft: moderateScale(10, 0.3),
-            height : windowHeight * 0.2,
-}}>
+            height: windowHeight * 0.2,
+          }}>
           <View style={styles.Profile}>
             <CustomImage
               resizeMode={'cover'}
-              source={user?.image ? {uri :user?.image} : require('../Assets/Images/user.png')}
-              style={{width: '100%', height: '100%'}}
+              source={user?.image ? { uri: user?.image } : require('../Assets/Images/user.png')}
+              style={{ width: '100%', height: '100%' }}
             />
           </View>
 
-          <View style={{marginLeft: moderateScale(10, 0.3)}}>
+          <View style={{ marginLeft: moderateScale(10, 0.3) }}>
             <CustomText
-              style={{fontSize: moderateScale(16, 0.6), color: Color.black}}
+              style={{ fontSize: moderateScale(16, 0.6), color: Color.black }}
               isBold>
               {user?.name}
             </CustomText>
@@ -149,7 +157,7 @@ const user = useSelector(state => state.commonReducer.userData)
                 fontSize: moderateScale(9, 0.6),
                 color: Color.black,
               }}>
-            Discover the World Just Around the Corner
+              Discover the World Just Around the Corner
             </CustomText>
           </View>
         </View>
@@ -168,8 +176,8 @@ const user = useSelector(state => state.commonReducer.userData)
                 borderBottomWidth: 0.5,
                 borderColor: Color.black,
                 margin: moderateScale(15, 0.3),
-                flexDirection : 'row',
-                alignItems : 'center'
+                flexDirection: 'row',
+                alignItems: 'center'
               }}>
               <Icon
                 name={item.iconName}
@@ -200,7 +208,7 @@ const user = useSelector(state => state.commonReducer.userData)
             borderRadius: (windowWidth * 0.14) / 1,
             backgroundColor: Color.white,
             position: 'absolute',
-            bottom: Platform.OS == 'android' ? moderateScale(40 , 0.6) : moderateScale(80 , 0.3),
+            bottom: Platform.OS == 'android' ? moderateScale(40, 0.6) : moderateScale(80, 0.3),
             left: 20,
             elevation: 10,
           }}>

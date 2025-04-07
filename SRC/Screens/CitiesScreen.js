@@ -39,7 +39,7 @@ const CitiesScreen = props => {
     console.log("🚀 ~ citiesList:", citiesList)
     // const [cityName, setCityName] = useState('')
     const [cityData, setCityData] = useState({})
-    console.log('cxcxzc',cityData);
+    console.log('cxcxzc', cityData);
     const [countryCode, setCountryCode] = useState(null)
     // console.log("🚀 ~ cityName:", cityName)
     const token = useSelector(state => state.authReducer.token);
@@ -84,7 +84,7 @@ const CitiesScreen = props => {
         setIsLoading(true)
         if (response != undefined) {
             console.log("🚀 ~ getCities ~ response:", response?.data)
-        setIsLoading(false)
+            setIsLoading(false)
             setCitiesList(response?.data?.data)
         } else {
             setIsLoading(false)
@@ -94,7 +94,6 @@ const CitiesScreen = props => {
     const getCityDetails = async (item) => {
         const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
         let fetchedData = [];
-        // for (const city of selectedCities) {
         try {
             const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=famous+landmarks+in+${item}&key=${apiKey}`;
             const response = await axios.get(placesUrl);
@@ -120,7 +119,7 @@ const CitiesScreen = props => {
         // } 
         const firstUri = fetchedData.length > 0 ? fetchedData[0].uri : null;
         // setCitiesWithImage(fetchedData);
-        setCityData({name : item , image : firstUri , id : data?.id})
+        setCityData({ name: item, image: firstUri, id: data?.id })
     }
 
     const onPressSave = async () => {
@@ -131,23 +130,23 @@ const CitiesScreen = props => {
             name: cityData?.name,
             image: cityData?.image
         }
-    //    return console.log("🚀 ~ onPressSave ~ body:", body)
+        //    return console.log("🚀 ~ onPressSave ~ body:", body)
         setIsLoading(false)
         const response = await Post(url, body, apiHeader(token))
-      
+
         setIsLoading(false)
         if (response != undefined) {
-            setCitiesList((prev)=> [...prev , 
-                {
-                    country_id: cityData?.id,
-                    name: cityData?.name,
-                    image: cityData?.image
-                }
+            setCitiesList((prev) => [...prev,
+            {
+                country_id: cityData?.id,
+                name: cityData?.name,
+                image: cityData?.image
+            }
             ])
             // getCities()
             setCityData({})
             setCitiesModalVisible(false)
-        } 
+        }
     }
 
     return (
@@ -290,15 +289,15 @@ const CitiesScreen = props => {
                                     }
                                 }}>
                                     {cityData?.name === item && isLoading ? (
-                                        <ActivityIndicator/>
-                                    ) :(
+                                        <ActivityIndicator />
+                                    ) : (
                                         <CustomText style={styles.text}>{item}</CustomText>
                                     )}
                                 </TouchableOpacity>
                             )
                         }}
                     />
-                    {/* <CustomButton
+                    <CustomButton
                         text={
                             isLoading ? (
                                 <ActivityIndicator size={'small'} color={'white'} />
@@ -315,7 +314,7 @@ const CitiesScreen = props => {
                         fontSize={moderateScale(11, 0.6)}
                         borderRadius={moderateScale(5, 0.3)}
                         marginTop={moderateScale(20, 0.3)}
-                    /> */}
+                    />
                 </View>
             </Modal>
 

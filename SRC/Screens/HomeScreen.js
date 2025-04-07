@@ -38,16 +38,14 @@ import {
   windowHeight,
   windowWidth,
 } from '../Utillity/utils';
-
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import AddPlacesModal from '../Components/AddPlacesModal';
 import SelectFilterModal from '../Components/FilterModal';
 import WelcomeModal from '../Components/WelcomeModal';
-import AddTripsModal from '../Components/AddTripsModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import CustomButton from '../Components/CustomButton';
-import { G } from 'react-native-svg';
 import navigationService from '../navigationService';
+import TripCards from '../Components/TripCards';
 
 const HomeScreen = props => {
   const isFocused = useIsFocused();
@@ -71,6 +69,7 @@ const HomeScreen = props => {
   const [label, setLabel] = useState('');
   const [searchData, setSearchData] = useState('');
   const [placesData, setplacesData] = useState([]);
+  console.log("🚀 ~ placesData:", placesData)
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [preferences, setPreferences] = useState(null);
   const [preferencesModalVisible, setPreferencesModalVisible] = useState(false);
@@ -94,6 +93,8 @@ const HomeScreen = props => {
   const [selectedItem, setSelectedItem] = useState({});
   const [issaveLoading, setSaveIsLoading] = useState(false);
   const [whishlistdata, setwhishlistdata] = useState(null);
+  const [dropDownVisible, setDropDownVisible] = useState(false);
+  const [filterplaces, setFilterPlaces] = useState('All');
 
   const currentLocation2 = {
     latitude: 24.8598186,
@@ -192,6 +193,7 @@ const HomeScreen = props => {
       Platform.OS == 'android' ? handleEnableLocation() : getLocation();
     }, 2000);
   };
+
   const getData = async location => {
     setplacesData([]);
     const url = `location?latitude=${Object.keys(customLocation).length > 0
@@ -229,7 +231,11 @@ const HomeScreen = props => {
       console.log("🚀 ~ response?.data?.results:", response?.data?.results)
       setIsLoading(false);
       if (response != undefined) {
-        setplacesData(response?.data?.results);
+        const highestRating = Math.max(...response?.data?.results.map(place => place.rating || 0));
+        console.log("🚀 ~ highestRating:", highestRating)
+        const topRatedPlaces = response?.data?.results.filter(place => place.rating === highestRating);
+        console.log("🚀 ~ topRatedPlaces:", topRatedPlaces)
+        setplacesData(filterplaces === 'All' ? response?.data?.results : topRatedPlaces);
       }
     } catch (error) {
       console.error("Error fetching McDonald's locations:", error);
@@ -464,7 +470,6 @@ const HomeScreen = props => {
   //   height : 200 ,
   //   backgroundColor : 'red'
   // }}
-
   // />
 
   const feedBackForm = async () => {
@@ -734,23 +739,23 @@ const HomeScreen = props => {
             <TouchableOpacity
               style={styles.menuIcon}
               onPress={() => setPreferencesModalVisible(true)}>
-               {preferences != null &&
+              {preferences != null &&
                 <View style={{
-                  position : 'absolute',
-                  right :1,
-                  top : -7,
-                  width : moderateScale(15,0.6),
-                  height : moderateScale(15,0.6),
-                  borderRadius : moderateScale(7.5,0.6),
-                  backgroundColor : 'red',
-                  justifyContent : 'center',
-                  alignItems : 'center',
+                  position: 'absolute',
+                  right: 1,
+                  top: -7,
+                  width: moderateScale(15, 0.6),
+                  height: moderateScale(15, 0.6),
+                  borderRadius: moderateScale(7.5, 0.6),
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
                   <CustomText style={{
-                    color : 'white'
+                    color: 'white'
                   }}>1</CustomText>
                 </View>
-}
+              }
               <Icon
                 name="filter"
                 as={Ionicons}
@@ -810,7 +815,14 @@ const HomeScreen = props => {
           <View style={styles.textContainer}>
             <CustomText
               style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
-              onPress={() => { }}
+              isBold>
+              As per your location we have following recommendations for you.
+            </CustomText>
+          </View>
+          <TripCards />
+          <View style={styles.textContainer}>
+            <CustomText
+              style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
               isBold>
               Places
             </CustomText>
@@ -821,7 +833,7 @@ const HomeScreen = props => {
                   backgroundColor: 'transparent',
                 },
               ]}
-              onPress={() => setPreferencesModalVisible(true)}>
+              onPress={() => setDropDownVisible(!dropDownVisible)}>
               <Icon
                 name="filter"
                 as={Ionicons}
@@ -829,6 +841,98 @@ const HomeScreen = props => {
                 size={moderateScale(28, 0.6)}
               />
             </TouchableOpacity>
+            {dropDownVisible && (
+              <View style={styles.con}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: moderateScale(10, 0.6),
+                    paddingVertical: moderateScale(10, 0.6)
+                  }}>
+                  <CustomText
+                    onPress={() => {
+                      setFilterPlaces('All')
+                      findNearestMcDonalds()
+                    }}
+                    style={{
+                      fontSize: moderateScale(14, 0.6),
+                      color: Color.black,
+                      paddingHorizontal: moderateScale(5, 0.6),
+                      textTransform: 'capitalize'
+                    }}>
+                    All
+                  </CustomText>
+                  {filterplaces === 'All' &&
+                    <Icon
+                      style={{
+                        paddingTop: moderateScale(2, 0.6),
+                      }}
+                      name="check"
+                      as={AntDesign}
+                      size={moderateScale(14, 0.6)}
+                      color={Color.blue}
+                    />
+                  }
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: moderateScale(10, 0.6),
+                  }}>
+                  <CustomText
+                    onPress={() => {
+                      setFilterPlaces('topRated')
+                      findNearestMcDonalds()
+                    }}
+                    style={{
+                      fontSize: moderateScale(14, 0.6),
+                      color: Color.black,
+                      paddingHorizontal: moderateScale(5, 0.6),
+                      textTransform: 'capitalize'
+                    }}>
+                    top Rated
+                  </CustomText>
+                  {filterplaces === 'Places' &&
+                    <Icon
+                      style={{
+                        paddingTop: moderateScale(2, 0.6),
+                      }}
+                      name="check"
+                      as={AntDesign}
+                      size={moderateScale(14, 0.6)}
+                      color={Color.blue}
+                    />}
+                </View>
+                {/* {selectedService?.length > 0 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      // console.log('helooooooooooooooooooooooooooo ' )
+                      profileUpdate();
+                    }}
+                    style={{
+                      backgroundColor: Color.blue,
+                      width: '100%',
+                      alignItems: 'center',
+                    }}>
+                    {isLoading ? (
+                      <ActivityIndicator size={'small'} color={Color.black} />
+                    ) : (
+                      <CustomText
+                        onPress={() => {
+                          profileUpdate();
+                        }}
+                        style={{
+                          fontSize: moderateScale(12, 0.6),
+                        }}>
+                        done
+                      </CustomText>
+                    )}
+                  </TouchableOpacity>
+                )} */}
+              </View>
+            )}
             {/* {!isLoading && (
               <CustomText
                 isBold
@@ -866,7 +970,7 @@ const HomeScreen = props => {
                 marginBottom: moderateScale(20, 0.3),
               }}
               renderItem={({ item, index }) => {
-              console.log("🚀 ~ item:", item?.photos)
+                console.log("🚀 ~ item:", item?.photos)
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard
@@ -1071,7 +1175,7 @@ const HomeScreen = props => {
         </ScrollView>
       </LinearGradient>
 
-    
+
     </ScreenBoiler>
   );
 };
@@ -1192,16 +1296,27 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(10, 0.3),
     width: windowWidth,
   },
-
+  con: {
+    backgroundColor: Color.white,
+    height: windowHeight * 0.09,
+    borderWidth: 1,
+    borderColor: Color.lightGrey,
+    width: windowWidth * 0.38,
+    borderRadius: moderateScale(10, 0.6),
+    zIndex: 1,
+    position: 'absolute',
+    right: 40,
+    top: 35,
+  },
   LogoText: {
     fontSize: moderateScale(35, 0.3),
     fontWeight: 'bold',
   },
   search: {
     flexDirection: 'row',
-     paddingHorizontal: moderateScale(2, 0.6),
+    paddingHorizontal: moderateScale(2, 0.6),
     alignItems: 'center',
-    justifyContent : 'space-between',
+    justifyContent: 'space-between',
     marginTop: moderateScale(10, 0.6),
     // backgroundColor : 'red'
   },

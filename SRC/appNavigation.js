@@ -36,6 +36,8 @@ import CitiesNoteScreen from './Screens/CitiesNoteScreen';
 import AddTripScreen from './Screens/AddTripScreen';
 import AddNewAdress from './Screens/AddNewAdress';
 import TripDetailsLocation from './Screens/TripDetailsLocation';
+import Explore from './Screens/Explore';
+import ExploreDetails from './Screens/ExploreDetails';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -82,6 +84,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="AddTripScreen" component={AddTripScreen} />
           <RootNav.Screen name="AddNewAdress" component={AddNewAdress} />
           <RootNav.Screen name="TripDetailsLocation" component={TripDetailsLocation} />
+          <RootNav.Screen name="ExploreDetails" component={ExploreDetails} />
         </RootNav.Navigator>
       </NavigationContainer>
     );
@@ -106,8 +109,8 @@ export const MyDrawer = () => {
         component={SubscriptionScreen}
       />
       <DrawerNavigation.Screen name="Filters" component={Filters} />
-
       <DrawerNavigation.Screen name="HighLights" component={HighLights} />
+      <DrawerNavigation.Screen name="Explore" component={Explore} />
       <DrawerNavigation.Screen
         name="ChangePassword"
         component={ChangePassword}

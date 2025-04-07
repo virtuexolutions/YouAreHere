@@ -119,7 +119,7 @@ const AddTripScreen = props => {
             flag: `https://flagcdn.com/w320/${countryCode.toLowerCase()}.png`,
             user_id: user?.id,
             country_uri: `https://flagcdn.com/w320/${countryCode.toLowerCase()}.png`,
-            country_city_count: 1,
+            // country_city_count: 1,
             city_image: citiesWithImage?.uri || cityimage,
         }
         console.log("🚀 ~ onPressSubmit ~ body:", body)
