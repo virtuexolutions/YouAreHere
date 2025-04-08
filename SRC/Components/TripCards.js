@@ -15,12 +15,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import finalPropsSelectorFactory from 'react-redux/es/connect/selectorFactory'
 import navigationService from '../navigationService'
 
-const TripCards = () => {
+const TripCards = ({ item }) => {
     const [isfav, setIsFav] = useState(false)
     return (
         <View style={styles.card_view}>
             <View style={styles.image_view}>
-                <CustomImage onPress={() => navigationService.navigate('ExploreDetails')} source={require('../Assets/Images/8.jpeg')} style={styles.image} />
+                <CustomImage onPress={() => navigationService.navigate('ExploreDetails')} source={{ uri: item?.image }} style={styles.image} />
             </View>
             <Icon name={isfav === true ? 'favorite' : 'favorite-border'} onPress={() => setIsFav(true)} as={MaterialIcons} size={moderateScale(20, 0.6)} color={Color.yellow} style={{
                 position: 'absolute',
@@ -30,7 +30,7 @@ const TripCards = () => {
             <View style={[styles.text_view, {
                 marginTop: moderateScale(8, 0.6)
             }]}>
-                <CustomText isBold style={styles.heading}>Beautiful old building</CustomText>
+                <CustomText isBold style={styles.heading}>{item?.publish_title}</CustomText>
                 <View style={styles.text_view}>
                     <Icon name='star' as={AntDesign} size={moderateScale(14, 0.6)} color={Color.yellow} />
                     <CustomText style={styles.rating_text}>5.9</CustomText>
@@ -42,7 +42,7 @@ const TripCards = () => {
                 marginTop: moderateScale(6, 0.6)
             }]}>
                 <Icon name='location-pin' as={MaterialIcons} size={moderateScale(14, 0.6)} color={Color.yellow} />
-                <CustomText isBold style={styles.heading}>Yogayakata</CustomText>
+                <CustomText isBold style={styles.heading}>{item?.city}</CustomText>
             </View>
         </View>
     )

@@ -44,7 +44,6 @@ const PlacesCard = ({
   style,
   isshownSave = true
 }) => {
-  console.log("🚀 ~ ids:", ids)
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
@@ -59,7 +58,6 @@ const PlacesCard = ({
   const [isLoading, setIsLoading] = useState(false);
   const [place_id, setPlaceId] = useState('')
   const [details, setDetails] = useState({})
-  console.log("🚀 ~ details:", details)
   const getData = async () => {
     const url = `auth/review_detail/${item.id}`;
     setIsLoading(true);
@@ -157,7 +155,6 @@ const PlacesCard = ({
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&key=${apiKey}&fields=name,formatted_address,formatted_phone_number,opening_hours,website,plus_code`;
     try {
       const response = await axios.get(url);
-      console.log("Place Details:", response?.data?.result);
       setDetails(response?.data?.result)
       // return response?.data?.result;
     } catch (error) {

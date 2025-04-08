@@ -7,7 +7,6 @@ import { moderateScale } from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
 
 const StoriesComponent = ({ item, setSelectedStory, selectedStory }) => {
-  console.log("🚀 ~ StoriesComponent ~ item:", item)
   return (
     <TouchableOpacity
       onPress={() => {

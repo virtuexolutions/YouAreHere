@@ -69,7 +69,6 @@ const HomeScreen = props => {
   const [label, setLabel] = useState('');
   const [searchData, setSearchData] = useState('');
   const [placesData, setplacesData] = useState([]);
-  console.log("🚀 ~ placesData:", placesData)
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [preferences, setPreferences] = useState(null);
   const [preferencesModalVisible, setPreferencesModalVisible] = useState(false);
@@ -228,13 +227,10 @@ const HomeScreen = props => {
     try {
       setIsLoading(true);
       const response = await axios.get(url);
-      console.log("🚀 ~ response?.data?.results:", response?.data?.results)
       setIsLoading(false);
       if (response != undefined) {
         const highestRating = Math.max(...response?.data?.results.map(place => place.rating || 0));
-        console.log("🚀 ~ highestRating:", highestRating)
         const topRatedPlaces = response?.data?.results.filter(place => place.rating === highestRating);
-        console.log("🚀 ~ topRatedPlaces:", topRatedPlaces)
         setplacesData(filterplaces === 'All' ? response?.data?.results : topRatedPlaces);
       }
     } catch (error) {
@@ -242,8 +238,16 @@ const HomeScreen = props => {
     }
   };
 
+  const getAllTrip = async () => {
+    const url = 'auth/trip_notes_publish'
+    const response = await Get(url, token);
+    if (response?.data != undefined) {
+      setTrip(response?.data?.trip_list)
+    }
+  }
   // ye abhi comment  kiya ha
   useEffect(() => {
+    // getA;;
     // console.log(
     //   'Running loscatddions ',
     //   currentLocation,
@@ -582,7 +586,6 @@ const HomeScreen = props => {
             <TouchableOpacity
               onPress={() => {
                 rbRef.open();
-                // console.log('================== hello ')
               }}
               style={[
                 styles.loc,
@@ -970,7 +973,6 @@ const HomeScreen = props => {
                 marginBottom: moderateScale(20, 0.3),
               }}
               renderItem={({ item, index }) => {
-                console.log("🚀 ~ item:", item?.photos)
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard

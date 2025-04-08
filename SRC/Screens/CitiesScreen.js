@@ -272,7 +272,6 @@ const CitiesScreen = props => {
                     <FlatList
                         data={searchQuery != '' ? filteredCities : cities}
                         renderItem={({ item, index }) => {
-                            // console.log("🚀 ~ item:", selectedCities === item)
                             return (
                                 <TouchableOpacity style={[styles.cites_btn, {
                                     backgroundColor: cityData?.name === item ? Color.themeColor : 'white',

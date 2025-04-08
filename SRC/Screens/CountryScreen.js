@@ -18,14 +18,13 @@ import CountryCard from '../Components/CountryCard'
 import navigationService from '../navigationService'
 import { Get, Post } from '../Axios/AxiosInterceptorFunction'
 import { useSelector } from 'react-redux'
-import { useNavigation , useIsFocused } from '@react-navigation/native'
+import { useNavigation, useIsFocused } from '@react-navigation/native'
 
 const CountryScreen = () => {
     const focused = useIsFocused()
     const navigation = useNavigation()
     const [countryModalVisible, setCountryModalVisible] = useState(false)
-    const [country, setCountry] = useState({"callingCode": ["1"], "cca2": "US", "currency": ["USD"], "flag": "flag-us", "name": "United States", "region": "Americas", "subregion": "North America"});
-    console.log("🚀 ~ CountryScreen ~ counf4try:", country)
+    const [country, setCountry] = useState({ "callingCode": ["1"], "cca2": "US", "currency": ["USD"], "flag": "flag-us", "name": "United States", "region": "Americas", "subregion": "North America" });
     const [visible, setVisible] = useState(false)
     const [countryCode, setCountryCode] = useState("US");
     // console.log("🚀 ~ CountryScreen ~ countryCode:", countryCode)
@@ -49,9 +48,8 @@ const CountryScreen = () => {
         const response = await Get(url, token)
         setIsLoading(false)
         if (response != undefined) {
-            console.log("🚀 ~ getCountries ~ response:", JSON.stringify(response?.data , null , 2) )
             setCountriesList(response?.data?.data)
-        } 
+        }
     }
 
     const addCountry = async (data) => {
@@ -61,7 +59,6 @@ const CountryScreen = () => {
         const response = await Post(url, data, apiHeader(token))
         setLoading(false)
         if (response != undefined) {
-            console.log("🚀 ~ addCountry ~ response:", response?.data?.data)
             getCountries()
         }
     }
@@ -70,7 +67,7 @@ const CountryScreen = () => {
         getCountries()
     }, [focused])
 
-   
+
 
     return (
         <ScreenBoiler
@@ -129,58 +126,57 @@ const CountryScreen = () => {
 
                 </View>
                 {isLoading ? (
-                    <View style ={{
-                        width : windowWidth,
-                        height : windowHeight * 0.4,
-                        alignItems : 'center',
-                        justifyContent : 'center',
+                    <View style={{
+                        width: windowWidth,
+                        height: windowHeight * 0.4,
+                        alignItems: 'center',
+                        justifyContent: 'center',
                     }}>
 
-                    <ActivityIndicator
-                        style={styles.indicatorStyle}
-                        size="small"
-                        color={Color.white}
+                        <ActivityIndicator
+                            style={styles.indicatorStyle}
+                            size="small"
+                            color={Color.white}
                         />
-                        </View>
+                    </View>
                 ) : (
                     <>
-                    <FlatList
-                        showsVerticalScrollIndicator={false}
-                        style={{
-                            height: windowHeight * 0.8,
-                            marginTop: moderateScale(20, 0.3),
-                        }}
-                        contentContainerStyle={{
+                        <FlatList
+                            showsVerticalScrollIndicator={false}
+                            style={{
+                                height: windowHeight * 0.8,
+                                marginTop: moderateScale(20, 0.3),
+                            }}
+                            contentContainerStyle={{
 
-                            paddingBottom: moderateScale(50, 0.6),
+                                paddingBottom: moderateScale(50, 0.6),
 
-                        }}
-                        data={countriesList}
-                        ListEmptyComponent={() => {
-                            return (
-                                <View style={{
-                                    width: windowWidth,
-                                    height: windowHeight * 0.5,
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                    <CustomText>No Data Found</CustomText>
-                                </View>
-                            )
-                        }}
-                        renderItem={({ item, index }) => {
-                            console.log("🚀 ~ CountryScreen ~ item:", item)
-                            return (
-                                <>
-                                    <CountryCard
-                                        // citiesCount={`No of cities added = ${item?.city_count}`}
-                                        name={item?.name}
-                                        uri={item?.uri}
-                                        onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
-                                    />
-                                </>
-                            )
-                        }}
+                            }}
+                            data={countriesList}
+                            ListEmptyComponent={() => {
+                                return (
+                                    <View style={{
+                                        width: windowWidth,
+                                        height: windowHeight * 0.5,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                        <CustomText>No Data Found</CustomText>
+                                    </View>
+                                )
+                            }}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <>
+                                        <CountryCard
+                                            // citiesCount={`No of cities added = ${item?.city_count}`}
+                                            name={item?.name}
+                                            uri={item?.uri}
+                                            onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
+                                        />
+                                    </>
+                                )
+                            }}
                         // ListFooterComponent={()=>{
                         //     return(
                         //         countries ? 
@@ -194,8 +190,8 @@ const CountryScreen = () => {
                         //     )
                         // }}
 
-                    />
-                  
+                        />
+
                     </>
                 )
                 }
@@ -333,7 +329,7 @@ const CountryScreen = () => {
                                 //     name: country?.name, uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
                                 //     city_count: 0
                                 // }]),
-                                    setCountryModalVisible(false)
+                                setCountryModalVisible(false)
                                 // setCountry({ cca2: 'US', name: 'United States'})
                                 // setCountryCode('US')
                                 addCountry({

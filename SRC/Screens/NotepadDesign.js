@@ -36,6 +36,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import axios from 'axios';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import NotePad from './NotePad';
 
 const Stories = [
   {
@@ -303,7 +304,7 @@ const NotepadDesign = props => {
   let Notedata = props?.route?.params?.data;
   let Country = props?.route?.params?.country;
   console.log("🚀 ~ Country:", Country)
-  console.log("🚀 ~ Notedata:", Notedata?.country)
+  console.log("🚀 ~ Notedata:", Notedata)
   const token = useSelector(state => state.authReducer.token);
   console.log(token, 'tokeeeeeeeeeeeeeeen')
   const isFocused = useIsFocused();
@@ -334,7 +335,9 @@ const NotepadDesign = props => {
   const [countryCode, setcountryCode] = useState('')
   console.log("🚀 ~ countryCode:", countryCode)
   const user = useSelector(state => state.commonReducer.userData);
-
+  const [publishTitle, setPublishTitle] = useState('')
+  const [ref, setRef] = useState(null);
+  console.log("🚀 ~ publishTitle:", publishTitle)
   const saveTripFromDetails = async () => {
     //  return console.log('here from details')
     const url = 'auth/trip';
@@ -399,10 +402,11 @@ const NotepadDesign = props => {
       lng: searchData?.location?.lng,
       city: Notedata?.name,
       country: Country,
-      flag: Notedata?.data?.country?.uri,
-      image: image?.uri,
+      flag: Notedata?.country?.uri,
+      image: Notedata?.image,
       // title : 
     };
+    console.log("🚀 ~ saveTrip ~ body:", body)
     // if (Object.keys(image).length > 0) {
     //   const imageForServer = await RNFetchBlob.fs.readFile(
     //     Platform.OS == 'android'
@@ -448,6 +452,7 @@ const NotepadDesign = props => {
     setTripLoading(false);
     if (response != undefined) {
       setTrips(response?.data?.Trip);
+      const filterData = response?.data?.Trip.filter((item) => setPublishTitle(item?.publish_title))
     }
   };
 
@@ -564,6 +569,17 @@ const NotepadDesign = props => {
     }
   };
 
+  const onPressPublish = async () => {
+    const url = `auth/trip_notes_publish${Country}?${NotePad?.name}`
+    const body = {
+      city: Notedata?.name,
+      publish_title: publishTitle ? publishTitle : 'Beatutiful Trip',
+      publish_description: ''
+    }
+    const response = await Post(url, body, apiHeader(token))
+    console.log("🚀 ~ onPressPublish ~ response:", response?.data)
+  }
+
   return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
@@ -667,7 +683,7 @@ const NotepadDesign = props => {
                   <View
                     style={{
                       width: windowWidth * 0.3,
-                      height: windowHeight * 0.13,
+                      // height: windowHeight * 0.13,
                       // alignSelf: 'center',
                       // marginTop: moderateScale(130, 0.3),
                       // backgroundColor: 'green',
@@ -1128,6 +1144,36 @@ const NotepadDesign = props => {
             </View>
           </Modal>
         </View>
+        <CustomButton
+          text={'Publish trip'}
+          isBold
+          textColor={Color.white}
+          width={windowWidth * 0.9}
+          height={windowHeight * 0.05}
+          bgColor={Color.themeColor}
+          fontSize={moderateScale(11, 0.6)}
+          borderRadius={moderateScale(5, 0.3)}
+          alignSelf={'flex-end'}
+          marginTop={moderateScale(30, 0.3)}
+          onPress={() => {
+            // onPressPublish()
+            ref.open()
+            // if (Object.keys(selectedStory).length > 0) {
+            //   setType('notes');
+            //   setNoteModalVisible(true);
+            // } else {
+            //   return Platform.OS == 'android'
+            //     ? ToastAndroid.show(`Select any Country`, ToastAndroid.SHORT)
+            //     : Alert.alert(`Select any Country`);
+            // }
+          }}
+          style={{
+            position: 'absolute',
+            bottom: 100,
+            alignSelf: "center",
+            left: 20
+          }}
+        />
       </LinearGradient>
       <ImagePickerModal
         show={imagePicker}
@@ -1139,6 +1185,34 @@ const NotepadDesign = props => {
         fromNotePad={true}
       // type={type}
       />
+      <RBSheet
+        ref={ref => {
+          setRef(ref);
+        }}
+        closeOnDragDown={true}
+        dragFromTopOnly={true}
+        openDuration={250}
+        height={windowHeight * 0.5}
+        customStyles={{
+          container: {
+            borderTopEndRadius: moderateScale(30, 0.6),
+            borderTopLeftRadius: moderateScale(30, 0.6),
+            overflow: 'hidden',
+          },
+        }}>
+        <View style={{
+          paddingVertical: moderateScale(20, 0.6),
+          paddingHorizontal: moderateScale(20, 0.6)
+        }}>
+          <CustomText isBold style={{
+            fontSize: moderateScale(14, 0.6),
+            textAlign: 'center'
+          }}>Publish Trip</CustomText>
+          <CustomText isBold style={{
+            fontSize: moderateScale(14, 0.6)
+          }}>To Publish Your Trip you have to add title and description</CustomText>
+        </View>
+      </RBSheet>
     </ScreenBoiler>
   );
 };
