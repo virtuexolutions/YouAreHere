@@ -78,6 +78,7 @@ const HomeScreen = props => {
   const [searchedPlaces, setSearchedPlaces] = useState([]);
   const [currentLocation, setCurrentLocation] = useState({});
   const [locationName, setLocationName] = useState('');
+  console.log("🚀 ~ locationName:", locationName)
   const [foundLocation, setFoundLocation] = useState({});
   const [countryCode, setCountryCode] = useState('');
   const [listName, setlistName] = useState('');
@@ -94,7 +95,10 @@ const HomeScreen = props => {
   const [whishlistdata, setwhishlistdata] = useState(null);
   const [dropDownVisible, setDropDownVisible] = useState(false);
   const [filterplaces, setFilterPlaces] = useState('All');
-
+  const [trip_loading, setTripLoading] = useState(false);
+  const [trips, setTrip] = useState([])
+  const [countryName, setCountryName] = useState('');
+  console.log("🚀 ~ countryName:", countryName)
   const currentLocation2 = {
     latitude: 24.8598186,
     longitude: 67.06233019999999,
@@ -238,15 +242,26 @@ const HomeScreen = props => {
     }
   };
 
+
+
   const getAllTrip = async () => {
-    const url = 'auth/trip_notes_publish'
+    const url = `auth/trip_notes_publish?country=${countryName}`
+    setTripLoading(true)
     const response = await Get(url, token);
+    setTripLoading(false)
+    console.log("🚀 ~ getAllTrip ~ response?.data?.data?.country?.cities:", response?.data)
     if (response?.data != undefined) {
-      setTrip(response?.data?.trip_list)
+      setTripLoading(false)
+      setTrip(response?.data?.cities)
     }
   }
+  // useEffect(() => {
+  //   getAllTrip()
+  // }, [countryName])
+
   // ye abhi comment  kiya ha
   useEffect(() => {
+    getAllTrip()
     // getA;;
     // console.log(
     //   'Running loscatddions ',
@@ -412,13 +427,26 @@ const HomeScreen = props => {
   }, [preferences, isFocused, customLocation]);
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc'}`;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc`;
+
     try {
       const response = await fetch(url);
       const data = await response.json();
+
       if (data.status === 'OK') {
-        const givenaddress = data?.results[0].formatted_address;
-        setLocationName(givenaddress);
+        const addressComponents = data.results[0].address_components;
+        const formattedAddress = data.results[0].formatted_address;
+
+        let country = '';
+
+        addressComponents.forEach(component => {
+          if (component.types.includes('country')) {
+            country = component.long_name;
+          }
+        });
+
+        setLocationName(formattedAddress);
+        setCountryName(country);
       } else {
         console.log('No address found');
       }
@@ -426,6 +454,7 @@ const HomeScreen = props => {
       console.error(error);
     }
   };
+
 
   useEffect(() => {
     if (currentLocation) {
@@ -822,7 +851,16 @@ const HomeScreen = props => {
               As per your location we have following recommendations for you.
             </CustomText>
           </View>
-          <TripCards />
+          {trip_loading ? <ActivityIndicator /> :
+            <FlatList style={{
+              paddingHorizontal: moderateScale(10, 0.6)
+            }} horizontal data={trips} renderItem={({ item }) => {
+              return (
+                <TripCards style={{ marginRight: moderateScale(10, 0.6) }} item={item} />
+              )
+            }} />
+          }
+          {/* <TripCards /> */}
           <View style={styles.textContainer}>
             <CustomText
               style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}

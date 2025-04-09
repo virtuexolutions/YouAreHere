@@ -336,8 +336,11 @@ const NotepadDesign = props => {
   console.log("🚀 ~ countryCode:", countryCode)
   const user = useSelector(state => state.commonReducer.userData);
   const [publishTitle, setPublishTitle] = useState('')
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
   const [ref, setRef] = useState(null);
   console.log("🚀 ~ publishTitle:", publishTitle)
+  const [publish_loading, setPublishLoading] = useState(false)
   const saveTripFromDetails = async () => {
     //  return console.log('here from details')
     const url = 'auth/trip';
@@ -404,7 +407,7 @@ const NotepadDesign = props => {
       country: Country,
       flag: Notedata?.country?.uri,
       image: Notedata?.image,
-      // title : 
+      title: searchData?.name
     };
     console.log("🚀 ~ saveTrip ~ body:", body)
     // if (Object.keys(image).length > 0) {
@@ -457,6 +460,7 @@ const NotepadDesign = props => {
   };
 
   const getTripNotes = async () => {
+
     const url = `auth/notes/index?place_id=${selectedStory?.id}`;
     setNotesLoading(true);
     const response = await Get(url, token);
@@ -570,14 +574,23 @@ const NotepadDesign = props => {
   };
 
   const onPressPublish = async () => {
-    const url = `auth/trip_notes_publish${Country}?${NotePad?.name}`
+    const url = `auth/trip_notes_publish?country=${Country}`
     const body = {
       city: Notedata?.name,
-      publish_title: publishTitle ? publishTitle : 'Beatutiful Trip',
-      publish_description: ''
+      trip_name: publishTitle ? publishTitle : title,
+      trip_description: description,
     }
+    console.log("🚀 ~ onPressPublish ~ body:", body)
+    setPublishLoading(true)
     const response = await Post(url, body, apiHeader(token))
+    setPublishLoading(false)
     console.log("🚀 ~ onPressPublish ~ response:", response?.data)
+    if (response?.data != undefined) {
+      setPublishLoading(false)
+      Platform?.OS == 'android'
+        ? ToastAndroid.show('Trip Published Successfully', ToastAndroid.SHORT)
+        : Alert.alert('Trip Published Successfully')
+    }
   }
 
   return (
@@ -1111,6 +1124,7 @@ const NotepadDesign = props => {
                 value={noteDesc}
                 viewHeight={0.06}
                 viewWidth={0.7}
+                multiLine
                 inputWidth={0.7}
                 borderBottom={1}
                 borderColor={Color.black}
@@ -1192,7 +1206,7 @@ const NotepadDesign = props => {
         closeOnDragDown={true}
         dragFromTopOnly={true}
         openDuration={250}
-        height={windowHeight * 0.5}
+        height={windowHeight * 0.45}
         customStyles={{
           container: {
             borderTopEndRadius: moderateScale(30, 0.6),
@@ -1211,6 +1225,77 @@ const NotepadDesign = props => {
           <CustomText isBold style={{
             fontSize: moderateScale(14, 0.6)
           }}>To Publish Your Trip you have to add title and description</CustomText>
+          <TextInputWithTitle
+            placeholder={'Title'}
+            setText={setTitle}
+            value={title}
+            viewHeight={0.06}
+            viewWidth={0.85}
+            inputWidth={0.6}
+            marginTop={moderateScale(10, 0.3)}
+            color={Color.orange}
+            borderRadius={moderateScale(20, 0.6)}
+            placeholderColor={Color.mediumGray}
+            backgroundColor={Color.white}
+            style={{
+              shadowColor: Color.themeColor,
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowOpacity: 0.32,
+              shadowRadius: 5.46,
+              elevation: 9,
+              paddingLeft: moderateScale(10, 0.6)
+            }}
+          />
+          <TextInputWithTitle
+            placeholder={'Description'}
+            setText={setDescription}
+            value={description}
+            viewHeight={0.15}
+            viewWidth={0.85}
+            inputWidth={0.85}
+            marginTop={moderateScale(10, 0.3)}
+            color={Color.orange}
+            borderRadius={moderateScale(20, 0.6)}
+            placeholderColor={Color.mediumGray}
+            backgroundColor={Color.white}
+            alignItems={'flex-start'}
+            multiline
+            style={{
+              shadowColor: Color.themeColor,
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowOpacity: 0.32,
+              shadowRadius: 5.46,
+              elevation: 9,
+              paddingLeft: moderateScale(10, 0.6)
+            }}
+          />
+          <View style={{ alignSelf: "center" }}>
+            <CustomButton
+              text={publish_loading ? (
+                <ActivityIndicator size={'small'} color={'white'} />
+              ) : (
+                'Submit'
+              )}
+              isBold
+              textColor={Color.white}
+              width={windowWidth * 0.8}
+              height={windowHeight * 0.05}
+              bgColor={Color.themeColor}
+              fontSize={moderateScale(11, 0.6)}
+              borderRadius={moderateScale(10, 0.3)}
+              alignSelf={'flex-end'}
+              marginTop={moderateScale(20, 0.3)}
+              onPress={() => {
+                onPressPublish()
+              }}
+            />
+          </View>
         </View>
       </RBSheet>
     </ScreenBoiler>

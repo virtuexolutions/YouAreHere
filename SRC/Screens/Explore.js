@@ -1,4 +1,4 @@
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ScreenBoiler from '../Components/ScreenBoiler'
 import LinearGradient from 'react-native-linear-gradient'
@@ -23,6 +23,7 @@ import TripCards from '../Components/TripCards'
 import CustomImage from '../Components/CustomImage'
 import CountryPicker from "react-native-country-picker-modal";
 import CustomButton from '../Components/CustomButton'
+import Modal from 'react-native-modal';
 
 const Explore = () => {
     const navigation = useNavigation();
@@ -70,6 +71,7 @@ const Explore = () => {
     ]
     const [countryModalVisible, setCountryModalVisible] = useState(false)
     const [country, setCountry] = useState({ "callingCode": ["1"], "cca2": "US", "currency": ["USD"], "flag": "flag-us", "name": "United States", "region": "Americas", "subregion": "North America" });
+    console.log("🚀 ~ Explore ~ country:", country)
     const [visible, setVisible] = useState(false)
     const [countryCode, setCountryCode] = useState("US");
     // console.log("🚀 ~ CountryScreen ~ countryCode:", countryCode)
@@ -79,9 +81,11 @@ const Explore = () => {
     const [loading, setLoading] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [countriesList, setCountriesList] = useState([]);
-    // useEffect(() => {
-    //     getAllTrip()
-    // }, [isFocused])
+    const [trip_loading, setTripLoading] = useState(false);
+
+    useEffect(() => {
+        getAllTrip()
+    }, [country?.name])
 
     const onSelect = country => {
         setCountryCode(country.cca2);
@@ -89,10 +93,14 @@ const Explore = () => {
     };
 
     const getAllTrip = async () => {
-        const url = 'auth/trip_notes_publish?country=United States'
+        const url = `auth/trip_notes_publish?country=${country?.name}`
+        setTripLoading(true)
         const response = await Get(url, token);
+        setTripLoading(false)
+        console.log("🚀 ~ getAllTrip ~ response?.data?.data?.country?.cities:", response?.data)
         if (response?.data != undefined) {
-            setTrip(response?.data)
+            setTripLoading(false)
+            setTrip(response?.data?.cities)
         }
     }
     return (
@@ -146,14 +154,14 @@ const Explore = () => {
                         />
                     </View>
 
-                    <FlatList data={trips} renderItem={({ item }) => {
+                    <FlatList numColumns={2} columnWrapperStyle={{ justifyContent: 'space-between' }} data={trips} renderItem={({ item }) => {
                         return (
                             <TripCards item={item} />
                         )
                     }} />
                 </View>
             </LinearGradient>
-            {/* <Modal
+            <Modal
                 isVisible={countryModalVisible}
                 onBackdropPress={() => {
                     setCountryModalVisible(false);
@@ -282,7 +290,7 @@ const Explore = () => {
                         }
                     />
                 </View>
-            </Modal> */}
+            </Modal>
         </ScreenBoiler>
     )
 }
@@ -301,4 +309,49 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: 'center',
     },
+    row: {
+        flexDirection: 'row',
+        marginTop: 10,
+        paddingHorizontal: 10,
+        width: windowWidth,
+        justifyContent: 'space-between'
+    },
+    Profile1: {
+        width: windowWidth * 0.3,
+        height: windowWidth * 0.3,
+        borderRadius: (windowWidth * 0.3) / 2,
+        borderWidth: 1,
+        borderColor: Color.white,
+        overflow: 'hidden',
+        alignSelf: 'center',
+        backgroundColor: '#EEEEEE',
+        marginTop: moderateScale(20, 0.3),
+        // alignItems: 'center',
+        // justifyContent: 'center',
+        // borderColor : 'black'
+    },
+    birthday: {
+        width: windowWidth * 0.75,
+        height: windowHeight * 0.06,
+        marginTop: moderateScale(10, 0.3),
+        borderRadius: moderateScale(10, 0.6),
+        borderWidth: 1,
+        backgroundColor: 'white',
+        borderColor: Color.lightGrey,
+        flexDirection: 'row',
+        paddingHorizontal: moderateScale(10, 0.6),
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        shadowColor: Color.themeColor,
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.32,
+        shadowRadius: 5.46,
+        elevation: 9,
+    },
+    indicatorStyle: {
+        marginTop: moderateScale(20, 0.6)
+    }
 })

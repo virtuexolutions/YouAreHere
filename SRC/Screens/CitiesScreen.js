@@ -29,19 +29,14 @@ const CitiesScreen = props => {
     const navigation = useNavigation()
     const [cities, setCities] = useState([])
     const [citiesmodalVisible, setCitiesModalVisible] = useState(false)
-    // const [cityData?.name, setSelectedCities] = useState([])
-    // console.log("🚀 ~ selectedCities:", selectedCities)
     const [searchQuery, setSearchQuery] = useState('')
-    // const [citiesWithImage, setCitiesWithImage] = useState(null)
     const [filteredCities, setFilteredCities] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [citiesList, setCitiesList] = useState([])
     console.log("🚀 ~ citiesList:", citiesList)
-    // const [cityName, setCityName] = useState('')
     const [cityData, setCityData] = useState({})
     console.log('cxcxzc', cityData);
     const [countryCode, setCountryCode] = useState(null)
-    // console.log("🚀 ~ cityName:", cityName)
     const token = useSelector(state => state.authReducer.token);
     console.log("🚀 ~ token:", token)
     const user = useSelector(state => state.commonReducer.userData);
@@ -116,21 +111,17 @@ const CitiesScreen = props => {
             console.error(`Error fetching image for ${item}:`, error);
             fetchedData.push({ name: item, uri: null });
         }
-        // } 
         const firstUri = fetchedData.length > 0 ? fetchedData[0].uri : null;
-        // setCitiesWithImage(fetchedData);
         setCityData({ name: item, image: firstUri, id: data?.id })
     }
 
     const onPressSave = async () => {
         const url = 'auth/cities'
-        // const firstItem = selectedCities[0];
         const body = {
             country_id: cityData?.id,
             name: cityData?.name,
             image: cityData?.image
         }
-        //    return console.log("🚀 ~ onPressSave ~ body:", body)
         setIsLoading(false)
         const response = await Post(url, body, apiHeader(token))
 
@@ -143,7 +134,6 @@ const CitiesScreen = props => {
                 image: cityData?.image
             }
             ])
-            // getCities()
             setCityData({})
             setCitiesModalVisible(false)
         }
@@ -158,7 +148,6 @@ const CitiesScreen = props => {
                 style={{
                     width: windowWidth,
                     height: windowHeight,
-                    //   justifyContent:'center'
                 }}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -175,7 +164,6 @@ const CitiesScreen = props => {
                         <Icon
                             onPress={() => {
                                 navigation.goBack();
-                                //   console.log('Toggle drawer'); navigation.toggleDrawer();
                             }}
                             name="chevron-back"
                             as={Ionicons}
@@ -187,21 +175,17 @@ const CitiesScreen = props => {
                         text={'Add City'}
                         isBold
                         textColor={Color.themeColor}
-                        // width={windowWidth * 0.2}
                         height={windowHeight * 0.03}
                         bgColor={Color.white}
                         fontSize={moderateScale(11, 0.6)}
                         borderRadius={moderateScale(5, 0.3)}
-                        //   alignSelf={'flex-end'}
                         marginTop={moderateScale(20, 0.3)}
                         style={{
                             marginRight: moderateScale(10, 0.3),
                         }}
                         onPress={() => {
-
                             setCitiesModalVisible(true)
                         }}
-                    // right={moderateScale(5,0.3)}
                     />
 
                 </View>
@@ -253,8 +237,6 @@ const CitiesScreen = props => {
                         placeholder={'Search Cities'}
                         setText={setSearchQuery}
                         value={searchQuery}
-                        // iconName={'search'}
-                        // iconType={Feather}
                         marginTop={moderateScale(5, 0.3)}
                         viewHeight={0.05}
                         viewWidth={0.83}
@@ -281,10 +263,7 @@ const CitiesScreen = props => {
                                     }
                                     else {
                                         getCityDetails(item)
-                                        // setSelectedCities(item)
-                                        // setCityName(item)
                                         setSearchQuery('')
-                                        // onPressSave()
                                     }
                                 }}>
                                     {cityData?.name === item && isLoading ? (

@@ -34,7 +34,7 @@ import navigationService from '../navigationService';
 import Share from 'react-native-share';
 import AddTripsModal from './AddTripsModal';
 
-const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome, style,
+const NearPlacesCard = ({ item, isType = true, onPressSave, fromWishList, setIds, ids, fromHome, style,
   isshownSave = true }) => {
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
@@ -131,7 +131,7 @@ const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome
       ios: 'maps://0,0?q=',
       android: 'geo:0,0?q=',
     });
-    const latLng = `${item?.geometry?.location?.lat},${item?.geometry?.location?.lng}`;
+    const latLng = `${item?.geometry?.location?.lat || item?.address?.geometry?.location?.lat},${item?.geometry?.location?.lng || item?.address?.geometry?.location?.lng}`;
     const label = 'Custom Label';
     const url = Platform.select({
       ios: `${scheme}${label}@${latLng}`,
@@ -177,10 +177,10 @@ const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome
             source={
               item?.image
                 ? { uri: item.image }
-                : ['', undefined, null].includes(item?.photos)
+                : ['', undefined, null].includes(item?.photos || item?.address?.photos)
                   ? require('../Assets/Images/errorimage.png')
                   : {
-                    uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${item?.photos?.[0]?.photo_reference}&key=${apiKey}`
+                    uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${item?.photos?.[0]?.photo_reference || item?.address?.photos?.[0]?.photo_reference}&key=${apiKey}`
                   }
             }
             style={{
@@ -211,7 +211,7 @@ const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome
             style={{ fontSize: moderateScale(13, 0.6), color: Color.black }}
             numberOfLines={1}
             isBold>
-            {item?.name}
+            {item?.name || item?.address?.name}
           </CustomText>
           <CustomText
             style={{
@@ -220,7 +220,7 @@ const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome
             }}
             numberOfLines={1}>
             {/* fhjagdhagshdjas */}
-            {item?.vicinity}
+            {item?.vicinity || item?.address?.vicinity}
           </CustomText>
         </View>
 
@@ -339,7 +339,7 @@ const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome
                 fontSize: moderateScale(17, 0.6),
                 color: Color.black,
               }}>
-              {item?.name}
+              {item?.name || item?.address?.name}
             </CustomText>
 
             <CustomButton
@@ -366,11 +366,11 @@ const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome
                 color: Color.themeDarkGray,
                 paddingLeft: moderateScale(10, 0.6),
               }}>
-              {`${item?.rating} `}
+              {`${item?.rating || item?.address?.rating} `}
             </CustomText>
             <RatingComponent
               disable={true}
-              rating={item?.rating}
+              rating={item?.rating || item?.address?.rating}
               starColor={'#Fdcc0d'}
               starStyle={{
                 marginRight: moderateScale(1, 0.3),
@@ -383,7 +383,7 @@ const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome
                 fontSize: moderateScale(13, 0.6),
                 color: Color.themeDarkGray,
               }}>
-              {` (${item?.user_ratings_total || item?.totalRatings})`}
+              {` (${item?.user_ratings_total || item?.totalRatings || item?.address?.user_ratings_total})`}
             </CustomText>
           </View>
 
@@ -394,15 +394,17 @@ const NearPlacesCard = ({ item, onPressSave, fromWishList, setIds, ids, fromHome
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <CustomText
-              style={{
-                fontSize: moderateScale(13, 0.6),
-                color: Color.themeDarkGray,
-                paddingLeft: moderateScale(10, 0.6),
-                marginTop: moderateScale(5, 0.3),
-              }}>
-              {item?.types[0] || item?.types}
-            </CustomText>
+            {isType &&
+              <CustomText
+                style={{
+                  fontSize: moderateScale(13, 0.6),
+                  color: Color.themeDarkGray,
+                  paddingLeft: moderateScale(10, 0.6),
+                  marginTop: moderateScale(5, 0.3),
+                }}>
+                {item?.types[0] || item?.types || item?.address?.types[0]}
+              </CustomText>
+            }
             <TouchableOpacity
               activeOpacity={0.8}
               style={{

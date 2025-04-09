@@ -198,12 +198,12 @@ const PlacesCard = ({
         <View style={styles.imageContainer}>
           <CustomImage
             source={
-              item?.photos ? 
-              { uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${item?.photos[0]?.photo_reference}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc`}
-:
-              ['', undefined, null].includes(item?.image)
-                ? require('../Assets/Images/errorimage.png')
-                : { uri: item?.image }
+              item?.photos ?
+                { uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${item?.photos[0]?.photo_reference}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc` }
+                :
+                ['', undefined, null].includes(item?.image)
+                  ? require('../Assets/Images/errorimage.png')
+                  : { uri: item?.image }
             }
             style={styles.image}
             resizeMode={'cover'}
@@ -571,7 +571,7 @@ const PlacesCard = ({
                 color: Color.black,
                 width: windowWidth * 0.85,
               }}>
-              {item?.address || details?.formatted_address}
+              {item?.address || item?.address?.formatted_address || details?.formatted_address}
             </CustomText>
           </View>
           <View
