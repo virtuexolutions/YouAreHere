@@ -34,8 +34,9 @@ import navigationService from '../navigationService';
 import Share from 'react-native-share';
 import AddTripsModal from './AddTripsModal';
 
-const NearPlacesCard = ({ item, isType = true, onPressSave, fromWishList, setIds, ids, fromHome, style,
+const NearPlacesCard = ({ item, isType = true, disabled, fromWishList, setIds, ids, fromHome, style,
   isshownSave = true }) => {
+  console.log("NearPlacesCard🚀 ~ item:", item)
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);
@@ -143,7 +144,7 @@ const NearPlacesCard = ({ item, isType = true, onPressSave, fromWishList, setIds
 
   return (
     <>
-      <TouchableOpacity
+      <TouchableOpacity disabled={disabled}
         activeOpacity={0.8}
         style={[
           styles.container,
@@ -161,7 +162,7 @@ const NearPlacesCard = ({ item, isType = true, onPressSave, fromWishList, setIds
         }}
         onPress={() => {
           if (!fromHome) {
-            if (ids.length > 0) {
+            if (ids?.length > 0) {
               !ids?.some(data => data == item?.id)
                 ? setIds(prev => [...prev, item?.id])
                 : setIds(ids?.filter(data => data != item?.id));
@@ -213,14 +214,21 @@ const NearPlacesCard = ({ item, isType = true, onPressSave, fromWishList, setIds
             isBold>
             {item?.name || item?.address?.name}
           </CustomText>
-          <CustomText
+          {/* <CustomText
             style={{
               fontSize: moderateScale(10, 0.6),
               color: Color.black,
             }}
             numberOfLines={1}>
-            {/* fhjagdhagshdjas */}
             {item?.vicinity || item?.address?.vicinity}
+          </CustomText> */}
+          <CustomText
+            style={{
+              fontSize: moderateScale(12, 0.6),
+              color: Color.black,
+            }}
+            numberOfLines={1}>
+            {item?.vicinity || item?.address?.vicinity || 'Address not available'}
           </CustomText>
         </View>
 
@@ -712,7 +720,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: moderateScale(20, 0.6),
     marginBottom: moderateScale(10, 0.3),
-    paddingHorizontal: moderateScale(5, 0.3),
+    paddingHorizontal: moderateScale(10, 0.3),
   },
   image: {
     height: windowHeight * 0.09,

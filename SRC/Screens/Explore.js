@@ -24,6 +24,7 @@ import CustomImage from '../Components/CustomImage'
 import CountryPicker from "react-native-country-picker-modal";
 import CustomButton from '../Components/CustomButton'
 import Modal from 'react-native-modal';
+import navigationService from '../navigationService'
 
 const Explore = () => {
     const navigation = useNavigation();
@@ -85,7 +86,7 @@ const Explore = () => {
 
     useEffect(() => {
         getAllTrip()
-    }, [country?.name])
+    }, [country])
 
     const onSelect = country => {
         setCountryCode(country.cca2);
@@ -100,9 +101,10 @@ const Explore = () => {
         console.log("🚀 ~ getAllTrip ~ response?.data?.data?.country?.cities:", response?.data)
         if (response?.data != undefined) {
             setTripLoading(false)
-            setTrip(response?.data?.cities)
+            setTrip(response?.data)
         }
     }
+
     return (
         <ScreenBoiler
             statusBarBackgroundColor={'white'}
@@ -153,12 +155,24 @@ const Explore = () => {
                             size={moderateScale(28, 0.6)}
                         />
                     </View>
-
-                    <FlatList numColumns={2} columnWrapperStyle={{ justifyContent: 'space-between' }} data={trips} renderItem={({ item }) => {
-                        return (
-                            <TripCards item={item} />
-                        )
-                    }} />
+                    {loading ? <ActivityIndicator size="large" color={Color.white} /> :
+                        <FlatList
+                            ListEmptyComponent={() => <CustomText style={{
+                                color: Color.red,
+                                textAlign: 'center',
+                                width: windowWidth * 0.9,
+                                marginTop: moderateScale(20, 0.6)
+                            }}>No data found</CustomText>}
+                            numColumns={2}
+                            columnWrapperStyle={{ justifyContent: 'space-between' }}
+                            data={trips}
+                            renderItem={({ item }) => {
+                                console.log("🚀 ~ Explore ~ item:", item)
+                                return (
+                                    <TripCards item={item} />
+                                )
+                            }} />
+                    }
                 </View>
             </LinearGradient>
             <Modal
@@ -285,6 +299,7 @@ const Explore = () => {
                             }
                             else {
                                 setCountryModalVisible(false)
+                                getAllTrip()
                             }
                         }
                         }

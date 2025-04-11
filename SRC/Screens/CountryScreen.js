@@ -68,7 +68,6 @@ const CountryScreen = () => {
     }, [focused])
 
 
-
     return (
         <ScreenBoiler
             statusBarBackgroundColor={'white'}
@@ -276,7 +275,6 @@ const CountryScreen = () => {
                                 setVisible(false);
                             }}
                         />
-
                         {country && (
                             <CustomText
                                 style={{

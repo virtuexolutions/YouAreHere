@@ -50,7 +50,6 @@ import TripCards from '../Components/TripCards';
 const HomeScreen = props => {
   const isFocused = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ token:", token)
   const user = useSelector(state => state.commonReducer.userData);
   const userPreferences = useSelector(state => state.commonReducer.prefrences);
   const favouriteplaces = useSelector(
@@ -78,7 +77,6 @@ const HomeScreen = props => {
   const [searchedPlaces, setSearchedPlaces] = useState([]);
   const [currentLocation, setCurrentLocation] = useState({});
   const [locationName, setLocationName] = useState('');
-  console.log("🚀 ~ locationName:", locationName)
   const [foundLocation, setFoundLocation] = useState({});
   const [countryCode, setCountryCode] = useState('');
   const [listName, setlistName] = useState('');
@@ -98,7 +96,6 @@ const HomeScreen = props => {
   const [trip_loading, setTripLoading] = useState(false);
   const [trips, setTrip] = useState([])
   const [countryName, setCountryName] = useState('');
-  console.log("🚀 ~ countryName:", countryName)
   const currentLocation2 = {
     latitude: 24.8598186,
     longitude: 67.06233019999999,
@@ -235,7 +232,8 @@ const HomeScreen = props => {
       if (response != undefined) {
         const highestRating = Math.max(...response?.data?.results.map(place => place.rating || 0));
         const topRatedPlaces = response?.data?.results.filter(place => place.rating === highestRating);
-        setplacesData(filterplaces === 'All' ? response?.data?.results : topRatedPlaces);
+        // setplacesData(filterplaces === 'All' ? response?.data?.results : topRatedPlaces);
+        setplacesData(topRatedPlaces)
       }
     } catch (error) {
       console.error("Error fetching McDonald's locations:", error);
@@ -249,10 +247,9 @@ const HomeScreen = props => {
     setTripLoading(true)
     const response = await Get(url, token);
     setTripLoading(false)
-    console.log("🚀 ~ getAllTrip ~ response?.data?.data?.country?.cities:", response?.data)
     if (response?.data != undefined) {
       setTripLoading(false)
-      setTrip(response?.data?.cities)
+      setTrip(response?.data)
     }
   }
   // useEffect(() => {
@@ -260,6 +257,12 @@ const HomeScreen = props => {
   // }, [countryName])
 
   // ye abhi comment  kiya ha
+
+
+  useEffect(() => {
+    getAllTrip()
+  }, [countryName])
+
   useEffect(() => {
     getAllTrip()
     // getA;;
@@ -843,7 +846,6 @@ const HomeScreen = props => {
               }}
             />
           </View>
-
           <View style={styles.textContainer}>
             <CustomText
               style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
@@ -851,14 +853,24 @@ const HomeScreen = props => {
               As per your location we have following recommendations for you.
             </CustomText>
           </View>
-          {trip_loading ? <ActivityIndicator /> :
-            <FlatList style={{
-              paddingHorizontal: moderateScale(10, 0.6)
-            }} horizontal data={trips} renderItem={({ item }) => {
-              return (
-                <TripCards style={{ marginRight: moderateScale(10, 0.6) }} item={item} />
-              )
-            }} />
+          {trip_loading ? <ActivityIndicator
+            color={Color.white}
+            size={moderateScale(20, 0.8)}
+          /> :
+            <FlatList
+              ListEmptyComponent={() => <CustomText style={{
+                color: Color.red,
+                textAlign: 'center',
+                width: windowWidth * 0.9,
+                marginTop: moderateScale(20, 0.6)
+              }}>No data found</CustomText>}
+              style={{
+                paddingHorizontal: moderateScale(10, 0.6)
+              }} horizontal data={trips} renderItem={({ item }) => {
+                return (
+                  <TripCards style={{ marginRight: moderateScale(10, 0.6) }} item={item} />
+                )
+              }} />
           }
           {/* <TripCards /> */}
           <View style={styles.textContainer}>
@@ -874,7 +886,9 @@ const HomeScreen = props => {
                   backgroundColor: 'transparent',
                 },
               ]}
-              onPress={() => setDropDownVisible(!dropDownVisible)}>
+              onPress={() => setPreferencesModalVisible(true)}
+            // onPress={() => setDropDownVisible(!dropDownVisible)}
+            >
               <Icon
                 name="filter"
                 as={Ionicons}
@@ -935,7 +949,7 @@ const HomeScreen = props => {
                     }}>
                     top Rated
                   </CustomText>
-                  {filterplaces === 'Places' &&
+                  {filterplaces === 'topRated' &&
                     <Icon
                       style={{
                         paddingTop: moderateScale(2, 0.6),

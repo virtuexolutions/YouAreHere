@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import LinearGradient from 'react-native-linear-gradient'
 import ScreenBoiler from '../Components/ScreenBoiler'
@@ -20,16 +20,23 @@ import { mode } from 'native-base/lib/typescript/theme/v33x-theme/tools'
 import Color from '../Assets/Utilities/Color'
 import PlacesCard from '../Components/PlacesCard'
 import NearPlacesCard from '../Components/NearPlacesCard'
+import CustomImage from '../Components/CustomImage'
 
 const ExploreDetails = props => {
-    const { data } = props?.route?.params
+    const data = props?.route?.params?.data
+    const details = props?.route?.params?.item
+    console.log(" ExploreDetails🚀 ~ item:", details)
+
+    console.log("🚀ExploreDetails ~ data:", data)
     const navigation = useNavigation()
     const [btn_text, setBtnText] = useState('details')
     const [loading, setLoading] = useState(false);
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const [images, setImages] = useState([]);
     const [placeDetails, setPlaceDetails] = useState([]);
-    const [placeLoading, setPlaceLoading] = useState(false)
+    const [imagesLoading, setImagesLoading] = useState(true);
+    const [placeLoading, setPlaceLoading] = useState(true);
+
     console.log("🚀 ~ placeDetails:", placeDetails)
     const [places_list, setPlacesList] = useState([])
     // const images = [
@@ -59,16 +66,22 @@ const ExploreDetails = props => {
     ]);
 
     useEffect(() => {
-        if (data?.trips?.length > 0) {
-            const allPlaces = data.trips[0].places;
+        if (data?.places?.length > 0) {
+            setImagesLoading(true);
+            setPlaceLoading(true);
+            const allPlaces = data.places;
             const imageUrls = allPlaces.map(place => place.image);
+            console.log("🚀 ~ useEffect ~ imageUrls:", imageUrls)
             setImages(imageUrls);
+            setImagesLoading(false);
             allPlaces.forEach(async (place) => {
+                console.log("🚀 ~ allPlaces.forEach ~ place:", place)
                 const address = await getRestaurantDetails(place?.title);
                 setPlaceDetails(prev => [...prev, {
                     locationName: place.title,
                     address: address,
                 }]);
+                setPlaceLoading(false);
             });
         }
     }, [data]);
@@ -118,7 +131,9 @@ const ExploreDetails = props => {
             statusBarBackgroundColor={'white'}
             statusBarContentStyle={'dark-content'}
         >
-            {data?.trips?.map((item) => {
+
+            {data?.places?.map((item) => {
+                console.log("🚀 ~ {data?.places?.map ~ item:", item)
                 return (
                     <LinearGradient
                         style={{
@@ -154,98 +169,131 @@ const ExploreDetails = props => {
                                 width: '80%',
                             }}>Details</CustomText>
                         </View>
-                        <ScrollView showsVerticalScrollIndicator={false}>
-                            <View style={styles.main_view}>
-                                <SliderBox
-                                    images={images}
-                                    sliderBoxHeight={windowHeight * 0.3}
-                                    parentWidth={windowWidth * 0.9}
-                                    onCurrentImagePressed={index => console.log(`Image ${index} pressed`)}
-                                    dotColor="#FFEE58"
-                                    inactiveDotColor="#90A4AE"
-                                    // paginationBoxVerticalPadding={20}
-                                    autoplay
-                                    circleLoop
-                                />
-                                <View style={styles.text_view}>
-                                    <CustomText isBold style={styles.heading}>{item?.name}</CustomText>
-                                    <View style={styles.text_view}>
-                                        <Icon name='star' as={AntDesign} size={moderateScale(14, 0.6)} color={Color.black} />
-                                        <CustomText style={styles.rating_text}>5.9</CustomText>
-                                    </View>
-                                </View>
-                                <View style={[styles.text_view, {
-                                    justifyContent: "flex-start",
-                                    marginTop: moderateScale(10, 0.6)
-                                }]}>
-                                    <Icon name='location' as={EvilIcons} size={moderateScale(16, 0.6)} color={Color.black} />
-                                    <CustomText style={styles.text}>{data?.name}</CustomText>
-                                </View>
-                                <View style={{
-                                    width: windowWidth * 0.9,
-                                    height: 1.5,
-                                    backgroundColor: Color.black,
-                                    marginTop: moderateScale(10, 0.6)
-                                }} />
-                                <View style={[styles.text_view, {
-                                    justifyContent: 'flex-start',
-                                    alignItems: "center",
-                                }]}>
-                                    <TouchableOpacity onPress={() => setBtnText(
-                                        'details')} style={styles.tab_btn}>
-                                        <CustomText isBold style={[styles.tab_text, {
-                                            borderBottomWidth: btn_text === 'details' ? 1 : 0,
-                                            borderBottomColor: btn_text === 'details' ? Color.white : 'transparent',
-                                            textAlign: 'center'
-                                        }]}>Details</CustomText>
-                                    </TouchableOpacity >
-                                    <TouchableOpacity style={styles.tab_btn} onPress={() => setBtnText('reviews')} >
-                                        <CustomText isBold style={[styles.tab_text, {
-                                            borderBottomWidth: btn_text === 'reviews' ? 1 : 0,
-                                            borderBottomColor: btn_text === 'reviews' ? Color.white : 'transparent',
-                                            textAlign: 'center'
-                                        }]}>Reviews</CustomText>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.tab_btn} onPress={() => setBtnText('maps')} >
-                                        <CustomText isBold style={[styles.tab_text, {
-                                            borderBottomWidth: btn_text === 'maps' ? 1 : 0,
-                                            borderBottomColor: btn_text === 'maps' ? Color.white : 'transparent',
-                                            textAlign: 'center'
-                                        }]}>Maps</CustomText>
-                                    </TouchableOpacity>
-                                </View>
-                                {btn_text === 'details' &&
-                                    <View>
-                                        <CustomText style={styles.description}>
-                                            {item?.description}
-                                        </CustomText>
-                                        <CustomText isBold style={styles.heading}>Locations</CustomText>
-                                        <FlatList
-                                            data={placeDetails}
-                                            showsVerticalScrollIndicator={false}
-                                            contentContainerStyle={{
-                                                paddingBottom: 50,
-                                                marginTop: moderateScale(10, 0.3),
-                                                marginBottom: moderateScale(20, 0.3),
-                                            }}
-                                            renderItem={({ item, index }) => {
-                                                return (
-                                                    <NearPlacesCard
-                                                        item={item}
-                                                        isType={false}
-                                                    />
-                                                )
-                                            }}
+                        {(imagesLoading || placeLoading) ?
+                            (
+                                <ActivityIndicator size="large" color={Color.white} style={{ marginTop: moderateScale(20, 0.6) }} />
+                            ) : (<>
+                                <ScrollView showsVerticalScrollIndicator={false}>
+                                    <View style={styles.main_view}>
+                                        <SliderBox
+                                            images={images}
+                                            sliderBoxHeight={windowHeight * 0.3}
+                                            parentWidth={windowWidth * 0.9}
+                                            onCurrentImagePressed={index => console.log(`Image ${index} pressed`)}
+                                            dotColor="#FFEE58"
+                                            inactiveDotColor="#90A4AE"
+                                            autoplay
+                                            circleLoop
                                         />
+                                        {/* <View style={{
+                                                    height: windowHeight * 0.3,
+                                                    width: windowWidth * 0.9,
+                                                    backgroundColor: "red"
+                                                }}>
+                                                    <CustomImage source={{ uri: item?.image }} style={{
+                                                        width: '100%',
+                                                        height: '100%'
+                                                    }} />
+                                                </View> */}
+
+                                        <View style={styles.text_view}>
+                                            <CustomText isBold style={styles.heading}>{details?.trip_name}</CustomText>
+                                            <View style={styles.text_view}>
+                                                <Icon name='star' as={AntDesign} size={moderateScale(14, 0.6)} color={Color.black} />
+                                                <CustomText style={styles.rating_text}>0</CustomText>
+                                            </View>
+                                        </View>
+                                        <View style={[styles.text_view, {
+                                            justifyContent: "flex-start",
+                                            marginTop: moderateScale(10, 0.6)
+                                        }]}>
+                                            <Icon name='location' as={EvilIcons} size={moderateScale(16, 0.6)} color={Color.black} />
+                                            <CustomText style={styles.text}>{data?.name}</CustomText>
+                                        </View>
+                                        <View style={{
+                                            width: windowWidth * 0.9,
+                                            height: 1.5,
+                                            backgroundColor: Color.black,
+                                            marginTop: moderateScale(10, 0.6)
+                                        }} />
+                                        <View style={[styles.text_view, {
+                                            justifyContent: 'flex-start',
+                                            alignItems: "center",
+                                        }]}>
+                                            <TouchableOpacity onPress={() => setBtnText(
+                                                'details')} style={styles.tab_btn}>
+                                                <CustomText isBold style={[styles.tab_text, {
+                                                    borderBottomWidth: btn_text === 'details' ? 1 : 0,
+                                                    borderBottomColor: btn_text === 'details' ? Color.white : 'transparent',
+                                                    textAlign: 'center'
+                                                }]}>Details</CustomText>
+                                            </TouchableOpacity >
+                                            <TouchableOpacity style={styles.tab_btn} onPress={() => setBtnText('reviews')} >
+                                                <CustomText isBold style={[styles.tab_text, {
+                                                    borderBottomWidth: btn_text === 'reviews' ? 1 : 0,
+                                                    borderBottomColor: btn_text === 'reviews' ? Color.white : 'transparent',
+                                                    textAlign: 'center'
+                                                }]}>Reviews</CustomText>
+                                            </TouchableOpacity>
+                                        </View>
+                                        {btn_text === 'details' &&
+                                            <View>
+                                                <CustomText style={[styles.description, {
+
+                                                }]}>
+                                                    {details?.trip_description ? details?.trip_description : ' No Details Found'}
+                                                </CustomText>
+                                                <CustomText isBold style={styles.heading}>Locations</CustomText>
+                                                {
+                                                    loading ? <ActivityIndicator
+                                                        color={Color.white}
+                                                        size={moderateScale(29, 0.8)}
+                                                    /> :
+                                                        <FlatList
+                                                            data={placeDetails}
+                                                            showsVerticalScrollIndicator={false}
+                                                            contentContainerStyle={{
+                                                                paddingBottom: 50,
+                                                                marginTop: moderateScale(10, 0.3),
+                                                                marginBottom: moderateScale(20, 0.3),
+                                                            }}
+                                                            renderItem={({ item, index }) => {
+                                                                console.log("🚀 ~ {data?.places?.map ~ item:", item)
+                                                                return (
+                                                                    <NearPlacesCard
+                                                                        disabled={true}
+                                                                        item={item}
+                                                                        isType={false}
+                                                                        isshownSave={false}
+                                                                    />
+                                                                )
+                                                            }}
+                                                        />
+                                                }
+                                            </View>
+                                        }
+                                        {
+                                            btn_text === 'reviews' &&
+                                            <View style={{
+                                                marginTop: moderateScale(10, 0.6)
+                                            }}>
+                                                <CustomText isBold style={styles.heading}>Reviews</CustomText>
+                                                <CustomText style={[styles.description, {
+
+                                                }]}>
+                                                    {'No Reviews Found'}
+                                                </CustomText>
+                                            </View>
+                                        }
                                     </View>
-                                }
-                            </View>
-                        </ScrollView>
+                                </ScrollView>
+                            </>)
+                        }
                     </LinearGradient>
                 )
             })
-
             }
+
         </ScreenBoiler>
     )
 }
