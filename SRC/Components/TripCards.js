@@ -16,7 +16,7 @@ import finalPropsSelectorFactory from 'react-redux/es/connect/selectorFactory'
 import navigationService from '../navigationService'
 import axios from 'axios'
 
-const TripCards = ({ item, style, name, onPress, image, country, trip_name }) => {
+const TripCards = ({ item, style, name, width, height, onPress, rating, image, trip_description, country, trip_name }) => {
     console.log("🚀 ~ TripCards ~ item:", item)
     const [isfav, setIsFav] = useState(false)
     const [countryCode, setCountryCode] = useState()
@@ -48,8 +48,14 @@ const TripCards = ({ item, style, name, onPress, image, country, trip_name }) =>
 
     return (
         <>
-            <View style={[styles.card_view, style]}>
-                <View style={styles.image_view}>
+            <View style={[styles.card_view, style || {
+                // width: width ? width : windowWidth * 0.44,
+                // height: height ? height : windowWidth * 0.3,
+            }]}>
+                <View style={[styles.image_view, {
+                    width: width ? width : windowWidth * 0.44,
+                    height: height ? height : windowWidth * 0.3,
+                }]}>
                     <CustomImage onPress={onPress ? onPress : () => navigationService.navigate('CitiesTrips', { data: item, countryCode: countryCode, image: item?.cities[0]?.places[0]?.image })} source={image ? { uri: image } : item?.cities[0]?.places[0]?.image ? { uri: item?.cities[0]?.places[0]?.image } : require('../Assets/Images/no_image.jpg')} style={styles.image} />
                 </View>
                 <Icon name={isfav === true ? 'favorite' : 'favorite-border'} onPress={() => setIsFav(true)} as={MaterialIcons} size={moderateScale(20, 0.6)} color={Color.yellow} style={{
@@ -65,7 +71,7 @@ const TripCards = ({ item, style, name, onPress, image, country, trip_name }) =>
                 }]}>
                     <Icon name='location-pin' as={MaterialIcons} size={moderateScale(14, 0.6)} color={Color.yellow} />
                     <CustomText isBold style={[styles.rating_text, {
-                        width: '70%'
+                        width: '80%'
                     }]}>{name ? name : item?.country}</CustomText>
                     <View style={{
                         width: moderateScale(20, 0.6),
@@ -77,7 +83,14 @@ const TripCards = ({ item, style, name, onPress, image, country, trip_name }) =>
                         }} source={{ uri: `https://flagsapi.com/${countryCode || country}/flat/64.png` }} />
                     </View>
                 </View>
-                <CustomText isBold style={styles.heading}>{trip_name ? trip_name : item?.trip_name}</CustomText>
+                <View style={styles.text_view}>
+                    <CustomText isBold style={styles.heading}>{trip_name ? trip_name : item?.trip_name}</CustomText>
+                    <View style={styles.text_view}>
+                        <Icon as={AntDesign} name={'star'} size={moderateScale(14, 0.6)} color={Color.yellow} />
+                        <CustomText style={styles.rating_text}>{item?.rating ? item?.rating : 0}</CustomText>
+                    </View>
+                </View>
+                <CustomText numberOfLines={2} style={styles.text}>{trip_description ? trip_description : item?.trip_description === null ? 'No Description' : item?.trip_description}</CustomText>
             </View>
 
         </>
@@ -95,8 +108,7 @@ const styles = StyleSheet.create({
         marginTop: moderateScale(10, 0.6)
     },
     image_view: {
-        width: windowWidth * 0.44,
-        height: windowWidth * 0.3,
+
         backgroundColor: 'red',
         borderTopEndRadius: moderateScale(10, 0.6),
         borderTopLeftRadius: moderateScale(10, 0.6)
@@ -121,5 +133,11 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(12, 0.6),
         marginLeft: moderateScale(5, 0.6),
         marginRight: moderateScale(5, 0.6)
+    },
+    text: {
+        marginLeft: moderateScale(5, 0.6),
+        width: '95%',
+        fontSize: moderateScale(11, 0.6),
+        color: Color.darkGray
     }
 })

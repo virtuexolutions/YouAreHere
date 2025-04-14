@@ -34,7 +34,7 @@ import navigationService from '../navigationService';
 import Share from 'react-native-share';
 import AddTripsModal from './AddTripsModal';
 
-const NearPlacesCard = ({ item, isType = true, disabled, fromWishList, setIds, ids, fromHome, style,
+const NearPlacesCard = ({ item, isType = true, disabled, onPressSave, fromWishList, setIds, ids, fromHome, style,
   isshownSave = true }) => {
   console.log("NearPlacesCard🚀 ~ item:", item)
   const token = useSelector(state => state.authReducer.token);

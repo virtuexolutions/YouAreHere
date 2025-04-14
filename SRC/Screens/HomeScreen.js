@@ -831,7 +831,7 @@ const HomeScreen = props => {
             //   />
             // </View>
           // )}*/}
-          <View
+          {/* <View
             style={{ flexDirection: 'row', marginTop: moderateScale(10, 0.3) }}>
             <FlatList
               data={cardData}
@@ -845,7 +845,7 @@ const HomeScreen = props => {
                 return <WelcomeCard item={item} />;
               }}
             />
-          </View>
+          </View> */}
           <View style={styles.textContainer}>
             <CustomText
               style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
@@ -868,11 +868,10 @@ const HomeScreen = props => {
                 paddingHorizontal: moderateScale(10, 0.6)
               }} horizontal data={trips} renderItem={({ item }) => {
                 return (
-                  <TripCards style={{ marginRight: moderateScale(10, 0.6) }} item={item} />
+                  <TripCards width={windowWidth * 0.7} height={windowHeight * 0.2} style={{ marginRight: moderateScale(10, 0.6), width: windowWidth * 0.7, height: windowHeight * 0.3 }} item={item} />
                 )
               }} />
           }
-          {/* <TripCards /> */}
           <View style={styles.textContainer}>
             <CustomText
               style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
