@@ -96,6 +96,7 @@ const HomeScreen = props => {
   const [filterplaces, setFilterPlaces] = useState('All');
   const [trip_loading, setTripLoading] = useState(false);
   const [trips, setTrip] = useState([])
+  console.log('tripsssssssssssssssss === = = == = = = = =>>  >>')
   const [countryName, setCountryName] = useState('');
   const currentLocation2 = {
     latitude: 24.8598186,
