@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import LinearGradient from 'react-native-linear-gradient'
 import ScreenBoiler from '../Components/ScreenBoiler'
 import { windowHeight, windowWidth } from '../Utillity/utils'
@@ -21,6 +21,7 @@ import Color from '../Assets/Utilities/Color'
 import PlacesCard from '../Components/PlacesCard'
 import NearPlacesCard from '../Components/NearPlacesCard'
 import CustomImage from '../Components/CustomImage'
+import ReviewModal from '../Components/ReviewModal'
 
 const ExploreDetails = props => {
     const data = props?.route?.params?.data
@@ -28,6 +29,8 @@ const ExploreDetails = props => {
     console.log(" ExploreDetails🚀 ~ item:", details)
 
     console.log("🚀ExploreDetails ~ data:", data)
+    const rbRef = useRef(null)
+    console.log('================= >> >> >> > > > > > > > >> ' , rbRef)
     const navigation = useNavigation()
     const [btn_text, setBtnText] = useState('details')
     const [loading, setLoading] = useState(false);
@@ -37,7 +40,6 @@ const ExploreDetails = props => {
     const [imagesLoading, setImagesLoading] = useState(true);
     const [placeLoading, setPlaceLoading] = useState(true);
 
-    console.log("🚀 ~ placeDetails:", placeDetails)
     const [places_list, setPlacesList] = useState([])
     // const images = [
     //     require('../Assets/Images/11.jpg'),
@@ -277,7 +279,18 @@ const ExploreDetails = props => {
                                             <View style={{
                                                 marginTop: moderateScale(10, 0.6)
                                             }}>
+                                                <View style={{flexDirection :'row', alignItems :'center'}}
+                                                >
                                                 <CustomText isBold style={styles.heading}>Reviews</CustomText>
+                                                <CustomText onPress={() =>{
+                                                   rbRef?.current?.open() 
+                                                }} style={{
+                                                    paddingHorizontal :moderateScale(10,.6) ,
+                                                    paddingTop :moderateScale(10,.6), 
+                                                    textTransform :'captilized',
+                                                    // backgroundColor :Color.white ,
+                                                    // borderRadius : 10,
+                                                }}>Add Review</CustomText></View>
                                                 <CustomText style={[styles.description, {
 
                                                 }]}>
@@ -293,6 +306,12 @@ const ExploreDetails = props => {
                 )
             })
             }
+            <ReviewModal
+            setRef={rbRef}
+            rbRef={rbRef}
+            item={details}
+            
+            />
 
         </ScreenBoiler>
     )
