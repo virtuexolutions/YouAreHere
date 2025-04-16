@@ -159,7 +159,7 @@ const AddTripScreen = props => {
       setLoading(false);
       Platform?.OS == 'android'
         ? ToastAndroid.show('Trip Added Successfully', ToastAndroid.SHORT)
-        : Alert.alert('Already added');
+        : Alert.alert('Trip Added Successfull');
       navigation.goBack();
     }
   };
@@ -253,7 +253,7 @@ const AddTripScreen = props => {
   const onPressCreate = async () => {
     const url = 'auth/playlists';
     const body = {
-      name: listName,
+      name: newTrip,
       user_id: user?.id,
     };
     settripLoading(true);
@@ -292,7 +292,7 @@ const AddTripScreen = props => {
       openNow: data?.open_now?.openNow || data?.opening_hours?.openNow,
       image: data?.photos != undefined ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${data?.photos[0]?.photo_reference
         }&key=${apiKey}` : null,
-      latitud: data?.location?.lat || data?.geometry?.location?.lat,
+      latitude: data?.location?.lat || data?.geometry?.location?.lat,
       longitude: data?.location?.lng || data?.geometry?.location?.lat,
       sub_category: false,
       playlist_id: id,
