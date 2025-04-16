@@ -108,7 +108,7 @@ const CitiesTrips = props => {
                                 <>
                                     <TripCards name={data?.country} country={countryCode} image={image} trip_name={item?.name} onPress={() => navigationService.navigate('ExploreDetails', {
                                         data: item,
-                                        item: data
+                                        item: data,
                                     })} />
                                 </>
                             )

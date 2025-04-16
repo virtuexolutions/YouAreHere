@@ -25,7 +25,7 @@ import CustomImage from '../Components/CustomImage'
 const ExploreDetails = props => {
     const data = props?.route?.params?.data
     const details = props?.route?.params?.item
-    console.log(" ExploreDetails🚀 ~ item:", details)
+    console.log(" ExploreDetails🚀 ~ item:", details?.trip_id)
 
     console.log("🚀ExploreDetails ~ data:", data)
     const navigation = useNavigation()

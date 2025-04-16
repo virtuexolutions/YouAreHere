@@ -46,6 +46,7 @@ import TextInputWithTitle from '../Components/TextInputWithTitle';
 import CustomButton from '../Components/CustomButton';
 import navigationService from '../navigationService';
 import TripCards from '../Components/TripCards';
+import AddTripsModal from '../Components/AddTripsModal';
 
 const HomeScreen = props => {
   const isFocused = useIsFocused();
@@ -111,7 +112,7 @@ const HomeScreen = props => {
   // const [welcomeModal ,setWelcomeModal ] =useState(true)
 
   const [rbRef, setRbRef] = useState(null);
- 
+
   const cardData = [
     {
       heading: 'Jet-Set to New Horizons',
@@ -138,7 +139,7 @@ const HomeScreen = props => {
     }, 2000);
   };
 
- 
+
 
   const findNearestMcDonalds = async location => {
     const radius = 50000;
@@ -181,7 +182,7 @@ const HomeScreen = props => {
       setTrip(response?.data)
     }
   }
- 
+
 
 
   const handleEnableLocation = () => {
@@ -306,7 +307,7 @@ const HomeScreen = props => {
     }
   };
 
- 
+
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc`;
@@ -375,12 +376,12 @@ const HomeScreen = props => {
     if (response?.data != undefined) {
       setAddTripLoading(false);
       setSaveModalVisible(false);
-      
+
     }
   };
 
   const saveCard = async item => {
-  //  return console.log('item' ,JSON.stringify(item , null ,2))
+    console.log('helllllllooooooooooooo')
     const url = 'auth/wishlist';
     const body = {
       user_id: user?.id,
@@ -391,7 +392,7 @@ const HomeScreen = props => {
       rating: item?.rating,
       totalRatings: item?.user_ratings_total === null ? item?.rating : item?.user_ratings_total,
       openNow: item?.open_now?.openNow || item?.opening_hours?.openNow,
-      image: item?.photos != undefined ?`https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
+      image: item?.photos != undefined ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
         }&key=${apiKey}` : null,
       latitude: item?.location?.lat || item?.geometry?.location?.lat,
       longitude: item?.location?.lng || item?.geometry?.location?.lat,
@@ -405,14 +406,13 @@ const HomeScreen = props => {
     if (response != undefined) {
       // setSaveModalVisible(true);
       setwhishlistdata(response?.data?.data);
-      navigationService.navigate('AddTripScreen', { data: whishlistdata })
       // getTripList()
       // Platform.OS == 'android'
       //   ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
       //   : Alert.alert('Added To Wishlist');
     }
   };
-  
+
   useEffect(() => {
     Platform.OS == 'android' ? handleEnableLocation() : getLocation();
   }, [preferences, isFocused, customLocation]);
@@ -514,7 +514,7 @@ const HomeScreen = props => {
               <CustomText style={styles.loctxt}>{locationName}</CustomText>
             </TouchableOpacity>
 
-           
+
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -636,7 +636,7 @@ const HomeScreen = props => {
                   width: windowWidth * 0.8,
                   backgroundColor: 'white',
                 },
-               
+
                 description: {
                   color: '#5d5d5d',
                 },
@@ -830,7 +830,7 @@ const HomeScreen = props => {
                       color={Color.blue}
                     />}
                 </View>
-              
+
               </View>
             )}
             {/* {!isLoading && (
@@ -873,13 +873,17 @@ const HomeScreen = props => {
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard
-                    onPressSave={() => saveCard(item)}
+                    onPressSave={() =>
+                      navigationService.navigate('AddTripScreen', { data: item })
+                    }
                     item={item}
                     fromHome={true}
                     isLoading2={issaveLoading}
                   />
                 ) : (
-                  <NearPlacesCard item={item} fromHome={true} onPressSave={() => saveCard(item)} />
+                  <NearPlacesCard item={item} fromHome={true} onPressSave={() =>
+                    navigationService.navigate('AddTripScreen', { data: item })
+                  } />
                 );
               }}
             />
@@ -909,7 +913,7 @@ const HomeScreen = props => {
           <Modal
             transparent
             visible={isSaveModalVisible}
-          
+
 
             style={{
               justifyContent: 'center',
@@ -959,10 +963,10 @@ const HomeScreen = props => {
                   </View>
                   {isCreateNewTrip === true && (
                     <View style={styles.trip_list_view}>
-                       <Icon onPress={() =>  setCreateNewTrip(false)} as={Entypo} name={'cross'} size={moderateScale(16, 0.6)} style={{
-                  alignSelf: 'flex-end',
-                  marginBottom: moderateScale(10, 0.6)
-                }} />
+                      <Icon onPress={() => setCreateNewTrip(false)} as={Entypo} name={'cross'} size={moderateScale(16, 0.6)} style={{
+                        alignSelf: 'flex-end',
+                        marginBottom: moderateScale(10, 0.6)
+                      }} />
                       <CustomText>Create New Trip List</CustomText>
                       <TextInputWithTitle
                         setText={setlistName}
@@ -1010,7 +1014,7 @@ const HomeScreen = props => {
                         <CustomText
                           style={{
                             fontSize: moderateScale(11, 0.6),
-                          
+
                           }}>
                           no data found
                         </CustomText>
@@ -1020,7 +1024,6 @@ const HomeScreen = props => {
                         return (
                           <TouchableOpacity
                             onPress={() => {
-                             
                               onPressAddTrip(item?.id);
                             }}
                             style={{
@@ -1034,20 +1037,17 @@ const HomeScreen = props => {
                               paddingHorizontal: moderateScale(10, 0.6),
                               borderWidth: 1.5,
                               borderColor:
-                               '#EEEEEEEE',
+                                '#EEEEEEEE',
                             }}>
-                           
-                               <CustomText
-                                style={{
-                                  fontSize: moderateScale(14, 0.6),
-                                  textTransform: 'capitalize',
-                                  width: '100%',
-                                  textAlign: 'left',
-                                }}>
-                                {item?.name}
-                              </CustomText>
-                            {/* } */}
-
+                            <CustomText
+                              style={{
+                                fontSize: moderateScale(14, 0.6),
+                                textTransform: 'capitalize',
+                                width: '100%',
+                                textAlign: 'left',
+                              }}>
+                              {item?.name}
+                            </CustomText>
                           </TouchableOpacity>
                         );
                       }}
@@ -1057,11 +1057,8 @@ const HomeScreen = props => {
               </View>
             </View>
           </Modal>
-         
         </ScrollView>
       </LinearGradient>
-
-
     </ScreenBoiler>
   );
 };
@@ -1118,18 +1115,18 @@ const styles = ScaledSheet.create({
     elevation: 10,
   },
   trip_list_view: {
-    position : 'absolute',
+    position: 'absolute',
     backgroundColor: 'rgba(255,255,255,0.7)',
     width: windowWidth * 0.8,
-   marginTop: moderateScale(10, 0.6),
+    marginTop: moderateScale(10, 0.6),
     alignItems: 'center',
     paddingVertical: moderateScale(10, 0.6),
     borderRadius: moderateScale(15, 0.6),
-    borderWidth : 1,
-    borderColor : Color.themeColor,
-    zIndex : 1,
-    alignSelf : 'center',
-    top : moderateScale(30,0.6)
+    borderWidth: 1,
+    borderColor: Color.themeColor,
+    zIndex: 1,
+    alignSelf: 'center',
+    top: moderateScale(30, 0.6)
 
   },
   modal_inner_view: {

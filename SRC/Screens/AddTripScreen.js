@@ -1,5 +1,5 @@
-import {Icon} from 'native-base';
-import React, {useEffect, useState} from 'react';
+import { Icon } from 'native-base';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -21,21 +21,22 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../Components/CustomText';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import CustomButton from '../Components/CustomButton';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import CustomImage from '../Components/CustomImage';
 import axios from 'axios';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import Modal from 'react-native-modal';
 import Color from '../Assets/Utilities/Color';
-import {color} from 'native-base/lib/typescript/theme/styled-system';
+import { color } from 'native-base/lib/typescript/theme/styled-system';
 
 const AddTripScreen = props => {
-  const {data} = props?.route?.params;
+  const { data } = props?.route?.params;
+  console.log("🚀 ~ data:", data)
   const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
@@ -116,16 +117,16 @@ const AddTripScreen = props => {
 
         if (photoReference) {
           const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
-          fetchedData.push({name: selectedCities, uri: photoUrl});
+          fetchedData.push({ name: selectedCities, uri: photoUrl });
         } else {
-          fetchedData.push({name: selectedCities, uri: null});
+          fetchedData.push({ name: selectedCities, uri: null });
         }
       } else {
-        fetchedData.push({name: selectedCities, uri: null});
+        fetchedData.push({ name: selectedCities, uri: null });
       }
     } catch (error) {
       console.error(`Error fetching image for ${selectedCities}:`, error);
-      fetchedData.push({name: selectedCities, uri: null});
+      fetchedData.push({ name: selectedCities, uri: null });
     }
     // }
     const firstUri = fetchedData.length > 0 ? fetchedData[0].uri : null;
@@ -264,16 +265,48 @@ const AddTripScreen = props => {
     }
   };
 
+  // const onPressAddTrip = async id => {
+  //   const url = `auth/playlists_detail/${id}`;
+  //   const body = {
+  //     //   wishlist_id: whishlistdata?.id,
+  //   };
+  //   setAddTripLoading(true);
+  //   const response = await Post(url, body, apiHeader(token));
+  //   setAddTripLoading(false);
+  //   if (response?.data != undefined) {
+  //     setAddTripLoading(false);
+  //   }
+  // };
+
+
   const onPressAddTrip = async id => {
-    const url = `auth/playlists_detail/${id}`;
+    const url = `auth/place_save/${id}`;
     const body = {
-      //   wishlist_id: whishlistdata?.id,
+      place_id: data?.place_id,
+      name: data?.name,
+      address: data?.address || data?.vicinity,
+      types: data?.types,
+      rating: data?.rating,
+      totalRatings: data?.user_ratings_total === null ? data?.rating : data?.user_ratings_total,
+      openNow: data?.open_now?.openNow || data?.opening_hours?.openNow,
+      image: data?.photos != undefined ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${data?.photos[0]?.photo_reference
+        }&key=${apiKey}` : null,
+      latitud: data?.location?.lat || data?.geometry?.location?.lat,
+      longitude: data?.location?.lng || data?.geometry?.location?.lat,
+      sub_category: false,
+      playlist_id: id,
     };
+    console.log("🚀 ~ body:", body)
     setAddTripLoading(true);
     const response = await Post(url, body, apiHeader(token));
+    console.log("🚀 ~ response:", response?.data)
     setAddTripLoading(false);
     if (response?.data != undefined) {
+      Platform.OS == 'android'
+        ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
+        : Alert.alert('Added To Wishlist');
       setAddTripLoading(false);
+      setTripListModalVisible(false)
     }
   };
 
@@ -286,8 +319,8 @@ const AddTripScreen = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         colors={Color.themeBgColor}>
         <View
           style={{
@@ -350,15 +383,13 @@ const AddTripScreen = props => {
                     flexGrow: 1,
                   },
                 ]}>
-                {country && (
-                  <CustomText
-                    style={{
-                      fontSize: moderateScale(15, 0.6),
-                      color: '#5E5E5E',
-                    }}>
-                    {'select trip List'}
-                  </CustomText>
-                )}
+                <CustomText
+                  style={{
+                    fontSize: moderateScale(15, 0.6),
+                    color: '#5E5E5E',
+                  }}>
+                  {'select trip List'}
+                </CustomText>
                 <Icon
                   name={'keyboard-arrow-down'}
                   as={MaterialIcons}
@@ -413,7 +444,7 @@ const AddTripScreen = props => {
                   as={FontAwesome}
                   size={moderateScale(20, 0.6)}
                   color={Color.themeDarkGray}
-                  onPress={() => {}}
+                  onPress={() => { }}
                   style={{
                     position: 'absolute',
                     right: moderateScale(5, 0.3),
@@ -582,7 +613,7 @@ const AddTripScreen = props => {
                   <CustomImage
                     source={
                       image?.uri
-                        ? {uri: image.uri.replace('file://', '')}
+                        ? { uri: image.uri.replace('file://', '') }
                         : require('../Assets/Images/no_image.jpg')
                     }
                     style={{
@@ -689,7 +720,7 @@ const AddTripScreen = props => {
                   please select country first
                 </CustomText>
               }
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity
                     style={[
@@ -702,7 +733,7 @@ const AddTripScreen = props => {
                       },
                     ]}
                     onPress={() => {
-                      //   onPressAddTrip(item?.id);
+                      onPressAddTrip(item?.id);
                       setSelectedListItem(item?.name);
                       //   if (selectedCities.includes(item)) {
                       //     Platform.OS == 'android'
@@ -736,7 +767,8 @@ const AddTripScreen = props => {
             />
             <CustomButton
               onPress={() => onPressCreate()}
-              text={'Submit'}
+              text={'Create'}
+              disabled={newTrip ? false : true}
               textColor={Color.white}
               height={windowHeight * 0.05}
               width={windowWidth * 0.6}
@@ -798,7 +830,7 @@ const AddTripScreen = props => {
                   please select country first
                 </CustomText>
               }
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity
                     style={styles.cites_btn}
@@ -806,9 +838,9 @@ const AddTripScreen = props => {
                       if (selectedCities.includes(item)) {
                         Platform.OS == 'android'
                           ? ToastAndroid.show(
-                              'City already added',
-                              ToastAndroid.SHORT,
-                            )
+                            'City already added',
+                            ToastAndroid.SHORT,
+                          )
                           : alert('City already added');
                       } else {
                         setSelectedCities(item);

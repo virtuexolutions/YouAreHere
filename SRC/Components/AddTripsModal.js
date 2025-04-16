@@ -22,7 +22,7 @@ import axios from 'axios';
 import { Post } from '../Axios/AxiosInterceptorFunction';
 import Modal from 'react-native-modal';
 
-const AddTripsModal = ({data}) => {
+const AddTripsModal = ({ data }) => {
     // const { data } = props?.route?.params
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const navigation = useNavigation()
@@ -226,7 +226,7 @@ const AddTripsModal = ({data}) => {
                             color={Color.black}
                         />
                     </TouchableOpacity>
-             0       <CustomText isBold style={{
+                    <CustomText isBold style={{
                         fontSize: moderateScale(20, 0.6),
                         textAlign: 'center',
                         width: '80%',
@@ -234,7 +234,7 @@ const AddTripsModal = ({data}) => {
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.main_view}>
-                      
+
                         <View style={{ justifyContent: "flex-start", alignItems: "flex-start", marginVertical: moderateScale(20, 0.6) }}>
 
                             <CustomText isBold style={{
