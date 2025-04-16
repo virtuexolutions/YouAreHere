@@ -303,8 +303,8 @@ const AddTripScreen = props => {
     setAddTripLoading(false);
     if (response?.data != undefined) {
       Platform.OS == 'android'
-        ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
-        : Alert.alert('Added To Wishlist');
+        ? ToastAndroid.show('Added SuccessFully', ToastAndroid.SHORT)
+        : Alert.alert('Added SuccessFully');
       setAddTripLoading(false);
       setTripListModalVisible(false)
     }
