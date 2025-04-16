@@ -40,6 +40,7 @@ const AddTripScreen = props => {
   const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ token:", token)
   const user = useSelector(state => state.commonReducer.userData);
   const [visible, setVisible] = useState(false);
   const [cityModalVisible, setcityModalVisible] = useState(false);

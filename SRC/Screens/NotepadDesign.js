@@ -651,7 +651,7 @@ const NotepadDesign = props => {
         </View>
 
         <CustomButton
-          text={'Add Trip'}
+          text={'Add Locations'}
           isBold
           textColor={Color.themeColor}
           // width={windowWidth * 0.2}
