@@ -98,7 +98,7 @@ const TextInputWithTitle = props => {
             as={props.iconType}
             style={[
               {
-
+ 
                 // backgroundColor :'red',
                 textAlign: 'center',
                 color: props.color ? props.color : Color.white,

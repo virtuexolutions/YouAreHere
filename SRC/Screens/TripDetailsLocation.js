@@ -61,27 +61,28 @@ const TripDetailsLocation = props => {
                         alignItems: 'center',
                         paddingVertical: moderateScale(10, 0.6),
                     }}>
-                    <CustomText
-                        style={{ fontSize: moderateScale(18, 0.6), color: Color.black }}
-                        isBold>
-                        Trips
-                    </CustomText>
-                    <TouchableOpacity
+                         <TouchableOpacity
                         activeOpacity={0.8}
                         style={styles.Rounded}
                         onPress={() => {
-                            navigation.toggleDrawer();
+                            navigation.goBack();
                         }}>
                         <Icon
                             onPress={() => {
-                                navigation.toggleDrawer();
+                                navigation.goBack();
                             }}
-                            name="menu"
+                            name="arrow-back"
                             as={Ionicons}
                             size={moderateScale(25)}
                             color={Color.black}
                         />
                     </TouchableOpacity>
+                    <CustomText
+                        style={{ fontSize: moderateScale(18, 0.6), color: Color.black }}
+                        isBold>
+                        Trips
+                    </CustomText>
+                   
                 </View>
                 <View>
                     {playListDataLoading ? (
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
         elevation: 5,
         position: 'absolute',
         top: 10,
-        right: 10,
+        left: 10,
     },
     card: {
         height: windowHeight * 0.10,

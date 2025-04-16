@@ -32,7 +32,7 @@ import { Alert } from 'react-native';
 import navigationService from '../navigationService';
 
 import Share from 'react-native-share';
-import AddTripsModal from './AddTripsModal';
+// import AddTripsModal from './AddTripsModal';
 
 const NearPlacesCard = ({ item, isType = true, disabled, onPressSave, fromWishList, setIds, ids, fromHome, style,
   isshownSave = true }) => {
@@ -49,7 +49,7 @@ const NearPlacesCard = ({ item, isType = true, disabled, onPressSave, fromWishLi
   const [reviewData, setReviewData] = useState([]);
   const [isLoading2, setIsLoading2] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [modalVisible, setIsModdalVisible] = useState(false);
+  // const [modalVisible, setIsModdalVisible] = useState(false);
 
   const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
 
@@ -634,11 +634,11 @@ const NearPlacesCard = ({ item, isType = true, disabled, onPressSave, fromWishLi
             </CustomText>
           </View>
         </View>
-        <AddTripsModal
+        {/* <AddTripsModal
           setisVisible={setIsModdalVisible}
           isVisible={modalVisible}
           data={item}
-        />
+        /> */}
         <Modal
           isVisible={isModalVisible}
           onBackdropPress={() => {

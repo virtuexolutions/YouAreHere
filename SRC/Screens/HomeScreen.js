@@ -111,63 +111,7 @@ const HomeScreen = props => {
   // const [welcomeModal ,setWelcomeModal ] =useState(true)
 
   const [rbRef, setRbRef] = useState(null);
-  const places = [
-    {
-      id: 'f1',
-      name: 'Restaurants',
-      label: 'restaurant',
-      icon: 'restaurant',
-      as: MaterialIcons,
-      // onPress: () => {},
-    },
-    {
-      id: 'h6',
-      name: 'Gas',
-      label: 'gas',
-      icon: 'local-gas-station',
-      as: MaterialIcons,
-      // onPress: () => {},
-    },
-    {
-      id: 't4',
-      name: 'Attractions',
-      icon: 'attractions',
-      as: MaterialIcons,
-      // onPress: () => {},
-    },
-    {
-      id: 'h1',
-      name: 'Hotels',
-      label: 'hotel',
-      icon: 'local-hotel',
-      as: MaterialIcons,
-      // onPress: () => {},
-    },
-    {
-      id: 'f2',
-      name: 'Coffee',
-      icon: 'coffee-outline',
-      as: MaterialCommunityIcons,
-      // onPress: () => {},
-    },
-    {
-      id: 's1',
-      name: 'Groceries',
-      label: 'shopping_mall',
-      icon: 'local-grocery-store',
-      as: MaterialIcons,
-      // onPress: () => {},
-    },
-    {
-      id: 't1',
-      name: 'Parks',
-      label: 'parks',
-      icon: 'park',
-      as: MaterialIcons,
-      // onPress: () => {},
-    },
-  ];
-
+ 
   const cardData = [
     {
       heading: 'Jet-Set to New Horizons',
@@ -194,22 +138,7 @@ const HomeScreen = props => {
     }, 2000);
   };
 
-  const getData = async location => {
-    setplacesData([]);
-    const url = `location?latitude=${Object.keys(customLocation).length > 0
-      ? customLocation?.location?.lat
-      : location?.lat
-      }&longitude=${Object.keys(customLocation).length > 0
-        ? customLocation?.location?.lng
-        : location?.lng
-      }&place[]=${preferences?.name != undefined ? preferences?.name : 'All'}`;
-    setIsLoading(true);
-    const response = await Get(url, token);
-    setIsLoading(false);
-    if (response != undefined) {
-      setplacesData(response?.data?.places);
-    }
-  };
+ 
 
   const findNearestMcDonalds = async location => {
     const radius = 50000;
@@ -233,7 +162,7 @@ const HomeScreen = props => {
         const highestRating = Math.max(...response?.data?.results.map(place => place.rating || 0));
         const topRatedPlaces = response?.data?.results.filter(place => place.rating === highestRating);
         // setplacesData(filterplaces === 'All' ? response?.data?.results : topRatedPlaces);
-        setplacesData(topRatedPlaces)
+        setplacesData(response?.data?.results)
       }
     } catch (error) {
       console.error("Error fetching McDonald's locations:", error);
@@ -252,56 +181,8 @@ const HomeScreen = props => {
       setTrip(response?.data)
     }
   }
-  // useEffect(() => {
-  //   getAllTrip()
-  // }, [countryName])
+ 
 
-  // ye abhi comment  kiya ha
-
-
-  useEffect(() => {
-    getAllTrip()
-  }, [countryName])
-
-  useEffect(() => {
-    getAllTrip()
-    // getA;;
-    // console.log(
-    //   'Running loscatddions ',
-    //   currentLocation,
-    //   JSON.stringify(favouriteplaces, null, 2),
-    // )
-    // findNearestMcDonalds(cU)
-    if (Object.keys(customLocation).length > 0 && isFocused) {
-      favouriteplaces.some(
-        (item, index) =>
-          item?.lat == customLocation?.location?.lat &&
-          item?.lng == customLocation?.location?.lng,
-      ) &&
-        (setFoundLocation(
-          favouriteplaces?.find(
-            (item, index) =>
-              item?.lat == customLocation?.location?.lat &&
-              item?.lng == customLocation?.location?.lng,
-          ),
-        ),
-          setIsVisibleModal(true));
-    } else {
-      favouriteplaces?.some(
-        (item, index) =>
-          item?.lat == currentLocation?.latitude &&
-          item?.lng == currentLocation?.longitude,
-      ) &&
-        (setFoundLocation(
-          favouriteplaces?.find(
-            (item, index) =>
-              item?.lat == currentLocation?.latitude &&
-              item?.lng == currentLocation?.longitude,
-          ),
-        ),
-          setIsVisibleModal(true));
-    }
-  }, [isFocused]);
 
   const handleEnableLocation = () => {
     RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
@@ -425,9 +306,7 @@ const HomeScreen = props => {
     }
   };
 
-  useEffect(() => {
-    Platform.OS == 'android' ? handleEnableLocation() : getLocation();
-  }, [preferences, isFocused, customLocation]);
+ 
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc`;
@@ -456,64 +335,6 @@ const HomeScreen = props => {
     } catch (error) {
       console.error(error);
     }
-  };
-
-
-  useEffect(() => {
-    if (currentLocation) {
-      getAddressFromCoordinates(
-        currentLocation?.latitude,
-        currentLocation?.longitude,
-      );
-    }
-    getTripList();
-  }, []);
-
-  // const fetchAddress = async () => {
-  //   try {
-  //     // Validate latitude and longitude
-  //     if (
-  //       !currentLocation?.latitude ||
-  //       !currentLocation?.longitude ||
-  //       isNaN(currentLocation?.latitude) ||
-  //       isNaN(currentLocation?.longitude)
-  //     ) {
-  //       throw new Error(
-  //         `Invalid latitude or longitude: ${currentLocation?.latitude}, ${currentLocation?.longitude}`,
-  //       );
-  //     }
-  //     Geocoder.init(apiKey);
-  //     const response = await Geocoder.from(
-  //       currentLocation?.latitude,
-  //       currentLocation?.longitude,
-  //     );
-  //     if (response.status === 'OK' && response.results.length > 0) {
-  //       const address = response.results[0].formatted_address;
-  //       setLocationName(address);
-  //       console.log('Address:=================================', response.results[0]);
-  //     } else {
-  //       console.error('No results found for the given location.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error during geocoding:', error);
-  //   }
-  // };
-
-  // return Object.keys(searchedPlaces)?.length > 0 &&    <CustomImage
-  // source={{uri : `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${searchedPlaces?.photos[0]?.photo_reference}&key=${apiKey}`}}
-  // style={{
-  // width : 200 ,
-  //   height : 200 ,
-  //   backgroundColor : 'red'
-  // }}
-  // />
-
-  const feedBackForm = async () => {
-    const url = Platform.select({
-      ios: `https://forms.gle/edJ3QPvb6B1awqvi6`,
-      android: `https://forms.gle/edJ3QPvb6B1awqvi6`,
-    });
-    Linking.openURL(url);
   };
 
   const getTripList = async () => {
@@ -554,14 +375,12 @@ const HomeScreen = props => {
     if (response?.data != undefined) {
       setAddTripLoading(false);
       setSaveModalVisible(false);
-      navigationService.navigate('AddTripScreen', { data: whishlistdata })
-      Platform?.OS == 'android'
-        ? ToastAndroid.show('Added Successfully', ToastAndroid.SHORT)
-        : Alert.alert('Added Successfully');
+      
     }
   };
 
   const saveCard = async item => {
+  //  return console.log('item' ,JSON.stringify(item , null ,2))
     const url = 'auth/wishlist';
     const body = {
       user_id: user?.id,
@@ -570,26 +389,87 @@ const HomeScreen = props => {
       address: item?.address || item?.vicinity,
       types: item?.types,
       rating: item?.rating,
-      totalRatings: item?.rating,
+      totalRatings: item?.user_ratings_total === null ? item?.rating : item?.user_ratings_total,
       openNow: item?.open_now?.openNow || item?.opening_hours?.openNow,
-      image: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
-        }&key=${apiKey}`,
+      image: item?.photos != undefined ?`https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
+        }&key=${apiKey}` : null,
       latitude: item?.location?.lat || item?.geometry?.location?.lat,
       longitude: item?.location?.lng || item?.geometry?.location?.lat,
       sub_category: false,
     };
+    // return console.log( JSON.stringify(body , null ,2))
     setSaveIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setSaveIsLoading(false);
-    if (response?.data != undefined) {
-      setSaveModalVisible(true);
+    // return  console.log(response)
+    if (response != undefined) {
+      // setSaveModalVisible(true);
       setwhishlistdata(response?.data?.data);
-      getTripList()
-      Platform.OS == 'android'
-        ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
-        : Alert.alert('Added To Wishlist');
+      navigationService.navigate('AddTripScreen', { data: whishlistdata })
+      // getTripList()
+      // Platform.OS == 'android'
+      //   ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
+      //   : Alert.alert('Added To Wishlist');
     }
   };
+  
+  useEffect(() => {
+    Platform.OS == 'android' ? handleEnableLocation() : getLocation();
+  }, [preferences, isFocused, customLocation]);
+  useEffect(() => {
+    if (currentLocation) {
+      getAddressFromCoordinates(
+        currentLocation?.latitude,
+        currentLocation?.longitude,
+      );
+    }
+    getTripList();
+  }, []);
+
+
+  useEffect(() => {
+    getAllTrip()
+  }, [countryName])
+
+  useEffect(() => {
+    getAllTrip()
+    // getA;;
+    // console.log(
+    //   'Running loscatddions ',
+    //   currentLocation,
+    //   JSON.stringify(favouriteplaces, null, 2),
+    // )
+    // findNearestMcDonalds(cU)
+    if (Object.keys(customLocation).length > 0 && isFocused) {
+      favouriteplaces?.some(
+        (item, index) =>
+          item?.lat == customLocation?.location?.lat &&
+          item?.lng == customLocation?.location?.lng,
+      ) &&
+        (setFoundLocation(
+          favouriteplaces?.find(
+            (item, index) =>
+              item?.lat == customLocation?.location?.lat &&
+              item?.lng == customLocation?.location?.lng,
+          ),
+        ),
+          setIsVisibleModal(true));
+    } else {
+      favouriteplaces?.some(
+        (item, index) =>
+          item?.lat == currentLocation?.latitude &&
+          item?.lng == currentLocation?.longitude,
+      ) &&
+        (setFoundLocation(
+          favouriteplaces?.find(
+            (item, index) =>
+              item?.lat == currentLocation?.latitude &&
+              item?.lng == currentLocation?.longitude,
+          ),
+        ),
+          setIsVisibleModal(true));
+    }
+  }, [isFocused]);
 
   return (
     <ScreenBoiler
@@ -634,12 +514,7 @@ const HomeScreen = props => {
               <CustomText style={styles.loctxt}>{locationName}</CustomText>
             </TouchableOpacity>
 
-            {/* <Icon
-              name="heart"
-              color={Color.white}
-              size={moderateScale(28, 0.6)}
-              as={EvilIcons}
-            /> */}
+           
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -761,11 +636,7 @@ const HomeScreen = props => {
                   width: windowWidth * 0.8,
                   backgroundColor: 'white',
                 },
-                // listView: {
-                //   width: windowWidth * 0.8,
-                //   marginLeft: moderateScale(5, 0.6),
-                //   borderColor: Color.veryLightGray,
-                // },
+               
                 description: {
                   color: '#5d5d5d',
                 },
@@ -959,32 +830,7 @@ const HomeScreen = props => {
                       color={Color.blue}
                     />}
                 </View>
-                {/* {selectedService?.length > 0 && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      // console.log('helooooooooooooooooooooooooooo ' )
-                      profileUpdate();
-                    }}
-                    style={{
-                      backgroundColor: Color.blue,
-                      width: '100%',
-                      alignItems: 'center',
-                    }}>
-                    {isLoading ? (
-                      <ActivityIndicator size={'small'} color={Color.black} />
-                    ) : (
-                      <CustomText
-                        onPress={() => {
-                          profileUpdate();
-                        }}
-                        style={{
-                          fontSize: moderateScale(12, 0.6),
-                        }}>
-                        done
-                      </CustomText>
-                    )}
-                  </TouchableOpacity>
-                )} */}
+              
               </View>
             )}
             {/* {!isLoading && (
@@ -1040,7 +886,7 @@ const HomeScreen = props => {
           )}
           <WelcomeModal
             isModalVisible={isVisibleModal}
-            setIsModdalVisible={setIsVisibleModal}
+            // setIsModdalVisible={setIsVisibleModal}
             matchLocation={foundLocation}
             setMatchLocation={setFoundLocation}
           />
@@ -1063,9 +909,7 @@ const HomeScreen = props => {
           <Modal
             transparent
             visible={isSaveModalVisible}
-            // on={() => {
-            //   setSaveModalVisible(!isSaveModalVisible);
-            // }}
+          
 
             style={{
               justifyContent: 'center',
@@ -1115,6 +959,10 @@ const HomeScreen = props => {
                   </View>
                   {isCreateNewTrip === true && (
                     <View style={styles.trip_list_view}>
+                       <Icon onPress={() =>  setCreateNewTrip(false)} as={Entypo} name={'cross'} size={moderateScale(16, 0.6)} style={{
+                  alignSelf: 'flex-end',
+                  marginBottom: moderateScale(10, 0.6)
+                }} />
                       <CustomText>Create New Trip List</CustomText>
                       <TextInputWithTitle
                         setText={setlistName}
@@ -1162,7 +1010,7 @@ const HomeScreen = props => {
                         <CustomText
                           style={{
                             fontSize: moderateScale(11, 0.6),
-                            // color: Color.red,
+                          
                           }}>
                           no data found
                         </CustomText>
@@ -1172,7 +1020,7 @@ const HomeScreen = props => {
                         return (
                           <TouchableOpacity
                             onPress={() => {
-                              setSelectedItem(item);
+                             
                               onPressAddTrip(item?.id);
                             }}
                             style={{
@@ -1186,14 +1034,10 @@ const HomeScreen = props => {
                               paddingHorizontal: moderateScale(10, 0.6),
                               borderWidth: 1.5,
                               borderColor:
-                                item?.id === selectedItem?.id
-                                  ? Color.themeColor
-                                  : '#EEEEEEEE',
+                               '#EEEEEEEE',
                             }}>
-                            {
-                              selectedItem?.id === item?.id && addTripLoading ? <ActivityIndicator style={{
-                                marginTop: moderateScale(10, 0.6)
-                              }} size="small" color={Color.themeColor} /> : <CustomText
+                           
+                               <CustomText
                                 style={{
                                   fontSize: moderateScale(14, 0.6),
                                   textTransform: 'capitalize',
@@ -1202,7 +1046,7 @@ const HomeScreen = props => {
                                 }}>
                                 {item?.name}
                               </CustomText>
-                            }
+                            {/* } */}
 
                           </TouchableOpacity>
                         );
@@ -1213,18 +1057,7 @@ const HomeScreen = props => {
               </View>
             </View>
           </Modal>
-          {/* <AddTripsModal
-            isVisible={true}
-          /> */}
-          {/* <PreferenceModal
-            modalIsVisible={preferences}
-            search={search}
-            setSearch={setSearch}
-            setModalIsVisible={setPreferences}
-            selectedType={currentItem}
-            // setUserPreferences={setUserPreferences}
-            userPreferences={userPreferences}
-          /> */}
+         
         </ScrollView>
       </LinearGradient>
 
@@ -1285,21 +1118,19 @@ const styles = ScaledSheet.create({
     elevation: 10,
   },
   trip_list_view: {
-    backgroundColor: Color.white,
+    position : 'absolute',
+    backgroundColor: 'rgba(255,255,255,0.7)',
     width: windowWidth * 0.8,
-    height: windowHeight * 0.2,
-    marginTop: moderateScale(10, 0.6),
+   marginTop: moderateScale(10, 0.6),
     alignItems: 'center',
     paddingVertical: moderateScale(10, 0.6),
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.39,
-    shadowRadius: 8.3,
-    elevation: 13,
     borderRadius: moderateScale(15, 0.6),
+    borderWidth : 1,
+    borderColor : Color.themeColor,
+    zIndex : 1,
+    alignSelf : 'center',
+    top : moderateScale(30,0.6)
+
   },
   modal_inner_view: {
     height: windowHeight,
