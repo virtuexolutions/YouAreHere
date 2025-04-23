@@ -598,7 +598,7 @@ const HomeScreen = props => {
                 }}
               />
             </TouchableOpacity>
-            <GooglePlacesAutocomplete
+            {/* <GooglePlacesAutocomplete
               placeholder="Search"
               textInputProps={{
                 placeholderTextColor: '#5d5d5d',
@@ -610,9 +610,7 @@ const HomeScreen = props => {
                 });
               }}
               query={{
-                // key: 'AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8' --old api,
                 key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
-
                 language: 'en',
               }}
               isRowScrollable={true}
@@ -637,12 +635,23 @@ const HomeScreen = props => {
                   width: windowWidth * 0.8,
                   backgroundColor: 'white',
                 },
-
                 description: {
                   color: '#5d5d5d',
                 },
               }}
-            />
+            /> */}
+            <TouchableOpacity onPress={() => {
+              navigationService.navigate('SearchScreen')
+            }} style={{
+              backgroundColor: Color.white,
+              width: windowWidth * 0.7,
+              height: windowHeight * 0.046,
+              borderRadius: moderateScale(15, 0.6),
+              justifyContent: 'center',
+              paddingHorizontal: moderateScale(10, 0.6)
+            }}>
+              <CustomText>Search</CustomText>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.menuIcon}
               onPress={() => setPreferencesModalVisible(true)}>

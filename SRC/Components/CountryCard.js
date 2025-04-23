@@ -31,8 +31,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Alert } from 'react-native';
 import navigationService from '../navigationService';
 import Share from 'react-native-share';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
-const CountryCard = ({ uri, name, onPress, citiesCount }) => {
+const CountryCard = ({ uri, issettingOption = false, countryType, onPressSetting, name, onPress, citiesCount }) => {
+    console.log("🚀 ~ CountryCard ~ countryType:", countryType)
     // const navigation = useNavigation()
     return (
         <TouchableOpacity
@@ -56,6 +58,22 @@ const CountryCard = ({ uri, name, onPress, citiesCount }) => {
                     resizeMode={'stretch'}
                 />
             </View>
+            {countryType &&
+                <View style={{
+                    width: moderateScale(20, 0.6),
+                    height: moderateScale(20, 0.6),
+                    backgroundColor: Color.themeColor,
+                    position: 'absolute',
+                    left: 70,
+                    bottom: 5,
+                    borderRadius: windowWidth,
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                    <Icon name={countryType === 'private' ? 'lock' : 'public'} as={countryType === 'public' ? MaterialIcons : Entypo} style={{
+                    }} size={moderateScale(12, 0.6)} color={Color.white} />
+                </View>
+            }
             <View style={{ width: windowWidth * 0.45 }}>
                 <CustomText
                     style={{ fontSize: moderateScale(13, 0.6), color: Color.black }}
@@ -72,7 +90,16 @@ const CountryCard = ({ uri, name, onPress, citiesCount }) => {
                     {citiesCount}
                 </CustomText>
             </View>
-
+            {issettingOption &&
+                <TouchableOpacity onPress={onPressSetting} style={{
+                    flex: 1,
+                    top: 10,
+                    position: 'absolute',
+                    right: 15,
+                }}>
+                    <Icon name={'dots-three-horizontal'} as={Entypo} size={moderateScale(20, 0.6)} />
+                </TouchableOpacity>
+            }
 
         </TouchableOpacity>
     )

@@ -218,7 +218,7 @@ const CitiesScreen = props => {
                             <CountryCard
                                 name={item?.name}
                                 uri={item?.image}
-                                onPress={() => navigation.navigate('NotepadDesign', { data: item, country: data?.name })}
+                                onPress={() => navigation.navigate('NotepadDesign', { data: item, country: data?.name, type: data?.type })}
                             />
                         )
                     }}

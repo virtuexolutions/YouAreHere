@@ -19,6 +19,10 @@ import navigationService from '../navigationService'
 import { Get, Post } from '../Axios/AxiosInterceptorFunction'
 import { useSelector } from 'react-redux'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
+import TextInputWithTitle from '../Components/TextInputWithTitle'
+import RBSheet from 'react-native-raw-bottom-sheet'
+import Entypo from 'react-native-vector-icons/Entypo'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 const CountryScreen = () => {
     const focused = useIsFocused()
@@ -27,20 +31,36 @@ const CountryScreen = () => {
     const [country, setCountry] = useState({ "callingCode": ["1"], "cca2": "US", "currency": ["USD"], "flag": "flag-us", "name": "United States", "region": "Americas", "subregion": "North America" });
     const [visible, setVisible] = useState(false)
     const [countryCode, setCountryCode] = useState("US");
-    // console.log("🚀 ~ CountryScreen ~ countryCode:", countryCode)
     const [withFilter, setFilter] = useState(true);
-    const [countries, setCountries] = useState([])
-    // console.log("🚀 ~ CountryScreen ~ countries:", countries)
+    const [countries, setCountries] = useState(countriesList)
+    console.log("🚀 ~ CountryScreen ~ countries:", countries)
     const [loading, setLoading] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [countriesList, setCountriesList] = useState([]);
-    // console.log("🚀 ~ CountryScreen ~ countriesList:", countriesList)
+    console.log("🚀 ~ CountryScreen ~ countriesList:", countriesList)
     const token = useSelector(state => state.authReducer.token);
+    const [privacyVisible, setprivacyVisible] = useState(null)
+    const [openSelectedTab, setOpenSelectedTab] = useState(false)
+    const [selectTab, setSelectedTab] = useState({
+        country: '',
+        type: ""
+    })
+    const [selectedCountryIndex, setSelectedCountryIndex] = useState(null);
+    console.log("🚀 ~ CountryScreen ~ selectedCountryIndex:", selectedCountryIndex)
+    // const [title, setTitle] = useState('')
+    // const [description, setDescription] = useState('')
+    
+
 
     const onSelect = country => {
         setCountryCode(country.cca2);
         setCountry(country);
     };
+
+
+    useEffect(() => {
+        setCountries(countriesList);
+    }, [countriesList]);
 
     const getCountries = async () => {
         const url = 'auth/countries'
@@ -53,7 +73,6 @@ const CountryScreen = () => {
     }
 
     const addCountry = async (data) => {
-        console.log("🚀 ~ addCountry ~ data:", data)
         const url = 'auth/countries'
         setLoading(true)
         const response = await Post(url, data, apiHeader(token))
@@ -67,6 +86,17 @@ const CountryScreen = () => {
         getCountries()
     }, [focused])
 
+
+    const updatePrivacyStatus = (status) => {
+        const updatedCountries = [...countries];
+        console.log("🚀 ~ updatePrivacyStatus ~ updatedCountries:", updatedCountries)
+        updatedCountries[selectedCountryIndex] = {
+            ...updatedCountries[selectedCountryIndex],
+            type: status
+        };
+        setCountries(updatedCountries);
+        privacyVisible?.close();
+    };
 
     return (
         <ScreenBoiler
@@ -124,6 +154,7 @@ const CountryScreen = () => {
                     />
 
                 </View>
+
                 {isLoading ? (
                     <View style={{
                         width: windowWidth,
@@ -151,7 +182,7 @@ const CountryScreen = () => {
                                 paddingBottom: moderateScale(50, 0.6),
 
                             }}
-                            data={countriesList}
+                            data={countries}
                             ListEmptyComponent={() => {
                                 return (
                                     <View style={{
@@ -165,29 +196,24 @@ const CountryScreen = () => {
                                 )
                             }}
                             renderItem={({ item, index }) => {
+                                console.log(item, '================>itemmmmmmm')
                                 return (
                                     <>
                                         <CountryCard
                                             // citiesCount={`No of cities added = ${item?.city_count}`}
                                             name={item?.name}
                                             uri={item?.uri}
+                                            countryType={item?.type}
+                                            issettingOption
+                                            onPressSetting={() => {
+                                                setSelectedCountryIndex(index);
+                                                privacyVisible?.open()
+                                            }}
                                             onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
                                         />
                                     </>
                                 )
                             }}
-                        // ListFooterComponent={()=>{
-                        //     return(
-                        //         countries ? 
-                        //         <CountryCard
-                        //         citiesCount={`No of cities added = 0`}
-                        //         name={country?.name}
-                        //         uri={`https://flagcdn.com/w320/${country?.cca2.toLowerCase()}.png`}
-                        //             //   onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
-                        //           />
-                        //           : <></>
-                        //     )
-                        // }}
 
                         />
 
@@ -341,6 +367,197 @@ const CountryScreen = () => {
                     />
                 </View>
             </Modal>
+            <RBSheet
+                ref={ref => {
+                    setprivacyVisible(ref);
+                }}
+                closeOnDragDown={true}
+                dragFromTopOnly={true}
+                openDuration={250}
+                height={windowHeight * 0.35}
+                customStyles={{
+                    container: {
+                        borderTopEndRadius: moderateScale(30, 0.6),
+                        borderTopLeftRadius: moderateScale(30, 0.6),
+                        overflow: 'hidden',
+                    },
+                }}>
+                <View style={{
+                    paddingVertical: moderateScale(10, 0.6),
+                    paddingHorizontal: moderateScale(20, 0.6)
+                }}>
+                    <CustomText isBold style={{
+                        fontSize: moderateScale(14, 0.6),
+                        textAlign: 'center'
+                    }}>Privacy type</CustomText>
+                    <CustomText isBold style={{
+                        fontSize: moderateScale(14, 0.6),
+                        marginTop: moderateScale(10, 0.6)
+                    }}>Please select the privacy type</CustomText>
+                    <View style={{
+                        width: windowWidth * 0.9,
+                        backgroundColor: Color.white,
+                        shadowColor: "#000",
+                        shadowOffset: {
+                            width: 0,
+                            height: 4,
+                        },
+                        shadowOpacity: 0.32,
+                        shadowRadius: 5.46,
+                        elevation: 9,
+                        borderRadius: moderateScale(20, 0.6),
+                        paddingHorizontal: moderateScale(15, 0.6),
+                        paddingVertical: moderateScale(15, 0.6)
+                    }}>
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: "center",
+                            justifyContent: 'space-between',
+                        }}>
+                            <CustomText isBold style={{
+                                fontSize: moderateScale(14, 0.6),
+                                color: Color.darkGray
+                            }}>Select type</CustomText>
+                            <Icon onPress={() => {
+                                setOpenSelectedTab(!openSelectedTab)
+                            }} as={Entypo} name={'chevron-down'} size={moderateScale(16, 0.6)} color={Color.darkGray} />
+                        </View>
+                        {openSelectedTab &&
+                            <View style={{
+                                width: windowWidth * 0.8,
+                                height: windowHeight * 0.1,
+                                top: -10,
+                                zIndex: 1,
+                                marginTop: moderateScale(20, 0.6)
+                            }}>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    alignItems: "center",
+                                    justifyContent: 'space-between',
+                                    width: windowWidth * 0.8,
+                                    height: moderateScale(40, 0.6),
+                                    borderRadius: moderateScale(10, 0.6),
+                                    borderWidth: 1.5,
+                                    borderColor: Color.lightGrey
+                                }}
+                                >
+                                    <TouchableOpacity onPress={() => updatePrivacyStatus('private')} style={{
+                                        flexDirection: 'row',
+                                        alignItems: "center",
+                                        justifyContent: 'space-between',
+                                        marginLeft: moderateScale(10, 0.6)
+                                    }}>
+                                        <Icon name={'lock'} as={Entypo} size={moderateScale(20, 0.6)} color={Color.veryLightGray} />
+                                        <CustomText isBold style={{
+                                            fontSize: moderateScale(13, 0.6),
+                                            marginLeft: moderateScale(7, 0.6),
+                                            color: Color.veryLightGray
+                                        }}>Private</CustomText>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    alignItems: "center",
+                                    justifyContent: 'space-between',
+                                    width: windowWidth * 0.8,
+                                    height: moderateScale(40, 0.6),
+                                    borderRadius: moderateScale(10, 0.6),
+                                    borderWidth: 1.5,
+                                    borderColor: Color.lightGrey,
+                                    marginTop: moderateScale(10, 0.6)
+                                }}
+                                >
+                                    <TouchableOpacity onPress={() => updatePrivacyStatus('public')} style={{
+                                        flexDirection: 'row',
+                                        alignItems: "center",
+                                        justifyContent: 'space-between',
+                                        marginLeft: moderateScale(10, 0.6)
+                                    }}>
+                                        <Icon name={'public'} as={MaterialIcons
+                                        } size={moderateScale(20, 0.6)} color={Color.veryLightGray} />
+                                        <CustomText isBold style={{
+                                            fontSize: moderateScale(13, 0.6),
+                                            marginLeft: moderateScale(7, 0.6),
+                                            color: Color.veryLightGray
+                                        }}>Public</CustomText>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        }
+                    </View>
+                    {/* <TextInputWithTitle
+                        placeholder={'Title'}
+                        setText={setTitle}
+                        value={title}
+                        viewHeight={0.06}
+                        viewWidth={0.85}
+                        inputWidth={0.6}
+                        marginTop={moderateScale(10, 0.3)}
+                        color={Color.orange}
+                        borderRadius={moderateScale(20, 0.6)}
+                        placeholderColor={Color.mediumGray}
+                        backgroundColor={Color.white}
+                        style={{
+                            shadowColor: Color.themeColor,
+                            shadowOffset: {
+                                width: 0,
+                                height: 4,
+                            },
+                            shadowOpacity: 0.32,
+                            shadowRadius: 5.46,
+                            elevation: 9,
+                            paddingLeft: moderateScale(10, 0.6)
+                        }}
+                    />
+                    <TextInputWithTitle
+                        placeholder={'Description'}
+                        setText={setDescription}
+                        value={description}
+                        viewHeight={0.15}
+                        viewWidth={0.85}
+                        inputWidth={0.85}
+                        marginTop={moderateScale(10, 0.3)}
+                        color={Color.orange}
+                        borderRadius={moderateScale(20, 0.6)}
+                        placeholderColor={Color.mediumGray}
+                        backgroundColor={Color.white}
+                        alignItems={'flex-start'}
+                        multiline
+                        style={{
+                            shadowColor: Color.themeColor,
+                            shadowOffset: {
+                                width: 0,
+                                height: 4,
+                            },
+                            shadowOpacity: 0.32,
+                            shadowRadius: 5.46,
+                            elevation: 9,
+                            paddingLeft: moderateScale(10, 0.6)
+                        }}
+                    /> */}
+                    {/* <View style={{ alignSelf: "center" }}>
+                        <CustomButton
+                            text={publish_loading ? (
+                                <ActivityIndicator size={'small'} color={'white'} />
+                            ) : (
+                                'Submit'
+                            )}
+                            isBold
+                            textColor={Color.white}
+                            width={windowWidth * 0.8}
+                            height={windowHeight * 0.05}
+                            bgColor={Color.themeColor}
+                            fontSize={moderateScale(11, 0.6)}
+                            borderRadius={moderateScale(10, 0.3)}
+                            alignSelf={'flex-end'}
+                            marginTop={moderateScale(20, 0.3)}
+                            onPress={() => {
+                                onPressPublish()
+                            }}
+                        />
+                    </View> */}
+                </View>
+            </RBSheet>
         </ScreenBoiler>
     )
 }

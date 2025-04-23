@@ -303,8 +303,7 @@ const Stories = [
 const NotepadDesign = props => {
   let Notedata = props?.route?.params?.data;
   let Country = props?.route?.params?.country;
-  console.log("🚀 ~ Country:", Country)
-  console.log("🚀 ~ Notedata:", Notedata)
+  let privacyType = props?.route?.params?.type;
   const token = useSelector(state => state.authReducer.token);
   console.log(token, 'tokeeeeeeeeeeeeeeen')
   const isFocused = useIsFocused();
@@ -313,7 +312,6 @@ const NotepadDesign = props => {
   // const stories = useSelector(state => state.commonReducer.notePadData);
   const [isLoading, setIsLoading] = useState(false);
   const [trips, setTrips] = useState([]);
-  console.log("🚀 ~ trips:", trips)
   const [tripNotes, setTripNotes] = useState([]);
   const [image, setImage] = useState({});
   const [selectedNote, setSelectedNote] = useState({});
@@ -326,20 +324,16 @@ const NotepadDesign = props => {
   const [noteModalVisible, setNoteModalVisible] = useState(false);
   const [type, setType] = useState('trip');
   const [searchData, setSearchData] = useState({})
-  console.log("🚀 ~ searchData:", searchData)
   const [selectedStory, setSelectedStory] = useState({});
   const [country, setCountry] = useState('');
-  console.log("🚀 ~ country:", country)
   const [imagePicker, setImagePicker] = useState(false);
   const [currentLocation, setCurrentLocation] = useState({})
   const [countryCode, setcountryCode] = useState('')
-  console.log("🚀 ~ countryCode:", countryCode)
   const user = useSelector(state => state.commonReducer.userData);
   const [publishTitle, setPublishTitle] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [ref, setRef] = useState(null);
-  console.log("🚀 ~ publishTitle:", publishTitle)
   const [publish_loading, setPublishLoading] = useState(false)
   const saveTripFromDetails = async () => {
     //  return console.log('here from details')
@@ -372,10 +366,6 @@ const NotepadDesign = props => {
         const responseData = await Post(url, body, apiHeader(token));
         setIsLoading(false);
         if (responseData != undefined) {
-          console.log(
-            '🚀 ~ file: NotepadDesign.js:373 ~ saveTrip ~ responseData:',
-            responseData?.data,
-          );
           setTripModalVisibe(false);
           setImage({});
           setCountry('');
@@ -409,7 +399,6 @@ const NotepadDesign = props => {
       image: Notedata?.image,
       title: searchData?.name
     };
-    console.log("🚀 ~ saveTrip ~ body:", body)
     // if (Object.keys(image).length > 0) {
     //   const imageForServer = await RNFetchBlob.fs.readFile(
     //     Platform.OS == 'android'
@@ -426,15 +415,10 @@ const NotepadDesign = props => {
         ? ToastAndroid.show('Please add country name', ToastAndroid.SHORT)
         : Alert.alert('Please add country name');
     }
-    console.log("🚀 ~ saveTrip ~ body:", body)
     setIsLoading(true);
     const responseData = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (responseData != undefined) {
-      console.log(
-        '🚀 ~ file: NotepadDesign.js:373 ~ saveTrip ~ responseData:',
-        responseData?.data,
-      );
       setTripModalVisibe(false);
       setImage({});
       setCountry('');
@@ -449,9 +433,7 @@ const NotepadDesign = props => {
     console.log('fasdasd asd ad asd d asd d  sdasd');
     const url = `auth/trip/index/${user?.id}?country=${Country}&city=${Notedata?.name}`;
     setTripLoading(true);
-    console.log("🚀 ~ getTrips ~ url:", url)
     const response = await Get(url, token);
-    console.log("🚀 ~ getTrips ~ response:", response?.data)
     setTripLoading(false);
     if (response != undefined) {
       setTrips(response?.data?.Trip);
@@ -495,11 +477,6 @@ const NotepadDesign = props => {
     setIsLoading(true);
     const response = await Post(url, formData, apiHeader(token));
     setIsLoading(false);
-
-    console.log(
-      '🚀 ~ file: NotepadDesign.js:442 ~ saveTripNote ~ response:',
-      response?.data,
-    );
     if (response != undefined) {
       setNoteDesc('');
       setImage({});
@@ -548,8 +525,6 @@ const NotepadDesign = props => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      console.log("🚀 ~ getLatLngFromCity ~ data:", data)
-
       if (data.status === "OK") {
         const result = data.results[0];
         const location = result.geometry.location;
@@ -579,12 +554,11 @@ const NotepadDesign = props => {
       city: Notedata?.name,
       trip_name: publishTitle ? publishTitle : title,
       trip_description: description,
+      type: privacyType
     }
-    console.log("🚀 ~ onPressPublish ~ body:", body)
     setPublishLoading(true)
     const response = await Post(url, body, apiHeader(token))
     setPublishLoading(false)
-    console.log("🚀 ~ onPressPublish ~ response:", response?.data)
     if (response?.data != undefined) {
       setPublishLoading(false)
       Platform?.OS == 'android'
@@ -1158,36 +1132,38 @@ const NotepadDesign = props => {
             </View>
           </Modal>
         </View>
-        <CustomButton
-          text={'Publish trip'}
-          isBold
-          textColor={Color.white}
-          width={windowWidth * 0.9}
-          height={windowHeight * 0.05}
-          bgColor={Color.themeColor}
-          fontSize={moderateScale(11, 0.6)}
-          borderRadius={moderateScale(5, 0.3)}
-          alignSelf={'flex-end'}
-          marginTop={moderateScale(30, 0.3)}
-          onPress={() => {
-            // onPressPublish()
-            ref.open()
-            // if (Object.keys(selectedStory).length > 0) {
-            //   setType('notes');
-            //   setNoteModalVisible(true);
-            // } else {
-            //   return Platform.OS == 'android'
-            //     ? ToastAndroid.show(`Select any Country`, ToastAndroid.SHORT)
-            //     : Alert.alert(`Select any Country`);
-            // }
-          }}
-          style={{
-            position: 'absolute',
-            bottom: 100,
-            alignSelf: "center",
-            left: 20
-          }}
-        />
+        {privacyType === 'public' &&
+          <CustomButton
+            text={'Publish trip'}
+            isBold
+            textColor={Color.white}
+            width={windowWidth * 0.9}
+            height={windowHeight * 0.05}
+            bgColor={Color.themeColor}
+            fontSize={moderateScale(11, 0.6)}
+            borderRadius={moderateScale(5, 0.3)}
+            alignSelf={'flex-end'}
+            marginTop={moderateScale(30, 0.3)}
+            onPress={() => {
+              // onPressPublish()
+              ref.open()
+              // if (Object.keys(selectedStory).length > 0) {
+              //   setType('notes');
+              //   setNoteModalVisible(true);
+              // } else {
+              //   return Platform.OS == 'android'
+              //     ? ToastAndroid.show(`Select any Country`, ToastAndroid.SHORT)
+              //     : Alert.alert(`Select any Country`);
+              // }
+            }}
+            style={{
+              position: 'absolute',
+              bottom: 100,
+              alignSelf: "center",
+              left: 20
+            }}
+          />
+        }
       </LinearGradient>
       <ImagePickerModal
         show={imagePicker}

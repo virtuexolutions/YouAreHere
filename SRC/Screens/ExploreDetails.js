@@ -16,7 +16,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomText from '../Components/CustomText'
 import { SliderBox } from 'react-native-image-slider-box';
-import { mode } from 'native-base/lib/typescript/theme/v33x-theme/tools'
 import Color from '../Assets/Utilities/Color'
 import PlacesCard from '../Components/PlacesCard'
 import NearPlacesCard from '../Components/NearPlacesCard'
@@ -26,11 +25,8 @@ import ReviewModal from '../Components/ReviewModal'
 const ExploreDetails = props => {
     const data = props?.route?.params?.data
     const details = props?.route?.params?.item
-    console.log(" ExploreDetails🚀 ~ item:", details?.trip_id)
-
-    console.log("🚀ExploreDetails ~ data:", data)
     const rbRef = useRef(null)
-    console.log('================= >> >> >> > > > > > > > >> ' , rbRef)
+
     const navigation = useNavigation()
     const [btn_text, setBtnText] = useState('details')
     const [loading, setLoading] = useState(false);
@@ -73,11 +69,9 @@ const ExploreDetails = props => {
             setPlaceLoading(true);
             const allPlaces = data.places;
             const imageUrls = allPlaces.map(place => place.image);
-            console.log("🚀 ~ useEffect ~ imageUrls:", imageUrls)
-            setImages(imageUrls);
+            setImages(imageUrls != null ? imageUrls : require('../Assets/Images/no_image.jpg'));
             setImagesLoading(false);
             allPlaces.forEach(async (place) => {
-                console.log("🚀 ~ allPlaces.forEach ~ place:", place)
                 const address = await getRestaurantDetails(place?.title);
                 setPlaceDetails(prev => [...prev, {
                     locationName: place.title,
@@ -126,16 +120,12 @@ const ExploreDetails = props => {
         }
     };
 
-
-
     return (
         <ScreenBoiler
             statusBarBackgroundColor={'white'}
             statusBarContentStyle={'dark-content'}
         >
-
             {data?.places?.map((item) => {
-                console.log("🚀 ~ {data?.places?.map ~ item:", item)
                 return (
                     <LinearGradient
                         style={{
@@ -177,27 +167,30 @@ const ExploreDetails = props => {
                             ) : (<>
                                 <ScrollView showsVerticalScrollIndicator={false}>
                                     <View style={styles.main_view}>
-                                        <SliderBox
-                                            images={images}
-                                            sliderBoxHeight={windowHeight * 0.3}
-                                            parentWidth={windowWidth * 0.9}
-                                            onCurrentImagePressed={index => console.log(`Image ${index} pressed`)}
-                                            dotColor="#FFEE58"
-                                            inactiveDotColor="#90A4AE"
-                                            autoplay
-                                            circleLoop
-                                        />
-                                        {/* <View style={{
-                                                    height: windowHeight * 0.3,
-                                                    width: windowWidth * 0.9,
-                                                    backgroundColor: "red"
-                                                }}>
-                                                    <CustomImage source={{ uri: item?.image }} style={{
-                                                        width: '100%',
-                                                        height: '100%'
-                                                    }} />
-                                                </View> */}
-
+                                        {images === null ? (
+                                            <View style={{
+                                                height: windowHeight * 0.3,
+                                                width: windowWidth * 0.9,
+                                                backgroundColor: "red"
+                                            }}>
+                                                <CustomImage source={{ uri: item?.image }} style={{
+                                                    width: '100%',
+                                                    height: '100%'
+                                                }} />
+                                            </View>
+                                        ) : (
+                                            <SliderBox
+                                                images={images}
+                                                sliderBoxHeight={windowHeight * 0.3}
+                                                parentWidth={windowWidth * 0.9}
+                                                onCurrentImagePressed={index => console.log(`Image ${index} pressed`)}
+                                                dotColor="#FFEE58"
+                                                inactiveDotColor="#90A4AE"
+                                                autoplay
+                                                circleLoop
+                                            />
+                                        )
+                                        }
                                         <View style={styles.text_view}>
                                             <CustomText isBold style={styles.heading}>{details?.trip_name}</CustomText>
                                             <View style={styles.text_view}>
@@ -260,7 +253,6 @@ const ExploreDetails = props => {
                                                                 marginBottom: moderateScale(20, 0.3),
                                                             }}
                                                             renderItem={({ item, index }) => {
-                                                                console.log("🚀 ~ {data?.places?.map ~ item:", item)
                                                                 return (
                                                                     <NearPlacesCard
                                                                         disabled={true}
@@ -279,22 +271,43 @@ const ExploreDetails = props => {
                                             <View style={{
                                                 marginTop: moderateScale(10, 0.6)
                                             }}>
-                                                <View style={{flexDirection :'row', alignItems :'center'}}
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}
                                                 >
-                                                <CustomText isBold style={styles.heading}>Reviews</CustomText>
-                                                <CustomText onPress={() =>{
-                                                   rbRef?.current?.open() 
-                                                }} style={{
-                                                    paddingHorizontal :moderateScale(10,.6) ,
-                                                    paddingTop :moderateScale(10,.6), 
-                                                    textTransform :'captilized',
-                                                    // backgroundColor :Color.white ,
-                                                    // borderRadius : 10,
-                                                }}>Add Review</CustomText></View>
+                                                    <CustomText isBold style={styles.heading}>Reviews</CustomText>
+                                                    <CustomText onPress={() => {
+                                                        rbRef?.current?.open()
+                                                    }} style={{
+                                                        paddingHorizontal: moderateScale(10, .6),
+                                                        paddingTop: moderateScale(10, .6),
+                                                        textTransform: 'captilized',
+                                                        // backgroundColor :Color.white ,
+                                                        // borderRadius : 10,
+                                                    }}>Add Review</CustomText></View>
                                                 <CustomText style={[styles.description, {
 
                                                 }]}>
-                                                    {'No Reviews Found'}
+                                                    <FlatList
+                                                        data={details?.reviews}
+                                                        ListEmptyComponent={() => <CustomText>no data found</CustomText>}
+                                                        showsVerticalScrollIndicator={false}
+                                                        renderItem={({ item, index }) => {
+                                                            return (
+                                                                <View style={{
+                                                                    backgroundColor: Color.white,
+                                                                    width: windowWidth * 0.9,
+                                                                    height: moderateScale(60, 0.6),
+                                                                    justifyContent: 'center',
+                                                                    alignItems: "flex-start",
+                                                                    paddingHorizontal: moderateScale(10, 0.6),
+                                                                    borderRadius: moderateScale(10, 0.6),
+                                                                    marginTop: moderateScale(10, 0.6)
+                                                                    // paddingVertical: moderateScale(10, 0.6) 
+                                                                }}>
+                                                                    <CustomText>{item?.text}</CustomText>
+                                                                </View>
+                                                            )
+                                                        }}
+                                                    />
                                                 </CustomText>
                                             </View>
                                         }
@@ -307,10 +320,10 @@ const ExploreDetails = props => {
             })
             }
             <ReviewModal
-            setRef={rbRef}
-            rbRef={rbRef}
-            item={details}
-            
+                setRef={rbRef}
+                rbRef={rbRef}
+                item={details}
+
             />
 
         </ScreenBoiler>
