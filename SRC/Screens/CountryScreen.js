@@ -49,7 +49,7 @@ const CountryScreen = () => {
     console.log("🚀 ~ CountryScreen ~ selectedCountryIndex:", selectedCountryIndex)
     // const [title, setTitle] = useState('')
     // const [description, setDescription] = useState('')
-    
+
 
 
     const onSelect = country => {
@@ -205,6 +205,7 @@ const CountryScreen = () => {
                                             uri={item?.uri}
                                             countryType={item?.type}
                                             issettingOption
+                                            isPublicType
                                             onPressSetting={() => {
                                                 setSelectedCountryIndex(index);
                                                 privacyVisible?.open()

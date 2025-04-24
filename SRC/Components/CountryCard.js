@@ -33,7 +33,7 @@ import navigationService from '../navigationService';
 import Share from 'react-native-share';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
-const CountryCard = ({ uri, issettingOption = false, countryType, onPressSetting, name, onPress, citiesCount }) => {
+const CountryCard = ({ uri, issettingOption = false, countryType, isPublicType = false, onPressSetting, name, onPress, citiesCount }) => {
     console.log("🚀 ~ CountryCard ~ countryType:", countryType)
     // const navigation = useNavigation()
     return (
@@ -58,22 +58,46 @@ const CountryCard = ({ uri, issettingOption = false, countryType, onPressSetting
                     resizeMode={'stretch'}
                 />
             </View>
-            {countryType &&
-                <View style={{
-                    width: moderateScale(20, 0.6),
-                    height: moderateScale(20, 0.6),
-                    backgroundColor: Color.themeColor,
-                    position: 'absolute',
-                    left: 70,
-                    bottom: 5,
-                    borderRadius: windowWidth,
-                    justifyContent: "center",
-                    alignItems: "center"
-                }}>
-                    <Icon name={countryType === 'private' ? 'lock' : 'public'} as={countryType === 'public' ? MaterialIcons : Entypo} style={{
-                    }} size={moderateScale(12, 0.6)} color={Color.white} />
-                </View>
+            {
+                isPublicType && (
+                    <>
+
+                        {countryType === null ? (
+                            <View style={{
+                                width: moderateScale(20, 0.6),
+                                height: moderateScale(20, 0.6),
+                                backgroundColor: Color.themeColor,
+                                position: 'absolute',
+                                left: 70,
+                                bottom: 5,
+                                borderRadius: windowWidth,
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}>
+                                <Icon name={'lock'} as={Entypo} style={{
+                                }} size={moderateScale(12, 0.6)} color={Color.white} />
+                            </View>
+                        ) : (
+                            <View style={{
+                                width: moderateScale(20, 0.6),
+                                height: moderateScale(20, 0.6),
+                                backgroundColor: Color.themeColor,
+                                position: 'absolute',
+                                left: 70,
+                                bottom: 5,
+                                borderRadius: windowWidth,
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}>
+                                <Icon name={'public'} as={MaterialIcons} style={{
+                                }} size={moderateScale(12, 0.6)} color={Color.white} />
+                            </View>
+                        )
+                        }
+                    </>
+                )
             }
+
             <View style={{ width: windowWidth * 0.45 }}>
                 <CustomText
                     style={{ fontSize: moderateScale(13, 0.6), color: Color.black }}

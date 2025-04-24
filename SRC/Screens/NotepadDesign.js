@@ -558,12 +558,14 @@ const NotepadDesign = props => {
     }
     setPublishLoading(true)
     const response = await Post(url, body, apiHeader(token))
+    console.log("🚀 ~ onPressPublish ~ response:", response?.data)
     setPublishLoading(false)
     if (response?.data != undefined) {
       setPublishLoading(false)
       Platform?.OS == 'android'
         ? ToastAndroid.show('Trip Published Successfully', ToastAndroid.SHORT)
         : Alert.alert('Trip Published Successfully')
+      ref.close()
     }
   }
 

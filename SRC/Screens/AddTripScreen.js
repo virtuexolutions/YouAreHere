@@ -172,12 +172,13 @@ const AddTripScreen = props => {
 
   const getCityAndCountry = async () => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-      data?.address,
+      data?.address || data?.vicinity,
     )}&key=${apiKey}`;
 
     try {
       const response = await fetch(url);
       const result = await response.json();
+      console.log("🚀 ~ getCityAndCountry ~ result:", result)
 
       if (result.status !== 'OK') {
         console.error(
@@ -205,6 +206,8 @@ const AddTripScreen = props => {
         });
 
         placeId = result.results[0].place_id;
+        console.log("🚀 ~ getCityAndCountry ~ city:", city)
+
         setSelectedCities(city);
         setCountryCode(countryCode);
         setCountry(country);

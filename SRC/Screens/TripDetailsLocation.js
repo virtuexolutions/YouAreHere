@@ -35,7 +35,7 @@ const TripDetailsLocation = props => {
         setplayListDataLoading(true)
         const response = await Get(url, token)
         setplayListDataLoading(false)
-        console.log("responseeeeeeeeeeeeeeeeeeeeeeee", response?.data)
+        console.log("responseeeeeeeeeeeeeeeeeeeeeeee", response?.data?.data)
         if (response?.data != undefined) {
             setplayListDataLoading(false)
             setplayListData(response?.data?.data)
@@ -61,7 +61,7 @@ const TripDetailsLocation = props => {
                         alignItems: 'center',
                         paddingVertical: moderateScale(10, 0.6),
                     }}>
-                         <TouchableOpacity
+                    <TouchableOpacity
                         activeOpacity={0.8}
                         style={styles.Rounded}
                         onPress={() => {
@@ -82,7 +82,7 @@ const TripDetailsLocation = props => {
                         isBold>
                         Trips
                     </CustomText>
-                   
+
                 </View>
                 <View>
                     {playListDataLoading ? (
@@ -94,29 +94,24 @@ const TripDetailsLocation = props => {
                         </View>
                     ) : (
                         <>
-                            {playListData.map((item) => {
-                                console.log("🚀 ~ {playListData.map ~ item:", item)
-                                return (
-                                    <FlatList
-                                        data={item?.detail}
-                                        keyExtractor={(item, index) => index.toString()}
-                                        ListEmptyComponent={<CustomText style={{
-                                            fontSize: moderateScale(15, 0.6),
-                                            color: Color.red,
-                                            textAlign: "center"
-                                        }}>No Data Found</CustomText>}
-                                        renderItem={({ item }) => (
-                                            <NearPlacesCard
-                                                isshownSave={false}
-                                                item={item}
-                                                style={styles.card}
-                                                fromHome={true}
-                                                onPressSave={() => saveCard(item)}
-                                            />
-                                        )}
+                            <FlatList
+                                data={playListData}
+                                keyExtractor={(item, index) => index.toString()}
+                                ListEmptyComponent={<CustomText style={{
+                                    fontSize: moderateScale(15, 0.6),
+                                    color: Color.red,
+                                    textAlign: "center"
+                                }}>No Data Found</CustomText>}
+                                renderItem={({ item }) => (
+                                    <NearPlacesCard
+                                        isshownSave={false}
+                                        item={item}
+                                        style={styles.card}
+                                        fromHome={true}
+                                        onPressSave={() => saveCard(item)}
                                     />
-                                )
-                            })}
+                                )}
+                            />
                         </>
                     )}
                 </View>
