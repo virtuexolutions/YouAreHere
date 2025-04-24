@@ -8,7 +8,6 @@ import Color from '../Assets/Utilities/Color'
 import { TouchableOpacity } from 'react-native'
 import { Icon } from 'native-base'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import CustomText from '../Components/CustomText'
 import { Get } from '../Axios/AxiosInterceptorFunction'
 import { useSelector } from 'react-redux'

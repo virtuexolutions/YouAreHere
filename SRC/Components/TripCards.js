@@ -15,8 +15,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import finalPropsSelectorFactory from 'react-redux/es/connect/selectorFactory'
 import navigationService from '../navigationService'
 import axios from 'axios'
+import Share from 'react-native-share';
 
-const TripCards = ({ item, style, name, width, height, onPress, rating, image, trip_description, country, trip_name }) => {
+const TripCards = ({ item, style, name, width, height, isRight = false, onPress, rating, image, trip_description, country, trip_name }) => {
     console.log("🚀 ~ TripCards ~ item:", item)
     const [isfav, setIsFav] = useState(false)
     const [countryCode, setCountryCode] = useState()
@@ -46,6 +47,21 @@ const TripCards = ({ item, style, name, width, height, onPress, rating, image, t
     };
 
 
+
+    const shareAppLink = async () => {
+        const options = {
+            title: 'Download This App',
+            // message: 'Check out this app I found!',
+            url: 'https://play.google.com/store/apps/details?id=com.getyourguide.android&pcampaignid=web_share',
+        };
+
+        try {
+            await Share.open(options);
+        } catch (error) {
+            console.log('Error sharing link: ', error);
+        }
+    };
+
     return (
         <>
             <View style={[styles.card_view, style || {
@@ -59,6 +75,11 @@ const TripCards = ({ item, style, name, width, height, onPress, rating, image, t
                     <CustomImage onPress={onPress ? onPress : () => navigationService.navigate('CitiesTrips', { data: item, countryCode: countryCode, image: item?.cities[0]?.places[0]?.image })} source={image ? { uri: image } : item?.cities[0]?.places[0]?.image ? { uri: item?.cities[0]?.places[0]?.image } : require('../Assets/Images/no_image.jpg')} style={styles.image} />
                 </View>
                 <Icon name={isfav === true ? 'favorite' : 'favorite-border'} onPress={() => setIsFav(true)} as={MaterialIcons} size={moderateScale(20, 0.6)} color={Color.yellow} style={{
+                    position: 'absolute',
+                    right: 30,
+                    top: 10
+                }} />
+                <Icon name={'share'} onPress={() => shareAppLink()} as={Entypo} size={moderateScale(20, 0.6)} color={Color.yellow} style={{
                     position: 'absolute',
                     right: 10,
                     top: 10
@@ -76,6 +97,7 @@ const TripCards = ({ item, style, name, width, height, onPress, rating, image, t
                     <View style={{
                         width: moderateScale(20, 0.6),
                         height: moderateScale(20, 0.6),
+                        right: isRight ? moderateScale(10, 0.6) : 0
                     }}>
                         <CustomImage style={{
                             width: '100%',
@@ -108,7 +130,6 @@ const styles = StyleSheet.create({
         marginTop: moderateScale(10, 0.6)
     },
     image_view: {
-
         backgroundColor: 'red',
         borderTopEndRadius: moderateScale(10, 0.6),
         borderTopLeftRadius: moderateScale(10, 0.6)

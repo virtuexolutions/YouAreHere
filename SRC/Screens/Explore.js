@@ -169,7 +169,7 @@ const Explore = () => {
                             renderItem={({ item }) => {
                                 console.log("🚀 ~ Explore ~ item:", item)
                                 return (
-                                    <TripCards item={item} />
+                                    <TripCards isRight item={item} />
                                 )
                             }} />
                     }
