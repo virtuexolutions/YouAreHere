@@ -61,8 +61,7 @@ const CountryCard = ({ uri, issettingOption = false, countryType, isPublicType =
             {
                 isPublicType && (
                     <>
-
-                        {countryType === null ? (
+                        {countryType === null || 'private' ? (
                             <View style={{
                                 width: moderateScale(20, 0.6),
                                 height: moderateScale(20, 0.6),
