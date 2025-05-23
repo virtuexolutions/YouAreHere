@@ -96,7 +96,7 @@ const HomeScreen = props => {
   const [filterplaces, setFilterPlaces] = useState('All');
   const [trip_loading, setTripLoading] = useState(false);
   const [trips, setTrip] = useState([])
-  console.log('tripsssssssssssssssss === = = == = = = = =>>  >>')
+  console.log('tripsssssssssssssssss === = = == = = = = =>>  >>', trips)
   const [countryName, setCountryName] = useState('');
   const currentLocation2 = {
     latitude: 24.8598186,
@@ -136,6 +136,7 @@ const HomeScreen = props => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
+      // getAllTrip()
       Platform.OS == 'android' ? handleEnableLocation() : getLocation();
     }, 2000);
   };
@@ -177,13 +178,13 @@ const HomeScreen = props => {
     const url = `auth/trip_notes_publish?country=${countryName}`
     setTripLoading(true)
     const response = await Get(url, token);
+    console.log("🚀 ~ getAllTrip ~ response: country list", response?.data)
     setTripLoading(false)
     if (response?.data != undefined) {
       setTripLoading(false)
-      setTrip(response?.data)
+      setTrip(response?.data?.data)
     }
   }
-
 
 
   const handleEnableLocation = () => {

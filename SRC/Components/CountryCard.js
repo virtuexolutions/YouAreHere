@@ -61,23 +61,7 @@ const CountryCard = ({ uri, issettingOption = false, countryType, isPublicType =
             {
                 isPublicType && (
                     <>
-
-                        {countryType === null ? (
-                            <View style={{
-                                width: moderateScale(20, 0.6),
-                                height: moderateScale(20, 0.6),
-                                backgroundColor: Color.themeColor,
-                                position: 'absolute',
-                                left: 70,
-                                bottom: 5,
-                                borderRadius: windowWidth,
-                                justifyContent: "center",
-                                alignItems: "center"
-                            }}>
-                                <Icon name={'lock'} as={Entypo} style={{
-                                }} size={moderateScale(12, 0.6)} color={Color.white} />
-                            </View>
-                        ) : (
+                        {countryType === 'public' ? (
                             <View style={{
                                 width: moderateScale(20, 0.6),
                                 height: moderateScale(20, 0.6),
@@ -92,8 +76,22 @@ const CountryCard = ({ uri, issettingOption = false, countryType, isPublicType =
                                 <Icon name={'public'} as={MaterialIcons} style={{
                                 }} size={moderateScale(12, 0.6)} color={Color.white} />
                             </View>
-                        )
-                        }
+                        ) : (
+                            <View style={{
+                                width: moderateScale(20, 0.6),
+                                height: moderateScale(20, 0.6),
+                                backgroundColor: Color.themeColor,
+                                position: 'absolute',
+                                left: 70,
+                                bottom: 5,
+                                borderRadius: windowWidth,
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}>
+                                <Icon name={'lock'} as={Entypo} style={{
+                                }} size={moderateScale(12, 0.6)} color={Color.white} />
+                            </View>
+                        )}
                     </>
                 )
             }
