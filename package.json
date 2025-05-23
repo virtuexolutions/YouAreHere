@@ -21,7 +21,7 @@
     "babel-plugin-r-if": "^0.0.3",
     "deprecated-react-native-prop-types": "^4.0.0",
     "force": "^0.0.3",
-    "lottie-react-native": "^6.4.1",
+    "lottie-react-native": "^7.2.2",
     "moment": "^2.29.3",
     "native-base": "^3.4.13",
     "numeral": "^2.0.6",
