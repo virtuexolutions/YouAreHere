@@ -901,9 +901,10 @@ const HomeScreen = props => {
           )}
           <WelcomeModal
             isModalVisible={isVisibleModal}
-            // setIsModdalVisible={setIsVisibleModal}
+            setIsModdalVisible={setIsVisibleModal}
             matchLocation={foundLocation}
             setMatchLocation={setFoundLocation}
+          
           />
           <AddPlacesModal
             setLabel={setLabel}
