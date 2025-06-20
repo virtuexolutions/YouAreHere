@@ -101,7 +101,7 @@ const Explore = () => {
         console.log("🚀 ~ getAllTrip ~ response?.data?.data?.country?.cities:", response?.data)
         if (response?.data != undefined) {
             setTripLoading(false)
-            setTrip(response?.data)
+            setTrip(response?.data?.data)
         }
     }
 

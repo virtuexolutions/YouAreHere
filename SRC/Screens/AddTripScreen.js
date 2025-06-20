@@ -69,7 +69,7 @@ const AddTripScreen = props => {
   console.log('trippplissstttt', tripList);
   const [gettripLoading, setGetTripLoading] = useState(false);
   const [selectListItem, setSelectedListItem] = useState('');
-  console.log(selectListItem, 'selecteditemmmmmmmm');
+  console.log(selectListItem, 'selecteditemmmsssmmmmm');
   const onSelect = country => {
     setCountryCode(country.cca2);
     setCountry(country);
@@ -617,7 +617,7 @@ const AddTripScreen = props => {
                   <CustomImage
                     source={
                       image?.uri
-                        ? { uri: image.uri.replace('file://', '') }
+                        ? { uri: image.uri }
                         : require('../Assets/Images/no_image.jpg')
                     }
                     style={{
@@ -662,6 +662,7 @@ const AddTripScreen = props => {
                   onPressSubmit();
                 }}
               />
+              <View style={{ height: windowWidth * 0.15 }} />
             </View>
           </View>
         </ScrollView>

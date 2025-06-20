@@ -33,11 +33,12 @@ const WhishListScreen = ({ item }) => {
   const isFocused = useIsFocused();
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const token = useSelector(state => state.authReducer.token);
-console.log('tokeeeeeennnnn',token)
+  console.log('tokeeeeeennnnn', token)
   const navigationN = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [wishListData, setWishListData] = useState([]);
   const [tripList, setTripList] = useState([])
+  console.log("🚀 ~ WhishListScreen ~ tripList:", tripList)
   const [tripListloading, setTripListLoading] = useState(false)
   const [ids, setIds] = useState([]);
   console.log("🚀 ~ WhishListScreen ~ ids:", ids)
@@ -212,6 +213,12 @@ console.log('tokeeeeeennnnn',token)
           <FlatList
             data={tripList}
             showsVerticalScrollIndicator={false}
+            ListEmptyComponent={<CustomText style={{
+              fontSize: moderateScale(12, 0.6),
+              textAlign: 'center',
+              color: "red",
+              marginTop: moderateScale(10, 0.6)
+            }}> No Data Found</CustomText>}
             contentContainerStyle={{
               // marginTop: moderateScale(10, 0.3),
               // marginBottom: moderateScale(20, 0.3),

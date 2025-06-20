@@ -40,7 +40,7 @@ const PlacesCard = ({
   ids,
   onPressSave,
   fromHome,
-  isLoading2,
+  // isLoading2,
   style,
   isshownSave = true
 }) => {
@@ -54,7 +54,7 @@ const PlacesCard = ({
   const [ref, setRef] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [reviewData, setReviewData] = useState([]);
-  // const [isLoading2, setIsLoading2] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [place_id, setPlaceId] = useState('')
   const [details, setDetails] = useState({})
@@ -73,34 +73,34 @@ const PlacesCard = ({
     getPlaceDetails()
   }, [place_id])
 
-  // const saveCard = async () => {
-  //   const url = 'auth/wishlist';
-  //   const body = {
-  //     user_id: user?.id,
-  //     place_id: item?.place_id,
-  //     name: item?.name,
-  //     address: item?.address,
-  //     types: item?.types,
-  //     rating: item?.rating,
-  //     totalRatings: item?.rating,
-  //     openNow: item?.open_now?.openNow,
-  //     image: item?.image,
-  //     latitude: item?.location?.lat,
-  //     longitude: item?.location?.lng,
-  //     sub_category: false,
-  //   };
-  //   console.log('🚀 ~ saveCard ~ body:', body);
-  //   setIsLoading2(true);
-  //   const response = await Post(url, body, apiHeader(token));
-  //   setIsLoading2(false);
-  //   if (response?.data?.success) {
-  //     console.log(response?.data);
-  //     // setSaveModalVisible(true);
-  //     Platform.OS == 'android'
-  //       ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
-  //       : Alert.alert('Added To Wishlist');
-  //   }
-  // };
+  const saveCard = async () => {
+    const url = 'auth/wishlist';
+    const body = {
+      user_id: user?.id,
+      place_id: item?.place_id,
+      name: item?.name,
+      address: item?.address,
+      types: item?.types,
+      rating: item?.rating,
+      totalRatings: item?.rating,
+      openNow: item?.open_now?.openNow,
+      image: item?.image,
+      latitude: item?.location?.lat,
+      longitude: item?.location?.lng,
+      sub_category: false,
+    };
+    console.log('🚀 ~ saveCard ~ body:', body);
+    setIsLoading2(true);
+    const response = await Post(url, body, apiHeader(token));
+    setIsLoading2(false);
+    if (response?.data?.success) {
+      console.log(response?.data);
+      // setSaveModalVisible(true);
+      Platform.OS == 'android'
+        ? ToastAndroid.show('Added To Wishlist', ToastAndroid.SHORT)
+        : Alert.alert('Added To Wishlist');
+    }
+  };
 
   useEffect(() => {
     if (isModalVisible) {
@@ -385,13 +385,13 @@ const PlacesCard = ({
               }}
               starSize={moderateScale(11, 0.3)}
             />
-            <CustomText
+            {/* <CustomText
               style={{
                 fontSize: moderateScale(13, 0.6),
                 color: Color.themeDarkGray,
               }}>
-              {` (${item?.totalRatings})` || `(${item?.user_ratings_total})`}
-            </CustomText>
+              {` (${item?.rating})` || `(${item?.user_ratings_total})`}
+            </CustomText> */}
           </View>
 
           <View
