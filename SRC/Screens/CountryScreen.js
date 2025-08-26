@@ -135,26 +135,7 @@ const CountryScreen = () => {
                 end={{ x: 1, y: 1 }}
                 colors={Color.themeBgColor}>
                 <View style={styles.row}>
-
-                    <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={styles.Rounded}
-                        onPress={() => {
-                            console.log('Toggle drawer');
-                            navigation.toggleDrawer();
-                        }}>
-                        <Icon
-                            onPress={() => {
-                                navigation.toggleDrawer();
-                                //   console.log('Toggle drawer'); navigation.toggleDrawer();
-                            }}
-                            name="menu"
-                            as={Ionicons}
-                            size={moderateScale(25, 0.6)}
-                            color={Color.black}
-                        />
-                    </TouchableOpacity>
-                    <CustomButton
+                <CustomButton
                         text={'Add Trip'}
                         isBold
                         textColor={Color.themeColor}
@@ -174,6 +155,25 @@ const CountryScreen = () => {
                         }}
                     // right={moderateScale(5,0.3)}
                     />
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        style={styles.Rounded}
+                        onPress={() => {
+                            console.log('Toggle drawer');
+                            navigation.toggleDrawer();
+                        }}>
+                        <Icon
+                            onPress={() => {
+                                navigation.toggleDrawer();
+                                //   console.log('Toggle drawer'); navigation.toggleDrawer();
+                            }}
+                            name="menu"
+                            as={Ionicons}
+                            size={moderateScale(25, 0.6)}
+                            color={Color.black}
+                        />
+                    </TouchableOpacity>
+                  
 
                 </View>
 

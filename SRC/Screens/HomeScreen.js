@@ -1,7 +1,7 @@
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
-import { FlatList, Icon, ScrollView } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import {FlatList, Icon, ScrollView} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -14,19 +14,21 @@ import {
   View,
 } from 'react-native';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import OptionsMenu from 'react-native-options-menu';
+
 import GetLocation from 'react-native-get-location';
 import LinearGradient from 'react-native-linear-gradient';
-import { check, PERMISSIONS, request } from 'react-native-permissions';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import {check, PERMISSIONS, request} from 'react-native-permissions';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import CustomText from '../Components/CustomText';
 import NearPlacesCard from '../Components/NearPlacesCard';
 import PlacesCard from '../Components/PlacesCard';
@@ -38,7 +40,7 @@ import {
   windowHeight,
   windowWidth,
 } from '../Utillity/utils';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import AddPlacesModal from '../Components/AddPlacesModal';
 import SelectFilterModal from '../Components/FilterModal';
 import WelcomeModal from '../Components/WelcomeModal';
@@ -47,9 +49,13 @@ import CustomButton from '../Components/CustomButton';
 import navigationService from '../navigationService';
 import TripCards from '../Components/TripCards';
 import AddTripsModal from '../Components/AddTripsModal';
+import {setCustomLocation} from '../Store/slices/common';
+import LottieView from 'lottie-react-native';
+import CustomListEmptyComponent from '../Components/ListEmptyComponent';
 
 const HomeScreen = props => {
   const isFocused = useIsFocused();
+  const dispatch = useDispatch();
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
   const userPreferences = useSelector(state => state.commonReducer.prefrences);
@@ -63,6 +69,7 @@ const HomeScreen = props => {
   const customLocation = useSelector(
     state => state.commonReducer.customLocation,
   );
+  console.log(customLocation, 'data ==== > ');
 
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
@@ -77,6 +84,8 @@ const HomeScreen = props => {
   const [refreshing, setRefreshing] = useState(false);
   const [searchedPlaces, setSearchedPlaces] = useState([]);
   const [currentLocation, setCurrentLocation] = useState({});
+  // console.log('current loacation ======== > ' , currentLocation)
+
   const [locationName, setLocationName] = useState('');
   const [foundLocation, setFoundLocation] = useState({});
   const [countryCode, setCountryCode] = useState('');
@@ -95,8 +104,8 @@ const HomeScreen = props => {
   const [dropDownVisible, setDropDownVisible] = useState(false);
   const [filterplaces, setFilterPlaces] = useState('All');
   const [trip_loading, setTripLoading] = useState(false);
-  const [trips, setTrip] = useState([])
-  console.log('tripsssssssssssssssss === = = == = = = = =>>  >>', trips)
+  const [trips, setTrip] = useState([]);
+  // console.log('tripsssssssssssssssss === = = == = = = = =>>  >>', trips)
   const [countryName, setCountryName] = useState('');
   const currentLocation2 = {
     latitude: 24.8598186,
@@ -133,6 +142,9 @@ const HomeScreen = props => {
 
   const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
   const onRefresh = () => {
+    console.log(
+      'oonnnnnnnnnnn refersh ========== >>>>>>>'
+    )
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
@@ -142,6 +154,13 @@ const HomeScreen = props => {
   };
 
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     // getAllTrip()
+  //     Platform.OS == 'android' ? handleEnableLocation() : getLocation();
+  //   }, 2000);
+  // }, [])
+  
 
   const findNearestMcDonalds = async location => {
     const radius = 50000;
@@ -149,43 +168,48 @@ const HomeScreen = props => {
     const latitude = 24.871941;
     const longitude = 66.98806;
     const keyword = 'mc donald';
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${Object.keys(customLocation).length > 0
-      ? customLocation?.location?.lat
-      : location?.lat
-      },${Object.keys(customLocation).length > 0
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${
+      Object.keys(customLocation).length > 0
+        ? customLocation?.location?.lat
+        : location?.lat
+    },${
+      Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
         : location?.lng
-      }&rankby=distance&keyword=${preferences?.name ? preferences?.name : 'all'}`;
+    }&radius=${radius}&keyword=${preferences?.name ? preferences?.name : 'all'}`;
     // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&keyword=${keyword}&key=${apiKey}`;
+    //  return  console.log('my data --->',url , customLocation)
     try {
       setIsLoading(true);
       const response = await axios.get(url);
       setIsLoading(false);
       if (response != undefined) {
-        const highestRating = Math.max(...response?.data?.results.map(place => place.rating || 0));
-        const topRatedPlaces = response?.data?.results.filter(place => place.rating === highestRating);
+        console.log('===================== >>>>>>  result for places',response?.data?.results)
+        const highestRating = Math.max(
+          ...response?.data?.results.map(place => place.rating || 0),
+        );
+        const topRatedPlaces = response?.data?.results.filter(
+          place => place.rating === highestRating,
+        );
         // setplacesData(filterplaces === 'All' ? response?.data?.results : topRatedPlaces);
-        setplacesData(response?.data?.results)
+        setplacesData(response?.data?.results);
       }
     } catch (error) {
-      console.error("Error fetching McDonald's locations:", error);
+      console.error("Error fetching McDonald's ldocations:", error);
     }
   };
 
-
-
   const getAllTrip = async () => {
-    const url = `auth/trip_notes_publish?country=${countryName}`
-    setTripLoading(true)
+    const url = `auth/trip_notes_publish?country=${countryName}`;
+    setTripLoading(true);
     const response = await Get(url, token);
-    console.log("🚀 ~ getAllTrip ~ response: country list", response?.data)
-    setTripLoading(false)
+    // console.log("🚀 ~ getAllTrip ~ resdfgfgponse: country list", response?.data)
+    setTripLoading(false);
     if (response?.data != undefined) {
-      setTripLoading(false)
-      setTrip(response?.data?.data)
+      setTripLoading(false);
+      setTrip(response?.data?.data);
     }
-  }
-
+  };
 
   const handleEnableLocation = () => {
     RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
@@ -247,21 +271,21 @@ const HomeScreen = props => {
     if (permissionResult == false) {
       return Platform.OS == 'android'
         ? ToastAndroid.show(
-          'Location Permission denied by user',
-          ToastAndroid.SHORT,
-        )
+            'Location Permission denied by user',
+            ToastAndroid.SHORT,
+          )
         : Alert.alert(
-          'Location blocked',
-          'Location is blocked as denied by user , enable in settings and try again',
-          [
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            { text: 'Settings', onPress: () => Linking.openSettings() },
-          ],
-        );
+            'Location blocked',
+            'Location is blocked as denied by user , enable in settings and try again',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'Settings', onPress: () => Linking.openSettings()},
+            ],
+          );
     }
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
@@ -269,8 +293,9 @@ const HomeScreen = props => {
     })
       .then(async location => {
         setCurrentLocation(location);
-        getCountryCode();
-        getAddressFromCoordinates(location?.latitude, location?.longitude);
+        // setLocationName(location)
+        // getCountryCode();
+        // getAddressFromCoordinates(location?.latitude, location?.longitude);
         // preferences?.label == 'All' || preferences?.label == undefined
         //   ? getData({ lat: location?.latitude, lng: location?.longitude })
         // :
@@ -281,35 +306,33 @@ const HomeScreen = props => {
       })
       .catch(error => {
         setIsLoading(false);
-        const { code, message } = error;
+        const {code, message} = error;
         console.warn(code, message);
       });
   };
 
-  const getCountryCode = async (latitude, longitude) => {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation?.latitude},${currentLocation?.longitude}&key=${apiKey}`;
+  // const getCountryCode = async (latitude, longitude) => {
+  //   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation?.latitude},${currentLocation?.longitude}&key=${apiKey}`;
 
-    try {
-      let response = await fetch(url);
-      let data = await response.json();
+  //   try {
+  //     let response = await fetch(url);
+  //     let data = await response.json();
 
-      if (data.results.length > 0) {
-        let addressComponents = data.results[0].address_components;
-        let country = addressComponents.find(comp =>
-          comp.types.includes('country'),
-        );
+  //     if (data.results.length > 0) {
+  //       let addressComponents = data.results[0].address_components;
+  //       let country = addressComponents.find(comp =>
+  //         comp.types.includes('country'),
+  //       );
 
-        if (country) {
-          setCountryCode(country.short_name);
-          return country.short_name;
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching country code:', error);
-    }
-  };
-
-
+  //       if (country) {
+  //         setCountryCode(country.short_name);
+  //         return country.short_name;
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching country code:', error);
+  //   }
+  // };
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc`;
@@ -329,6 +352,8 @@ const HomeScreen = props => {
             country = component.long_name;
           }
         });
+
+        console.log(country, 'formatted  address');
 
         setLocationName(formattedAddress);
         setCountryName(country);
@@ -363,11 +388,11 @@ const HomeScreen = props => {
     if (response?.data != undefined) {
       settripLoading(false);
       setCreateNewTrip(false);
-      getTripList()
+      getTripList();
     }
   };
 
-  const onPressAddTrip = async (id) => {
+  const onPressAddTrip = async id => {
     const url = `auth/playlists_detail/${id}`;
     const body = {
       wishlist_id: whishlistdata?.id,
@@ -378,12 +403,11 @@ const HomeScreen = props => {
     if (response?.data != undefined) {
       setAddTripLoading(false);
       setSaveModalVisible(false);
-
     }
   };
 
   const saveCard = async item => {
-    console.log('helllllllooooooooooooo')
+    console.log('helllllllooooooooooooo');
     const url = 'auth/wishlist';
     const body = {
       user_id: user?.id,
@@ -392,10 +416,17 @@ const HomeScreen = props => {
       address: item?.address || item?.vicinity,
       types: item?.types,
       rating: item?.rating,
-      totalRatings: item?.user_ratings_total === null ? item?.rating : item?.user_ratings_total,
+      totalRatings:
+        item?.user_ratings_total === null
+          ? item?.rating
+          : item?.user_ratings_total,
       openNow: item?.open_now?.openNow || item?.opening_hours?.openNow,
-      image: item?.photos != undefined ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
-        }&key=${apiKey}` : null,
+      image:
+        item?.photos != undefined
+          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
+              item?.photos[0]?.photo_reference
+            }&key=${apiKey}`
+          : null,
       latitude: item?.location?.lat || item?.geometry?.location?.lat,
       longitude: item?.location?.lng || item?.geometry?.location?.lat,
       sub_category: false,
@@ -419,22 +450,33 @@ const HomeScreen = props => {
     Platform.OS == 'android' ? handleEnableLocation() : getLocation();
   }, [preferences, isFocused, customLocation]);
   useEffect(() => {
-    if (currentLocation) {
-      getAddressFromCoordinates(
-        currentLocation?.latitude,
-        currentLocation?.longitude,
-      );
+    if (
+      Object.keys(currentLocation).length > 0 ||
+      Object.keys(customLocation).length > 0
+    ) {
+      if (Object.keys(customLocation).length > 0) {
+        console.log('hello baber fdsgfdfgdfgfgddf');
+        getAddressFromCoordinates(
+          customLocation?.location?.lat,
+          customLocation?.location?.lng,
+        );
+      } else {
+        console.log('hello aaqib gfdfgdfgfgddf');
+        getAddressFromCoordinates(
+          currentLocation?.latitude,
+          currentLocation?.longitude,
+        );
+      }
     }
     getTripList();
-  }, []);
-
-
-  useEffect(() => {
-    getAllTrip()
-  }, [countryName])
+  }, [customLocation, currentLocation]);
 
   useEffect(() => {
-    getAllTrip()
+    getAllTrip();
+  }, [countryName]);
+
+  useEffect(() => {
+    getAllTrip();
     // getA;;
     // console.log(
     //   'Running loscatddions ',
@@ -455,7 +497,7 @@ const HomeScreen = props => {
               item?.lng == customLocation?.location?.lng,
           ),
         ),
-          setIsVisibleModal(true));
+        setIsVisibleModal(true));
     } else {
       favouriteplaces?.some(
         (item, index) =>
@@ -469,7 +511,7 @@ const HomeScreen = props => {
               item?.lng == currentLocation?.longitude,
           ),
         ),
-          setIsVisibleModal(true));
+        setIsVisibleModal(true));
     }
   }, [isFocused]);
 
@@ -482,18 +524,18 @@ const HomeScreen = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
         colors={Color.themeBgColor}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{ minHeight: windowHeight }}
+          style={{minHeight: windowHeight}}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           <View style={styles.welView}>
             <CustomText style={styles.weltxt}>
-              hello ,<CustomText style={styles.weltxt}>{user?.name}</CustomText>
+              hello,<CustomText style={styles.weltxt}>{user?.name}</CustomText>
             </CustomText>
           </View>
           <View style={styles.loc}>
@@ -513,17 +555,17 @@ const HomeScreen = props => {
                 size={moderateScale(28, 0.6)}
                 as={EvilIcons}
               />
-              <CustomText style={styles.loctxt}>{locationName}</CustomText>
+              <CustomText numberOfLines={2} style={styles.loctxt}>
+              {locationName}
+              </CustomText>
             </TouchableOpacity>
-
-
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {/* <View style={styles.placesContainer}>
+            <View style={styles.placesContainer}>
               {filteredUserPreference?.map((item, index) => {
                 return (
-                  <TouchableOpacity key={item.id} onPress={() => { }}>
+                  <TouchableOpacity key={item.id} onPress={() => {}}>
                     <OptionsMenu
                       customButton={
                         <View
@@ -581,24 +623,37 @@ const HomeScreen = props => {
                   </TouchableOpacity>
                 );
               })}
-            </View> */}
+            </View>
           </ScrollView>
           <View style={styles.search}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.toggleDrawer();
-              }}
-              style={styles.menuIcon}>
+          <TouchableOpacity
+              style={styles.menuIcon}
+              onPress={() => setPreferencesModalVisible(true)}>
+              {/* {preferences != null &&
+                <View style={{
+                  position: 'absolute',
+                  right: 1,
+                  top: -7,
+                  width: moderateScale(15, 0.6),
+                  height: moderateScale(15, 0.6),
+                  borderRadius: moderateScale(7.5, 0.6),
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                  <CustomText style={{
+                    color: 'white'
+                  }}>1</CustomText>
+                </View>
+              } */}
               <Icon
+                name="filter"
                 as={Ionicons}
-                name={'menu'}
-                color={Color.black}
-                size={6}
-                onPress={() => {
-                  navigation.toggleDrawer();
-                }}
+                color={Color.white}
+                size={moderateScale(28, 0.6)}
               />
             </TouchableOpacity>
+           
             {/* <GooglePlacesAutocomplete
               placeholder="Search"
               textInputProps={{
@@ -641,43 +696,70 @@ const HomeScreen = props => {
                 },
               }}
             /> */}
-            <TouchableOpacity onPress={() => {
-              navigationService.navigate('SearchScreen')
-            }} style={{
-              backgroundColor: Color.white,
-              width: windowWidth * 0.7,
-              height: windowHeight * 0.046,
-              borderRadius: moderateScale(15, 0.6),
-              justifyContent: 'center',
-              paddingHorizontal: moderateScale(10, 0.6)
-            }}>
-              <CustomText>Search</CustomText>
+            <TouchableOpacity
+              onPress={() => {
+                Object.keys(customLocation).length <= 0 &&
+                  navigationService.navigate('SearchScreen' ,{userLocation :currentLocation}); 
+              }}
+              style={{
+                backgroundColor:
+                  Object.keys(customLocation).length > 0
+                    ? Color.lightGrey
+                    : Color.white,
+                width: windowWidth * 0.7,
+                height: windowHeight * 0.046,
+                borderRadius: moderateScale(15, 0.6),
+                justifyContent: 'center',
+                paddingHorizontal: moderateScale(10, 0.6),
+              }}>
+              {Object.keys(customLocation).length > 0 ? (
+                <TouchableOpacity
+                  style={{
+                    width: '100%',
+                    height: '50%',
+                    // backgroundColor : 'red'
+                  }}
+                  onPress={() => {
+                    dispatch(setCustomLocation({}));
+                  }}>
+                  <Icon
+                    name={'close'}
+                    as={Ionicons}
+                    color={Color.themeColor}
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: -5,
+                      zIndex: 1,
+                    }}
+                  />
+                  <CustomText
+                    numberOfLines={1}
+                    style={{
+                      width: '90%',
+                    }}>
+                    {customLocation?.name}
+                  </CustomText>
+                </TouchableOpacity>
+              ) : (
+                <CustomText style={{
+                  fontSize :moderateScale(11,.6),color :Color.mediumGray
+                }}>Search business (e.g. starbucks new york)</CustomText>
+              )}
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.menuIcon}
-              onPress={() => setPreferencesModalVisible(true)}>
-              {preferences != null &&
-                <View style={{
-                  position: 'absolute',
-                  right: 1,
-                  top: -7,
-                  width: moderateScale(15, 0.6),
-                  height: moderateScale(15, 0.6),
-                  borderRadius: moderateScale(7.5, 0.6),
-                  backgroundColor: 'red',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                  <CustomText style={{
-                    color: 'white'
-                  }}>1</CustomText>
-                </View>
-              }
+              onPress={() => {
+                navigation.toggleDrawer();
+              }}
+              style={styles.menuIcon}>
               <Icon
-                name="filter"
                 as={Ionicons}
-                color={Color.white}
-                size={moderateScale(28, 0.6)}
+                name={'menu'}
+                color={Color.black}
+                size={6}
+                onPress={() => {
+                  navigation.toggleDrawer();
+                }}
               />
             </TouchableOpacity>
           </View>
@@ -730,37 +812,54 @@ const HomeScreen = props => {
           </View> */}
           <View style={styles.textContainer}>
             <CustomText
-              style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
+              style={{fontSize: moderateScale(15, 0.6), color: Color.black}}
               isBold>
               As per your location we have following recommendations for you.
             </CustomText>
           </View>
-          {trip_loading ? <ActivityIndicator
-            color={Color.white}
-            size={moderateScale(20, 0.8)}
-          /> :
+          {trip_loading ? (
+            <ActivityIndicator
+              color={Color.white}
+              size={moderateScale(20, 0.8)}
+            />
+          ) : (
             <FlatList
-              ListEmptyComponent={() => <CustomText style={{
-                color: Color.red,
-                textAlign: 'center',
-                width: windowWidth * 0.9,
-                marginTop: moderateScale(20, 0.6)
-              }}>No data found</CustomText>}
+              ListEmptyComponent={() => (
+                <CustomListEmptyComponent text={'No trip found under current location !!'}
+                customViewStyle={{
+                  marginLeft : moderateScale(-10,0.6)
+                }}
+                
+                />
+              )}
               style={{
-                paddingHorizontal: moderateScale(10, 0.6)
-              }} horizontal data={trips} renderItem={({ item }) => {
+                paddingHorizontal: moderateScale(10, 0.6),
+              }}
+              horizontal
+              data={trips}
+              renderItem={({item}) => {
                 return (
-                  <TripCards width={windowWidth * 0.7} height={windowHeight * 0.2} style={{ marginRight: moderateScale(10, 0.6), width: windowWidth * 0.7, height: windowHeight * 0.3 }} item={item} />
-                )
-              }} />
-          }
+                  <TripCards
+                    width={windowWidth * 0.7}
+                    height={windowHeight * 0.2}
+                    style={{
+                      marginRight: moderateScale(10, 0.6),
+                      width: windowWidth * 0.7,
+                      height: windowHeight * 0.3,
+                    }}
+                    item={item}
+                  />
+                );
+              }}
+            />
+          )}
           <View style={styles.textContainer}>
             <CustomText
-              style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
+              style={{fontSize: moderateScale(15, 0.6), color: Color.black}}
               isBold>
               Places
             </CustomText>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={[
                 styles.menuIcon,
                 {
@@ -776,7 +875,7 @@ const HomeScreen = props => {
                 color={Color.white}
                 size={moderateScale(28, 0.6)}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             {dropDownVisible && (
               <View style={styles.con}>
                 <View
@@ -784,22 +883,22 @@ const HomeScreen = props => {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     paddingHorizontal: moderateScale(10, 0.6),
-                    paddingVertical: moderateScale(10, 0.6)
+                    paddingVertical: moderateScale(10, 0.6),
                   }}>
                   <CustomText
                     onPress={() => {
-                      setFilterPlaces('All')
-                      findNearestMcDonalds()
+                      setFilterPlaces('All');
+                      findNearestMcDonalds();
                     }}
                     style={{
                       fontSize: moderateScale(14, 0.6),
                       color: Color.black,
                       paddingHorizontal: moderateScale(5, 0.6),
-                      textTransform: 'capitalize'
+                      textTransform: 'capitalize',
                     }}>
                     All
                   </CustomText>
-                  {filterplaces === 'All' &&
+                  {filterplaces === 'All' && (
                     <Icon
                       style={{
                         paddingTop: moderateScale(2, 0.6),
@@ -809,7 +908,7 @@ const HomeScreen = props => {
                       size={moderateScale(14, 0.6)}
                       color={Color.blue}
                     />
-                  }
+                  )}
                 </View>
                 <View
                   style={{
@@ -819,18 +918,18 @@ const HomeScreen = props => {
                   }}>
                   <CustomText
                     onPress={() => {
-                      setFilterPlaces('topRated')
-                      findNearestMcDonalds()
+                      setFilterPlaces('topRated');
+                      findNearestMcDonalds();
                     }}
                     style={{
                       fontSize: moderateScale(14, 0.6),
                       color: Color.black,
                       paddingHorizontal: moderateScale(5, 0.6),
-                      textTransform: 'capitalize'
+                      textTransform: 'capitalize',
                     }}>
                     top Rated
                   </CustomText>
-                  {filterplaces === 'topRated' &&
+                  {filterplaces === 'topRated' && (
                     <Icon
                       style={{
                         paddingTop: moderateScale(2, 0.6),
@@ -839,9 +938,9 @@ const HomeScreen = props => {
                       as={AntDesign}
                       size={moderateScale(14, 0.6)}
                       color={Color.blue}
-                    />}
+                    />
+                  )}
                 </View>
-
               </View>
             )}
             {/* {!isLoading && (
@@ -867,7 +966,7 @@ const HomeScreen = props => {
               }}>
               <ActivityIndicator size={'large'} color={Color.white} />
               <CustomText
-                style={{ color: 'white', fontSize: moderateScale(14, 0.6) }}>
+                style={{color: 'white', fontSize: moderateScale(14, 0.6)}}>
                 Please Wait
               </CustomText>
             </View>
@@ -880,21 +979,25 @@ const HomeScreen = props => {
                 marginTop: moderateScale(10, 0.3),
                 marginBottom: moderateScale(20, 0.3),
               }}
-              renderItem={({ item, index }) => {
+              renderItem={({item, index}) => {
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard
                     onPressSave={() =>
-                      navigationService.navigate('AddTripScreen', { data: item })
+                      navigationService.navigate('AddTripScreen', {data: item})
                     }
                     item={item}
                     fromHome={true}
                     isLoading2={issaveLoading}
                   />
                 ) : (
-                  <NearPlacesCard item={item} fromHome={true} onPressSave={() =>
-                    navigationService.navigate('AddTripScreen', { data: item })
-                  } />
+                  <NearPlacesCard
+                    item={item}
+                    fromHome={true}
+                    onPressSave={() =>
+                      navigationService.navigate('AddTripScreen', {data: item})
+                    }
+                  />
                 );
               }}
             />
@@ -904,16 +1007,29 @@ const HomeScreen = props => {
             setIsModdalVisible={setIsVisibleModal}
             matchLocation={foundLocation}
             setMatchLocation={setFoundLocation}
-          
           />
           <AddPlacesModal
             setLabel={setLabel}
             label={label}
             setRef={setRbRef}
             rbRef={rbRef}
-            item={currentLocation}
+            item={
+              Object.keys(customLocation).length > 0
+                ? customLocation
+                : currentLocation
+            }
+            lat={
+              Object.keys(customLocation).length > 0
+                ? customLocation?.location?.lat
+                : currentLocation?.latitude
+            }
+            long={
+              Object.keys(customLocation).length > 0
+                ? customLocation?.location?.lng
+                : currentLocation?.longitude
+            }
             locationName={locationName}
-            countryCode={countryCode}
+            // countryCode={countryCode}
           />
           <SelectFilterModal
             show={preferencesModalVisible}
@@ -925,18 +1041,22 @@ const HomeScreen = props => {
           <Modal
             transparent
             visible={isSaveModalVisible}
-
-
             style={{
               justifyContent: 'center',
               alignItems: 'center',
             }}>
             <View style={styles.modal_inner_view}>
               <View style={styles.main_view}>
-                <Icon onPress={() => setSaveModalVisible(false)} as={Entypo} name={'cross'} size={moderateScale(26, 0.6)} style={{
-                  alignSelf: 'flex-end',
-                  marginBottom: moderateScale(10, 0.6)
-                }} />
+                <Icon
+                  onPress={() => setSaveModalVisible(false)}
+                  as={Entypo}
+                  name={'cross'}
+                  size={moderateScale(26, 0.6)}
+                  style={{
+                    alignSelf: 'flex-end',
+                    marginBottom: moderateScale(10, 0.6),
+                  }}
+                />
                 <ScrollView>
                   <View style={styles.text_view}>
                     <CustomText
@@ -975,10 +1095,16 @@ const HomeScreen = props => {
                   </View>
                   {isCreateNewTrip === true && (
                     <View style={styles.trip_list_view}>
-                      <Icon onPress={() => setCreateNewTrip(false)} as={Entypo} name={'cross'} size={moderateScale(16, 0.6)} style={{
-                        alignSelf: 'flex-end',
-                        marginBottom: moderateScale(10, 0.6)
-                      }} />
+                      <Icon
+                        onPress={() => setCreateNewTrip(false)}
+                        as={Entypo}
+                        name={'cross'}
+                        size={moderateScale(16, 0.6)}
+                        style={{
+                          alignSelf: 'flex-end',
+                          marginBottom: moderateScale(10, 0.6),
+                        }}
+                      />
                       <CustomText>Create New Trip List</CustomText>
                       <TextInputWithTitle
                         setText={setlistName}
@@ -999,7 +1125,10 @@ const HomeScreen = props => {
                         onPress={() => onPressCreate()}
                         text={
                           tripLoading ? (
-                            <ActivityIndicator size="small" color={Color.white} />
+                            <ActivityIndicator
+                              size="small"
+                              color={Color.white}
+                            />
                           ) : (
                             'Create'
                           )
@@ -1012,27 +1141,38 @@ const HomeScreen = props => {
                         fontSize={moderateScale(10, 0.6)}
                         marginTop={moderateScale(10, 0.6)}
                       />
-
                     </View>
                   )}
                   {gettripLoading ? (
-                    <ActivityIndicator style={{
-                      marginTop: moderateScale(10, 0.6)
-                    }} size="small" color={Color.themeColor} />
+                    <ActivityIndicator
+                      style={{
+                        marginTop: moderateScale(10, 0.6),
+                      }}
+                      size="small"
+                      color={Color.themeColor}
+                    />
                   ) : (
                     <FlatList
                       data={tripList}
                       ListEmptyComponent={() => {
-                        <CustomText
-                          style={{
-                            fontSize: moderateScale(11, 0.6),
-
-                          }}>
-                          no data found
-                        </CustomText>
+                        <View>
+                          <LottieView
+                            resizeMode="cover"
+                            source={require('../Assets/Images/animation.json')}
+                            style={{height: '100%'}}
+                            autoPlay
+                            loop
+                          />
+                          <CustomText
+                            style={{
+                              fontSize: moderateScale(11, 0.6),
+                            }}>
+                            no data found
+                          </CustomText>
+                        </View>
                       }}
                       showsVerticalScrollIndicator={false}
-                      renderItem={({ item }) => {
+                      renderItem={({item}) => {
                         return (
                           <TouchableOpacity
                             onPress={() => {
@@ -1048,8 +1188,7 @@ const HomeScreen = props => {
                               justifyContent: 'center',
                               paddingHorizontal: moderateScale(10, 0.6),
                               borderWidth: 1.5,
-                              borderColor:
-                                '#EEEEEEEE',
+                              borderColor: '#EEEEEEEE',
                             }}>
                             <CustomText
                               style={{
@@ -1088,6 +1227,7 @@ const styles = ScaledSheet.create({
     color: Color.white,
   },
   loctxt: {
+    width: '85%',
     fontSize: moderateScale(13, 0.6),
     paddingTop: moderateScale(5, 0.6),
     color: Color.white,
@@ -1138,8 +1278,7 @@ const styles = ScaledSheet.create({
     borderColor: Color.themeColor,
     zIndex: 1,
     alignSelf: 'center',
-    top: moderateScale(30, 0.6)
-
+    top: moderateScale(30, 0.6),
   },
   modal_inner_view: {
     height: windowHeight,

@@ -12,6 +12,8 @@ import Modal from 'react-native-modal';
 import CustomText from './CustomText';
 import { moderateScale } from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
+import Entypo from 'react-native-vector-icons/Entypo';
 import { Icon } from 'native-base';
 import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import TextInputWithTitle from './TextInputWithTitle';
@@ -118,6 +120,10 @@ const PreferenceModal = ({
             }}>
             {selectedType?.label}
           </CustomText>
+
+          <Icon onPress={() =>{
+            setModalIsVisible(false)
+          }} as={Entypo} name='cross' size={moderateScale(20,.6)} color={Color.white} />
         </View>
         <View style={styles.modalBody}>
           <View style={styles.modalSearchBar}>
@@ -295,8 +301,10 @@ const styles = StyleSheet.create({
   modalHeader: {
     backgroundColor: Color.themeColor,
     height: windowHeight * 0.09,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    alignItems : 'center',
     paddingHorizontal: moderateScale(19, 0.8),
+    flexDirection :'row'
   },
   modalSearchBar: {
     marginTop: moderateScale(-30, 0.9),

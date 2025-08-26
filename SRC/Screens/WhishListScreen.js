@@ -149,7 +149,7 @@ const WhishListScreen = ({ item }) => {
           <CustomText
             style={{ fontSize: moderateScale(18, 0.6), color: Color.black }}
             isBold>
-            Trips List
+            Trips 
           </CustomText>
           <TouchableOpacity
             activeOpacity={0.8}
@@ -216,7 +216,7 @@ const WhishListScreen = ({ item }) => {
             ListEmptyComponent={<CustomText style={{
               fontSize: moderateScale(12, 0.6),
               textAlign: 'center',
-              color: "red",
+              color: "black",
               marginTop: moderateScale(10, 0.6)
             }}> No Data Found</CustomText>}
             contentContainerStyle={{

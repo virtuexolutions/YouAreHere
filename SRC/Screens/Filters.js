@@ -787,7 +787,9 @@ const Filters = ({route}) => {
     };
 
     if (userPreferences.length < 1) {
-      ToastAndroid.show('Please choose Preferences....', ToastAndroid.SHORT);
+      Platform.OS == 'android' ?
+      ToastAndroid.show('Please choose Preferences....', ToastAndroid.SHORT) :
+      Alert.alert('Please choose Preferences....')
       return;
     }
 
@@ -806,7 +808,7 @@ const Filters = ({route}) => {
       dispatch(setPrefrences(response?.data?.user?.preferences));
       Platform.OS == 'android'
         ? ToastAndroid.show('Preference updated', ToastAndroid.SHORT)
-        : alert('Preference updated');
+        : Alert.alert('Preference updated');
     }
   };
 

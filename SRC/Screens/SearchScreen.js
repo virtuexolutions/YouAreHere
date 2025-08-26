@@ -17,11 +17,12 @@ import CustomButton from '../Components/CustomButton';
 import { setCustomLocation } from '../Store/slices/common';
 import { useDispatch } from 'react-redux';
 
-const SearchScreen = () => {
+const SearchScreen = (props) => {
+  const userLocation = props?.route?.params?.userLocation
   const dispatch = useDispatch()
   const navigation = useNavigation();
   const [searchData, setSearchData] = useState('');
-  console.log("🚀 ~ file: SearchScreen.js:21 ~ SearchScreen ~ searchData:", searchData)
+  console.log("🚀 ~ file: SearchScreen.js:21 ~ SearchScreen ~ searchData:", userLocation)
 
   const homePlace = {
     description: 'Home',
@@ -70,7 +71,8 @@ const SearchScreen = () => {
           query={{
             // key: 'AIzaSyDa3hGQ1LsGw7cyjCwCKx6rxU62g6vt0b8' --old api,
             key: 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc',
-
+            radius :5000,
+            location:`${userLocation?.latitude},${userLocation?.longitude}`,
             language: 'en',
           }}
           isRowScrollable={true}

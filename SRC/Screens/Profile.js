@@ -227,7 +227,7 @@ const Profile = props => {
               isLoading ? (
                 <ActivityIndicator size={'small'} color={'white'} />
               ) : (
-                'edit'
+                'save'
               )
             }
             textColor={Color.white}

@@ -149,8 +149,8 @@ const ChangePassword = props => {
 
               <TextInputWithTitle
                 secureText
-                titleText={'Current Passwrod'}
-                placeholder={'Current Passwrod'}
+                titleText={'Current Password'}
+                placeholder={'Current Password'}
                 setText={setCurrentPassword}
                 value={currentPassword}
                 viewHeight={0.07}
@@ -186,8 +186,8 @@ const ChangePassword = props => {
               />
               <TextInputWithTitle
                 secureText
-                titleText={'Confirm your new password'}
-                placeholder={'Confirm your new password'}
+                titleText={'Confirm Your New Password'}
+                placeholder={'Confirm Your New Password'}
                 setText={setConfirmNewPassword}
                 value={confirmNewPassword}
                 viewHeight={0.07}

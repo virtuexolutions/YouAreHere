@@ -20,7 +20,7 @@ import CustomImage from './CustomImage';
 
 const WelcomeModal = ({item, isModalVisible, setIsModdalVisible , matchLocation , setMatchLocation}) => {
   const navigation = useNavigation();
-  console.log(matchLocation , 'welcome modal')
+  // console.log(matchLocation , 'welcome modal')
   // const dispatch =useDispatch()
   //   const Voucher = useSelector(state => state.commonReducer.selectedVoucher);
 

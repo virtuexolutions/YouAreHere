@@ -20,6 +20,8 @@ import { setDeletFavLocation, setFavouriteLocaion } from '../Store/slices/common
 
 const AddPlacesModal = ({
   item,
+  long,
+  lat,
   setRef,
   rbRef,
   locationName,
@@ -34,10 +36,10 @@ const AddPlacesModal = ({
   const favouriteplaces = useSelector(
     state => state.commonReducer.favouriteLocation,
   );
-  console.log(
-    'item ======================== favouriteLocation',
-    favouriteplaces,
-  );
+  // console.log(
+  //   'item ======================== favouriteLocation',
+  //   favouriteplaces,
+  // );
 
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const mapRef = useRef(null);
@@ -93,16 +95,16 @@ const AddPlacesModal = ({
               style={styles.map}
               //   provider={PROVIDER_GOOGLE}ßß
               initialRegion={{
-                latitude: parseFloat(item?.latitude),
-                longitude: parseFloat(item?.longitude),
+                latitude: parseFloat(lat),
+                longitude: parseFloat(long),
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
               }}>
               <Marker
                 pinColor="red"
                 coordinate={{
-                  latitude: parseFloat(item?.latitude),
-                  longitude: parseFloat(item?.longitude),
+                  latitude: parseFloat(lat),
+                  longitude: parseFloat(long),
                 }}
               />
             </MapView>
@@ -165,7 +167,7 @@ const AddPlacesModal = ({
           }}
         />
 
-        {favouriteplaces?.length < 2 && (
+        {/* {favouriteplaces?.length < 2 && (
           <TouchableOpacity
             onPress={() => {
               setModalIsVisible(true);
@@ -179,7 +181,7 @@ const AddPlacesModal = ({
             />
             <CustomText style={styles.addtxt}>add new address</CustomText>
           </TouchableOpacity>
-        )}
+        )} */}
         <SearchLocationModal
           setLabel={setLabel}
           label={label}

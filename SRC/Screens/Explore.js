@@ -98,7 +98,7 @@ const Explore = () => {
         setTripLoading(true)
         const response = await Get(url, token);
         setTripLoading(false)
-        console.log("🚀 ~ getAllTrip ~ response?.data?.data?.country?.cities:", response?.data)
+        // console.log("🚀 ~ getAllTrip ~ response?.data?.data?.country?.cities:", response?.data)
         if (response?.data != undefined) {
             setTripLoading(false)
             setTrip(response?.data?.data)
@@ -144,9 +144,7 @@ const Explore = () => {
                 </View>
                 <View style={styles.main_View}>
                     <View style={styles.text_view}>
-                        <CustomText isBold style={{
-                            fontSize: moderateScale(15, 0.6),
-                        }}>Select Country First</CustomText>
+                      
                         <Icon
                             onPress={() => setCountryModalVisible(true)}
                             name="filter"
@@ -154,6 +152,13 @@ const Explore = () => {
                             color={Color.white}
                             size={moderateScale(28, 0.6)}
                         />
+                          <CustomText isBold style={{
+                            fontSize: moderateScale(15, 0.6),
+                            color :Color.black,
+                                width :windowWidth*0.84,
+                            paddingHorizontal : moderateScale(10,.6),
+                            textAlign : 'center'
+                        }}>Select Country First</CustomText>
                     </View>
                     {loading ? <ActivityIndicator size="large" color={Color.white} /> :
                         <FlatList
@@ -321,7 +326,8 @@ const styles = StyleSheet.create({
     },
     text_view: {
         flexDirection: 'row',
-        justifyContent: "space-between",
+        // justifyContent: "space-between",
+        // marginHorizontal :moderateScale(10,6),
         alignItems: 'center',
     },
     row: {
