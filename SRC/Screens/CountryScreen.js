@@ -120,6 +120,8 @@ const CountryScreen = () => {
         }
     }
 
+
+
     return (
         <ScreenBoiler
             statusBarBackgroundColor={'white'}
@@ -233,7 +235,9 @@ const CountryScreen = () => {
                                                 privacyVisible?.open()
                                                 setSelectedTab(item)
                                             }}
-                                            onPress={() => navigationService.navigate('CitiesScreen', { data: item })}
+                                            onPress={() => 
+                                                navigationService.navigate('StatesScreen', { data: item })
+                                            }
                                         />
                                     </>
                                 )

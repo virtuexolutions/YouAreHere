@@ -39,6 +39,8 @@ import TripDetailsLocation from './Screens/TripDetailsLocation';
 import Explore from './Screens/Explore';
 import ExploreDetails from './Screens/ExploreDetails';
 import CitiesTrips from './Screens/CitiesTrips';
+import StatesScreen from './Screens/StatesScreen';
+import StateTrips from './Screens/StateTrips';
 
 const AppNavigator = () => {
   // const isLogin = false;
@@ -87,6 +89,10 @@ const AppNavigator = () => {
           <RootNav.Screen name="AddNewAdress" component={AddNewAdress} />
           <RootNav.Screen name="TripDetailsLocation" component={TripDetailsLocation} />
           <RootNav.Screen name="ExploreDetails" component={ExploreDetails} />
+          <RootNav.Screen name="StatesScreen" component={StatesScreen} />
+          <RootNav.Screen name="StateTrips" component={StateTrips} />
+
+          
         </RootNav.Navigator>
       </NavigationContainer>
     );

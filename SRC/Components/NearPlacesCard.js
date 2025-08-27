@@ -36,7 +36,6 @@ import Share from 'react-native-share';
 
 const NearPlacesCard = ({ item, isType = true, disabled, onPressSave, fromWishList, setIds, ids, fromHome, style,
   isshownSave = true }) => {
-  console.log("NearPlacesCard🚀 ~ item:", item)
   const token = useSelector(state => state.authReducer.token);
   const WhishList = useSelector(state => state.commonReducer.WishList);
   const user = useSelector(state => state.commonReducer.userData);

@@ -87,6 +87,9 @@ const HomeScreen = props => {
   // console.log('current loacation ======== > ' , currentLocation)
 
   const [locationName, setLocationName] = useState('');
+  const [selectedmiles, setSelectedmiles] = useState('');
+  // console.log('==========v>>>>> >>> >> > > > >miles', selectedmiles);
+
   const [foundLocation, setFoundLocation] = useState({});
   const [countryCode, setCountryCode] = useState('');
   const [listName, setlistName] = useState('');
@@ -142,9 +145,7 @@ const HomeScreen = props => {
 
   const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
   const onRefresh = () => {
-    console.log(
-      'oonnnnnnnnnnn refersh ========== >>>>>>>'
-    )
+    console.log('oonnnnnnnnnnn refersh ========== >>>>>>>');
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
@@ -153,17 +154,17 @@ const HomeScreen = props => {
     }, 2000);
   };
 
-
   // useEffect(() => {
   //   setTimeout(() => {
   //     // getAllTrip()
   //     Platform.OS == 'android' ? handleEnableLocation() : getLocation();
   //   }, 2000);
   // }, [])
-  
 
-  const findNearestMcDonalds = async location => {
-    const radius = 50000;
+  const findNearestMcDonalds = async (location, selectedRadius) => {
+    // const radius =
+    //   selectedRadius == '200' ? 200000 : selectedRadius == '100' ? 100000 : 50000;
+    const radius = 50000; 
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
     const longitude = 66.98806;
@@ -171,12 +172,15 @@ const HomeScreen = props => {
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${
       Object.keys(customLocation).length > 0
         ? customLocation?.location?.lat
-        : location?.lat
+        : selectedmiles ? location?.latitude :location?.lat
     },${
       Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
-        : location?.lng
-    }&radius=${radius}&keyword=${preferences?.name ? preferences?.name : 'all'}`;
+        : selectedmiles ? location?.longitude :location?.lng
+    }&radius=${radius}&keyword=${
+      preferences?.name ? preferences?.name : 'all'
+    }`;
+    console.log('urllllllll ------ >', url);
     // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&keyword=${keyword}&key=${apiKey}`;
     //  return  console.log('my data --->',url , customLocation)
     try {
@@ -184,7 +188,7 @@ const HomeScreen = props => {
       const response = await axios.get(url);
       setIsLoading(false);
       if (response != undefined) {
-        console.log('===================== >>>>>>  result for places',response?.data?.results)
+        // console.log('===================== >>>>>>  result for places',response?.data?.results)
         const highestRating = Math.max(
           ...response?.data?.results.map(place => place.rating || 0),
         );
@@ -514,6 +518,7 @@ const HomeScreen = props => {
         setIsVisibleModal(true));
     }
   }, [isFocused]);
+  // const milesArray = ['50', '100', '200'];
 
   return (
     <ScreenBoiler
@@ -528,6 +533,7 @@ const HomeScreen = props => {
         end={{x: 1, y: 1}}
         colors={Color.themeBgColor}>
         <ScrollView
+          // scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           style={{minHeight: windowHeight}}
           refreshControl={
@@ -556,7 +562,7 @@ const HomeScreen = props => {
                 as={EvilIcons}
               />
               <CustomText numberOfLines={2} style={styles.loctxt}>
-              {locationName}
+                {locationName}
               </CustomText>
             </TouchableOpacity>
           </View>
@@ -626,7 +632,7 @@ const HomeScreen = props => {
             </View>
           </ScrollView>
           <View style={styles.search}>
-          <TouchableOpacity
+            <TouchableOpacity
               style={styles.menuIcon}
               onPress={() => setPreferencesModalVisible(true)}>
               {/* {preferences != null &&
@@ -653,7 +659,7 @@ const HomeScreen = props => {
                 size={moderateScale(28, 0.6)}
               />
             </TouchableOpacity>
-           
+
             {/* <GooglePlacesAutocomplete
               placeholder="Search"
               textInputProps={{
@@ -699,7 +705,9 @@ const HomeScreen = props => {
             <TouchableOpacity
               onPress={() => {
                 Object.keys(customLocation).length <= 0 &&
-                  navigationService.navigate('SearchScreen' ,{userLocation :currentLocation}); 
+                  navigationService.navigate('SearchScreen', {
+                    userLocation: currentLocation,
+                  });
               }}
               style={{
                 backgroundColor:
@@ -742,9 +750,13 @@ const HomeScreen = props => {
                   </CustomText>
                 </TouchableOpacity>
               ) : (
-                <CustomText style={{
-                  fontSize :moderateScale(11,.6),color :Color.mediumGray
-                }}>Search business (e.g. starbucks new york)</CustomText>
+                <CustomText
+                  style={{
+                    fontSize: moderateScale(11, 0.6),
+                    color: Color.mediumGray,
+                  }}>
+                  enter to search Location/Business Name
+                </CustomText>
               )}
             </TouchableOpacity>
             <TouchableOpacity
@@ -825,11 +837,11 @@ const HomeScreen = props => {
           ) : (
             <FlatList
               ListEmptyComponent={() => (
-                <CustomListEmptyComponent text={'No trip found under current location !!'}
-                customViewStyle={{
-                  marginLeft : moderateScale(-10,0.6)
-                }}
-                
+                <CustomListEmptyComponent
+                  text={'No trip found under current location !!'}
+                  customViewStyle={{
+                    marginLeft: moderateScale(-10, 0.6),
+                  }}
                 />
               )}
               style={{
@@ -859,6 +871,9 @@ const HomeScreen = props => {
               isBold>
               Places
             </CustomText>
+
+            
+
             {/* <TouchableOpacity
               style={[
                 styles.menuIcon,
@@ -956,6 +971,42 @@ const HomeScreen = props => {
               </CustomText>
             )} */}
           </View>
+
+          {/* <View style={styles.miles_card}>
+            {milesArray?.map(item => {
+              return (
+                <TouchableOpacity
+                  style={{flexDirection: 'row'}}
+                  onPress={() => {
+                    findNearestMcDonalds(currentLocation , item);
+                    // setSelectedmiles(item);
+                  }}>
+                  <CustomText
+                    onPress={() => {
+                      setSelectedmiles(item);
+                      // findNearestMcDonalds();
+                    }}
+                    style={{
+                      paddingVertical: moderateScale(5, 0.6),
+                      fontSize: moderateScale(13, 0.6),
+                      marginRight: moderateScale(5, 6),
+                    }}>
+                    {item} km
+                  </CustomText>
+                  {selectedmiles == item && (
+                    <Icon
+                      style={{
+                        marginTop: moderateScale(5, 0.6),
+                      }}
+                      as={Entypo}
+                      color={Color.black}
+                      name={'check'}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View> */}
           {isLoading ? (
             <View
               style={{
@@ -972,6 +1023,7 @@ const HomeScreen = props => {
             </View>
           ) : (
             <FlatList
+              scrollEnabled={false}
               data={placesData}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
@@ -980,6 +1032,7 @@ const HomeScreen = props => {
                 marginBottom: moderateScale(20, 0.3),
               }}
               renderItem={({item, index}) => {
+                // console.log('------------------====-=-=-=-=-=-=-=- >>> ',item)
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard
@@ -1169,7 +1222,7 @@ const HomeScreen = props => {
                             }}>
                             no data found
                           </CustomText>
-                        </View>
+                        </View>;
                       }}
                       showsVerticalScrollIndicator={false}
                       renderItem={({item}) => {
@@ -1231,6 +1284,15 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(13, 0.6),
     paddingTop: moderateScale(5, 0.6),
     color: Color.white,
+  },
+  miles_card: {
+    backgroundColor: Color.white,
+    paddingHorizontal: moderateScale(10, 0.6),
+    padding: moderateScale(10, 0.6),
+    marginVertical: moderateScale(5, 0.6),
+    zIndex: 1,
+    width: windowWidth * 0.22,
+    borderRadius: 10,
   },
   loc: {
     flexDirection: 'row',
@@ -1327,6 +1389,7 @@ const styles = ScaledSheet.create({
     paddingHorizontal: moderateScale(10, 0.6),
     marginTop: moderateScale(10, 0.3),
     width: windowWidth,
+    // backgroundColor :'red'
   },
   con: {
     backgroundColor: Color.white,

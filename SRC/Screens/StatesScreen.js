@@ -23,16 +23,18 @@ import { useSelector } from 'react-redux'
 import { imageUrl } from '../Config'
 
 
-const CitiesScreen = props => {
+const StatesScreen = props => {
     const { data } = props?.route?.params
-    const { stateData } = props?.route?.params
+    console.log('dataaaaaaaaaaaaaaaaaaa ============ >>>>>>>>>' ,data?.name)
+    // const  stateData  = props?.route?.params?.stateData
 
-    console.log("🚀 ~ CitiesScreen ~ data========== ......-====. :", props?.route?.params)
     const navigation = useNavigation()
     const [cities, setCities] = useState([])
+    console.log('citiessssssssssssssssssssss' ,cities)
     const [citiesmodalVisible, setCitiesModalVisible] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
     const [filteredCities, setFilteredCities] = useState([])
+    console.log(filteredCities, 'filteredCitites')
     const [isLoading, setIsLoading] = useState(false)
     const [citiesList, setCitiesList] = useState([])
     console.log("🚀 ~ citiesList:", citiesList)
@@ -44,26 +46,28 @@ const CitiesScreen = props => {
     const user = useSelector(state => state.commonReducer.userData);
     console.log("🚀 ~ user:", user?.id)
 
-    const fetchCities = async (countryName) => {
+    const fetchStates = async (countryName) => {
+        console.log('from fetch function')
         try {
-            const response = await axios.post('https://countriesnow.space/api/v0.1/countries/state/cities', {
+            const response = await axios.post('https://countriesnow.space/api/v0.1/countries/states', {
                 country: data?.name,
             });
-            setCities(response.data.data);
+            console.log('========== == == == == == >>>>  respose ======. .. . ' ,response?.data?.data)
+            setCities(response.data.data?.states);
         } catch (error) {
             console.log('Error fetching cities', error);
         }
     };
 
     useEffect(() => {
-        fetchCities();
+        fetchStates();
         const countryCode = data.uri.split("/").pop().split(".")[0].toUpperCase();
         setCountryCode(countryCode)
     }, [])
 
     useEffect(() => {
         if (searchQuery != '') {
-            setFilteredCities(cities.filter(item => item.toLowerCase().includes(searchQuery.toLowerCase())))
+            setFilteredCities(cities.filter(item => item?.name.toLowerCase().includes(searchQuery.toLowerCase())))
         }
     }, [searchQuery])
 
@@ -72,15 +76,15 @@ const CitiesScreen = props => {
     // }, [selectedCities])
 
     useEffect(() => {
-        getCities()
+        getStates()
     }, [])
 
-    const getCities = async () => {
+    const getStates = async () => {
         const url = `auth/cities?country_id=${data?.id}`
         const response = await Get(url, token)
         setIsLoading(true)
         if (response != undefined) {
-            console.log("🚀 ~ getCities ~ response:", response?.data)
+            console.log("🚀 ~ getStates ~ response:", response?.data)
             setIsLoading(false)
             setCitiesList(response?.data?.data)
         } else {
@@ -118,15 +122,16 @@ const CitiesScreen = props => {
     }
 
     const onPressSave = async () => {
-        const url = 'auth/cities'
+        const url = 'auth/state'
         const body = {
             country_id: cityData?.id,
-            name: cityData?.name,
+            name: cityData?.name?.name,
             image: cityData?.image
         }
         setIsLoading(false)
         const response = await Post(url, body, apiHeader(token))
-
+        return  console.log('first=   ======== = === == >>> ',response?.data)
+        
         setIsLoading(false)
         if (response != undefined) {
             setCitiesList((prev) => [...prev,
@@ -177,7 +182,7 @@ const CitiesScreen = props => {
                         />
                     </TouchableOpacity>
                     <CustomButton
-                        text={'Add City'}
+                        text={'Add state'}
                         isBold
                         textColor={Color.themeColor}
                         height={windowHeight * 0.03}
@@ -223,7 +228,7 @@ const CitiesScreen = props => {
                             <CountryCard
                                 name={item?.name}
                                 uri={item?.image}
-                                onPress={() => navigation.navigate('NotepadDesign', { data: item, country: data?.name, type: data?.type })}
+                                onPress={() => navigation.navigate('CitiesSCreeen', { data: item, country: data?.name, type: data?.type })}
                             />
                         )
                     }}
@@ -234,12 +239,12 @@ const CitiesScreen = props => {
             }}>
                 <View style={styles.cities_card}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: windowWidth * 0.85 }}>
-                        <CustomText isBold style={styles.heading}>Select Cities</CustomText>
+                        <CustomText isBold style={styles.heading}>Select states</CustomText>
                         <Icon name='cross' as={Entypo} size={moderateScale(25, 0.6)}
                             color={Color.black} onPress={() => setCitiesModalVisible(false)} />
                     </View>
                     <TextInputWithTitle
-                        placeholder={'Search Cities'}
+                        placeholder={'Search states'}
                         setText={setSearchQuery}
                         value={searchQuery}
                         marginTop={moderateScale(5, 0.3)}
@@ -259,6 +264,7 @@ const CitiesScreen = props => {
                     <FlatList
                         data={searchQuery != '' ? filteredCities : cities}
                         renderItem={({ item, index }) => {
+                            console.log('iteemmmmmmm', item)
                             return (
                                 <TouchableOpacity style={[styles.cites_btn, {
                                     backgroundColor: cityData?.name === item ? Color.themeColor : 'white',
@@ -274,7 +280,7 @@ const CitiesScreen = props => {
                                     {cityData?.name === item && isLoading ? (
                                         <ActivityIndicator />
                                     ) : (
-                                        <CustomText style={styles.text}>{item}</CustomText>
+                                        <CustomText style={styles.text}>{item?.name}</CustomText>
                                     )}
                                 </TouchableOpacity>
                             )
@@ -305,7 +311,7 @@ const CitiesScreen = props => {
     )
 }
 
-export default CitiesScreen
+export default StatesScreen
 
 const styles = ScaledSheet.create({
     Rounded: {

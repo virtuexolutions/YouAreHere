@@ -76,7 +76,18 @@ const TripCards = ({
 
   return (
     <>
-      <View
+      <TouchableOpacity 
+
+onPress={
+  onPress
+    ? onPress
+    : () =>
+        navigationService.navigate('CitiesTrips', {
+          data: item,
+          countryCode: countryCode,
+          image: item?.cities[0]?.places[0]?.image,
+        })
+}
         style={[
           styles.card_view,
           style
@@ -94,7 +105,7 @@ const TripCards = ({
               onPress
                 ? onPress
                 : () =>
-                    navigationService.navigate('CitiesTrips', {
+                    navigationService.navigate('StateTrips', {
                       data: item,
                       countryCode: countryCode,
                       image: item?.cities[0]?.places[0]?.image,
@@ -155,7 +166,7 @@ const TripCards = ({
             style={[
               styles.rating_text,
               {
-                width: '80%',
+                width: '75%',
               },
             ]}>
             {name ? name : item?.country}
@@ -202,7 +213,7 @@ const TripCards = ({
             ? 'No Description'
             : item?.trip_description}
         </CustomText>
-      </View>
+      </TouchableOpacity>
     </>
   );
 };
