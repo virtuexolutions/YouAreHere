@@ -33,11 +33,9 @@ const CountryScreen = () => {
     const [countryCode, setCountryCode] = useState("US");
     const [withFilter, setFilter] = useState(true);
     const [countries, setCountries] = useState(countriesList)
-    console.log("🚀 ~ CountryScreen ~ countries:", countries)
     const [loading, setLoading] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [countriesList, setCountriesList] = useState([]);
-    console.log("🚀 ~ CountryScreen ~ countriesList:", countriesList)
     const token = useSelector(state => state.authReducer.token);
     console.log("🚀 ~ CountryScreen ~ token:", token)
     const [privacyVisible, setprivacyVisible] = useState(null)
@@ -45,9 +43,7 @@ const CountryScreen = () => {
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [selectTab, setSelectedTab] = useState()
-    console.log("🚀 ~ CountryScreen ~ selectTab:", selectTab)
     const [selectedCountryIndex, setSelectedCountryIndex] = useState(null);
-    console.log("🚀 ~ CountryScreen ~ selectedCountryIndex:", selectedCountryIndex)
     const [updateLoading, setUpdateLoading] = useState(false)
 
 

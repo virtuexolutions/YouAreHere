@@ -188,7 +188,7 @@ const HomeScreen = props => {
       const response = await axios.get(url);
       setIsLoading(false);
       if (response != undefined) {
-        // console.log('===================== >>>>>>  result for places',response?.data?.results)
+        // console.log('===================== >>>>>>  result for places',JSON.stringify(response?.data?.results ,null ,2))
         const highestRating = Math.max(
           ...response?.data?.results.map(place => place.rating || 0),
         );
@@ -755,7 +755,7 @@ const HomeScreen = props => {
                     fontSize: moderateScale(11, 0.6),
                     color: Color.mediumGray,
                   }}>
-                  enter to search Location/Business Name
+                  Enter To Search Location/Business Name
                 </CustomText>
               )}
             </TouchableOpacity>
@@ -1032,7 +1032,7 @@ const HomeScreen = props => {
                 marginBottom: moderateScale(20, 0.3),
               }}
               renderItem={({item, index}) => {
-                // console.log('------------------====-=-=-=-=-=-=-=- >>> ',item)
+                console.log('------------------====-=-=-=-=-=-=-=- >>> ',item)
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard

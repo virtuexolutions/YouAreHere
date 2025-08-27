@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   Platform,
+  ToastAndroid,
   // ActivityIndicator
 } from 'react-native';
 import {FlatList, Icon, ScrollView} from 'native-base';

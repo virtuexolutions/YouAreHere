@@ -1,5 +1,5 @@
-import { Icon } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import {Icon} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -21,26 +21,29 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomText from '../Components/CustomText';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
 import CustomButton from '../Components/CustomButton';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import CustomImage from '../Components/CustomImage';
 import axios from 'axios';
-import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import Modal from 'react-native-modal';
 import Color from '../Assets/Utilities/Color';
-import { color } from 'native-base/lib/typescript/theme/styled-system';
+import {color} from 'native-base/lib/typescript/theme/styled-system';
 
 const AddTripScreen = props => {
-  const { data } = props?.route?.params;
-  console.log("🚀 ~ data:", data)
+  const {data} = props?.route?.params;
+  console.log(
+    '🚀 ~ AddTripScreen ~ data:==================== >>>>>>>>>>>>',
+    data,
+  );
+
   const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ token:", token)
   const user = useSelector(state => state.commonReducer.userData);
   const [visible, setVisible] = useState(false);
   const [cityModalVisible, setcityModalVisible] = useState(false);
@@ -50,12 +53,14 @@ const AddTripScreen = props => {
   const [cities, setCities] = useState([]);
   const [withFilter, setFilter] = useState(true);
   const [selectedCities, setSelectedCities] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+
   const [citiesWithImage, setCitiesWithImage] = useState(null);
   const [title, setTitle] = useState('');
   const [imagePicker, setImagePicker] = useState(false);
   const [image, setImage] = useState({});
+  console.log("🚀 ~ AddTripScreen ~ image:", image)
   const [cityimage, setCityImage] = useState();
-  console.log('🚀 ~ cityimage:', cityimage);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredCities, setFilteredCities] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -66,10 +71,8 @@ const AddTripScreen = props => {
   const [isCreateNewTrip, setCreateNewTrip] = useState(false);
   const [trip_loading, settripLoading] = useState(false);
   const [newTrip, setNewTrip] = useState('');
-  console.log('trippplissstttt', tripList);
   const [gettripLoading, setGetTripLoading] = useState(false);
   const [selectListItem, setSelectedListItem] = useState('');
-  console.log(selectListItem, 'selecteditemmmsssmmmmm');
   const onSelect = country => {
     setCountryCode(country.cca2);
     setCountry(country);
@@ -118,16 +121,16 @@ const AddTripScreen = props => {
 
         if (photoReference) {
           const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
-          fetchedData.push({ name: selectedCities, uri: photoUrl });
+          fetchedData.push({name: selectedCities, uri: photoUrl});
         } else {
-          fetchedData.push({ name: selectedCities, uri: null });
+          fetchedData.push({name: selectedCities, uri: null});
         }
       } else {
-        fetchedData.push({ name: selectedCities, uri: null });
+        fetchedData.push({name: selectedCities, uri: null});
       }
     } catch (error) {
       console.error(`Error fetching image for ${selectedCities}:`, error);
-      fetchedData.push({ name: selectedCities, uri: null });
+      fetchedData.push({name: selectedCities, uri: null});
     }
     // }
     const firstUri = fetchedData.length > 0 ? fetchedData[0].uri : null;
@@ -145,11 +148,13 @@ const AddTripScreen = props => {
       lng: data?.geometry?.location?.lng || data?.longitude,
       country_name: country,
       city_name: selectedCities,
+      state_name : selectedState,
       flag: `https://flagcdn.com/w320/${countryCode.toLowerCase()}.png`,
       user_id: user?.id,
       country_uri: `https://flagcdn.com/w320/${countryCode.toLowerCase()}.png`,
       // country_city_count: 1,
       city_image: citiesWithImage?.uri || cityimage,
+
     };
     console.log('🚀 ~ onPressSubmit ~ body:', body);
     setLoading(true);
@@ -178,7 +183,7 @@ const AddTripScreen = props => {
     try {
       const response = await fetch(url);
       const result = await response.json();
-      console.log("🚀 ~ getCityAndCountry ~ result:", result)
+      console.log('🚀 ~ getCityAndCountry ~ result:', result);
 
       if (result.status !== 'OK') {
         console.error(
@@ -203,14 +208,20 @@ const AddTripScreen = props => {
             country = component.long_name;
             countryCode = component.short_name;
           }
+
+          if (component.types.includes('administrative_area_level_1')) {
+            state = component.long_name; // e.g. Punjab
+            stateCode = component.short_name; // e.g. PB
+          }
         });
 
         placeId = result.results[0].place_id;
-        console.log("🚀 ~ getCityAndCountry ~ city:", city)
+        console.log('🚀 ~ getCityAndCountry ~ city:', city);
 
         setSelectedCities(city);
         setCountryCode(countryCode);
         setCountry(country);
+        setSelectedState(state)
 
         const placeDetailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=photo&key=${apiKey}`;
         const placeResponse = await fetch(placeDetailsUrl);
@@ -282,7 +293,6 @@ const AddTripScreen = props => {
   //   }
   // };
 
-
   const onPressAddTrip = async id => {
     const url = `auth/place_save/${id}`;
     const body = {
@@ -291,26 +301,33 @@ const AddTripScreen = props => {
       address: data?.address || data?.vicinity,
       types: data?.types,
       rating: data?.rating,
-      totalRatings: data?.user_ratings_total === null ? data?.rating : data?.user_ratings_total,
+      totalRatings:
+        data?.user_ratings_total === null
+          ? data?.rating
+          : data?.user_ratings_total,
       openNow: data?.open_now?.openNow || data?.opening_hours?.openNow,
-      image: data?.photos != undefined ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${data?.photos[0]?.photo_reference
-        }&key=${apiKey}` : null,
+      image:
+        data?.photos != undefined
+          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
+              data?.photos[0]?.photo_reference
+            }&key=${apiKey}`
+          : null,
       latitude: data?.location?.lat || data?.geometry?.location?.lat,
       longitude: data?.location?.lng || data?.geometry?.location?.lat,
       sub_category: false,
       playlist_id: id,
     };
-    console.log("🚀 ~ body:", body)
+    console.log('🚀 ~ body:', body);
     setAddTripLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    console.log("🚀 ~ response:", response?.data)
+    console.log('🚀 ~ response:', response?.data);
     setAddTripLoading(false);
     if (response?.data != undefined) {
       Platform.OS == 'android'
         ? ToastAndroid.show('Added SuccessFully', ToastAndroid.SHORT)
         : Alert.alert('Added SuccessFully');
       setAddTripLoading(false);
-      setTripListModalVisible(false)
+      setTripListModalVisible(false);
     }
   };
 
@@ -323,8 +340,8 @@ const AddTripScreen = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
         colors={Color.themeBgColor}>
         <View
           style={{
@@ -448,11 +465,48 @@ const AddTripScreen = props => {
                   as={FontAwesome}
                   size={moderateScale(20, 0.6)}
                   color={Color.themeDarkGray}
-                  onPress={() => { }}
+                  onPress={() => {}}
                   style={{
                     position: 'absolute',
                     right: moderateScale(5, 0.3),
                   }}
+                />
+              </TouchableOpacity>
+
+              <CustomText
+                isBold
+                style={{
+                  fontSize: moderateScale(12, 0.6),
+                  color: Color.black,
+                  marginTop: moderateScale(10, 0.6),
+                }}>
+                Select State
+              </CustomText>
+              <TouchableOpacity
+                onPress={() => setcityModalVisible(!cityModalVisible)}
+                style={[
+                  styles.birthday,
+                  {
+                    justifyContent: 'space-between',
+                    borderRadius: moderateScale(25, 0.6),
+                    overflow: 'hidden',
+                    flexGrow: 1,
+                  },
+                ]}>
+                {country && (
+                  <CustomText
+                    style={{
+                      fontSize: moderateScale(15, 0.6),
+                      color: '#5E5E5E',
+                    }}>
+                    {selectedState ? `${selectedState}` : 'select City'}
+                  </CustomText>
+                )}
+                <Icon
+                  name={'keyboard-arrow-down'}
+                  as={MaterialIcons}
+                  size={moderateScale(22, 0.6)}
+                  color={Color.themeDarkGray}
                 />
               </TouchableOpacity>
               <CustomText
@@ -617,7 +671,7 @@ const AddTripScreen = props => {
                   <CustomImage
                     source={
                       image?.uri
-                        ? { uri: image.uri }
+                        ? {uri: image.uri}
                         : require('../Assets/Images/no_image.jpg')
                     }
                     style={{
@@ -662,7 +716,7 @@ const AddTripScreen = props => {
                   onPressSubmit();
                 }}
               />
-              <View style={{ height: windowWidth * 0.15 }} />
+              <View style={{height: windowWidth * 0.15}} />
             </View>
           </View>
         </ScrollView>
@@ -725,7 +779,7 @@ const AddTripScreen = props => {
                   please select country first
                 </CustomText>
               }
-              renderItem={({ item, index }) => {
+              renderItem={({item, index}) => {
                 return (
                   <TouchableOpacity
                     style={[
@@ -835,7 +889,7 @@ const AddTripScreen = props => {
                   please select country first
                 </CustomText>
               }
-              renderItem={({ item, index }) => {
+              renderItem={({item, index}) => {
                 return (
                   <TouchableOpacity
                     style={styles.cites_btn}
@@ -843,9 +897,9 @@ const AddTripScreen = props => {
                       if (selectedCities.includes(item)) {
                         Platform.OS == 'android'
                           ? ToastAndroid.show(
-                            'City already added',
-                            ToastAndroid.SHORT,
-                          )
+                              'City already added',
+                              ToastAndroid.SHORT,
+                            )
                           : alert('City already added');
                       } else {
                         setSelectedCities(item);
