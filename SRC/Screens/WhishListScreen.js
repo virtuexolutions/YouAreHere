@@ -211,12 +211,14 @@ const WhishListScreen = ({ item }) => {
           </View>
         ) : (
           <FlatList
+          // data={[1,2,3,4,5]}
             data={tripList}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={<CustomText style={{
               fontSize: moderateScale(12, 0.6),
               textAlign: 'center',
               color: "black",
+              height : windowHeight*0.5, 
               marginTop: moderateScale(10, 0.6)
             }}> No Data Found</CustomText>}
             contentContainerStyle={{

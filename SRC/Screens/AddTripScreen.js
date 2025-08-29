@@ -36,10 +36,6 @@ import {color} from 'native-base/lib/typescript/theme/styled-system';
 
 const AddTripScreen = props => {
   const {data} = props?.route?.params;
-  console.log(
-    '🚀 ~ AddTripScreen ~ data:==================== >>>>>>>>>>>>',
-    data,
-  );
 
   const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
   const navigation = useNavigation();
@@ -51,6 +47,9 @@ const AddTripScreen = props => {
   const [countryCode, setCountryCode] = useState('US');
   const [country, setCountry] = useState([]);
   const [cities, setCities] = useState([]);
+  const [states, setStates] = useState([]);
+  console.log("🚀 ~ AddTripScreen ~ states:", states)
+
   const [withFilter, setFilter] = useState(true);
   const [selectedCities, setSelectedCities] = useState('');
   const [selectedState, setSelectedState] = useState('');
@@ -59,7 +58,7 @@ const AddTripScreen = props => {
   const [title, setTitle] = useState('');
   const [imagePicker, setImagePicker] = useState(false);
   const [image, setImage] = useState({});
-  console.log("🚀 ~ AddTripScreen ~ image:", image)
+  console.log('🚀 ~ AddTripScreen ~ image:=====================', image?.uri);
   const [cityimage, setCityImage] = useState();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredCities, setFilteredCities] = useState([]);
@@ -92,8 +91,28 @@ const AddTripScreen = props => {
     }
   };
 
+
+
+   const fetchStates = async countryName => {
+      console.log('from fetch function');
+      try {
+        const response = await axios.post(
+          'https://countriesnow.space/api/v0.1/countries/states',
+          {
+            country: data?.name,
+          },
+        );
+        // console.log('first= =========================== >',response.data.data?.states)
+  
+        setStates(response.data.data?.states);
+      } catch (error) {
+        console.log('Error fetching cities', error);
+      }
+    };
+  
   useEffect(() => {
     fetchCities();
+    fetchStates()
     getCityDetails();
   }, [country?.name]);
 
@@ -148,13 +167,12 @@ const AddTripScreen = props => {
       lng: data?.geometry?.location?.lng || data?.longitude,
       country_name: country,
       city_name: selectedCities,
-      state_name : selectedState,
+      state_name: selectedState,
       flag: `https://flagcdn.com/w320/${countryCode.toLowerCase()}.png`,
       user_id: user?.id,
       country_uri: `https://flagcdn.com/w320/${countryCode.toLowerCase()}.png`,
       // country_city_count: 1,
       city_image: citiesWithImage?.uri || cityimage,
-
     };
     console.log('🚀 ~ onPressSubmit ~ body:', body);
     setLoading(true);
@@ -221,7 +239,7 @@ const AddTripScreen = props => {
         setSelectedCities(city);
         setCountryCode(countryCode);
         setCountry(country);
-        setSelectedState(state)
+        setSelectedState(state);
 
         const placeDetailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=photo&key=${apiKey}`;
         const placeResponse = await fetch(placeDetailsUrl);
@@ -499,7 +517,7 @@ const AddTripScreen = props => {
                       fontSize: moderateScale(15, 0.6),
                       color: '#5E5E5E',
                     }}>
-                    {selectedState ? `${selectedState}` : 'select City'}
+                    {selectedState ? `${selectedState}` : 'select state'}
                   </CustomText>
                 )}
                 <Icon

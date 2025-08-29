@@ -33,10 +33,10 @@ import {imageUrl} from '../Config';
 
 const CitiesScreen = props => {
   const {data} = props?.route?.params;
-  console.log('🚀 ~ CitiesScreen ~ data:', data);
+  console.log("🚀 ~ CitiesScreen ~ data:", data)
   const countryid = props?.route?.params?.country_id;
+  // console.log("🚀 ~ CitiesScreen ~ countryid:", countryid)
 
-  console.log('🚀 ~ CitiesScreen ~ data========== ......-====. :', countryid);
   const navigation = useNavigation();
   const [cities, setCities] = useState([]);
   const [citiesmodalVisible, setCitiesModalVisible] = useState(false);
@@ -44,17 +44,12 @@ const CitiesScreen = props => {
   const [filteredCities, setFilteredCities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [citiesList, setCitiesList] = useState([]);
-  console.log('🚀 ~ citiesList:', citiesList);
+  console.log("🚀 ~ CitiesScreen ~ citiesList:", citiesList)
   const [cityData, setCityData] = useState({});
-  console.log(
-    'cxcxzc====================================== > city data ',
-    cityData,
-  );
+ 
   const [countryCode, setCountryCode] = useState(null);
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ token:', token);
   const user = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ user:', user?.id);
 
   const fetchCities = async countryName => {
     try {
@@ -65,7 +60,6 @@ const CitiesScreen = props => {
           state: data?.name,
         },
       );
-      console.log('🚀 ~ fetchCities ~ response:', response?.data);
       setCities(response.data.data);
     } catch (error) {
       console.log('Error fetching cities', error);
@@ -102,12 +96,10 @@ const CitiesScreen = props => {
 
   const getCities = async () => {
     const url = `auth/cities?country_id=${countryid}`;
-    console.log('🚀 ~ getCities ~ url:', url);
-    const response = await Get(url, token);
     setIsLoading(true);
+    const response = await Get(url, token);
+    setIsLoading(false);
     if (response != undefined) {
-      console.log('🚀 ~ getCities ~ response:', response?.data);
-      setIsLoading(false);
       setCitiesList(response?.data?.data);
     } else {
       setIsLoading(false);
@@ -124,12 +116,10 @@ const CitiesScreen = props => {
       if (response.data.results.length > 0) {
         const photoReference =
           response.data.results[0]?.photos?.[0]?.photo_reference;
-        console.log('🚀 ~ getCityDetails ~ photoReference:', photoReference);
 
         if (photoReference) {
           const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
           fetchedData.push({name: item, uri: photoUrl});
-          console.log('🚀 ~ getCityDetails ~ photoUrl:', photoUrl);
         } else {
           fetchedData.push({name: item, uri: null});
         }
@@ -216,45 +206,65 @@ const CitiesScreen = props => {
             }}
           />
         </View>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          style={{
-            height: windowHeight * 0.8,
-            marginTop: moderateScale(20, 0.3),
-          }}
-          contentContainerStyle={{
-            paddingBottom: moderateScale(50, 0.6),
-          }}
-          data={citiesList}
-          ListEmptyComponent={() => {
-            return (
-              <View
-                style={{
-                  width: windowWidth,
-                  height: windowHeight * 0.5,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <CustomText>No Data Found</CustomText>
-              </View>
-            );
-          }}
-          renderItem={({item, index}) => {
-            return (
-              <CountryCard
-                name={item?.name}
-                uri={item?.image}
-                onPress={() =>
-                  navigation.navigate('NotepadDesign', {
-                    data: item,
-                    country: data?.country?.name,
-                    type: data?.type,
-                  })
-                }
-              />
-            );
-          }}
-        />
+        {isLoading ? (
+          <View
+            style={{
+              width: windowWidth,
+              height: windowHeight * 0.8,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ActivityIndicator size={'large'} color={Color.themeColor} />
+            <CustomText
+              style={{
+                color: Color.white,
+                fontSize: moderateScale(13, 0.6),
+              }}>
+              Please Wait
+            </CustomText>
+          </View>
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            style={{
+              height: windowHeight * 0.8,
+              marginTop: moderateScale(20, 0.3),
+            }}
+            contentContainerStyle={{
+              paddingBottom: moderateScale(50, 0.6),
+            }}
+            data={citiesList}
+            renderItem={({item, index}) => {
+              console.log("🚀 ~ item ========================== >>>>>>>>>>> :", item)
+              return (
+                <CountryCard
+                  name={item?.name}
+                  uri={item?.image}
+                  onPress={() =>
+                    navigation.navigate('NotepadDesign', {
+                      data: item,
+                      country: data?.country?.name,
+                      type: data?.type,
+                    })
+                  }
+                />
+              );
+            }}
+            ListEmptyComponent={() => {
+              return (
+                <View
+                  style={{
+                    width: windowWidth,
+                    height: windowHeight * 0.5,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <CustomText>No Data Found</CustomText>
+                </View>
+              );
+            }}
+          />
+        )}
       </LinearGradient>
       <Modal
         isVisible={citiesmodalVisible}

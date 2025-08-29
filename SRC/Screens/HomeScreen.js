@@ -69,7 +69,6 @@ const HomeScreen = props => {
   const customLocation = useSelector(
     state => state.commonReducer.customLocation,
   );
-  console.log(customLocation, 'data ==== > ');
 
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +83,6 @@ const HomeScreen = props => {
   const [refreshing, setRefreshing] = useState(false);
   const [searchedPlaces, setSearchedPlaces] = useState([]);
   const [currentLocation, setCurrentLocation] = useState({});
-  // console.log('current loacation ======== > ' , currentLocation)
 
   const [locationName, setLocationName] = useState('');
   const [selectedmiles, setSelectedmiles] = useState('');
@@ -164,7 +162,7 @@ const HomeScreen = props => {
   const findNearestMcDonalds = async (location, selectedRadius) => {
     // const radius =
     //   selectedRadius == '200' ? 200000 : selectedRadius == '100' ? 100000 : 50000;
-    const radius = 50000; 
+    const radius = 200000;
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     const latitude = 24.871941;
     const longitude = 66.98806;
@@ -172,11 +170,15 @@ const HomeScreen = props => {
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${
       Object.keys(customLocation).length > 0
         ? customLocation?.location?.lat
-        : selectedmiles ? location?.latitude :location?.lat
+        : selectedmiles
+        ? location?.latitude
+        : location?.lat
     },${
       Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
-        : selectedmiles ? location?.longitude :location?.lng
+        : selectedmiles
+        ? location?.longitude
+        : location?.lng
     }&radius=${radius}&keyword=${
       preferences?.name ? preferences?.name : 'all'
     }`;
@@ -297,9 +299,10 @@ const HomeScreen = props => {
     })
       .then(async location => {
         setCurrentLocation(location);
+        console.log('🚀 ~ getLocation ~ location:', location);
         // setLocationName(location)
         // getCountryCode();
-        // getAddressFromCoordinates(location?.latitude, location?.longitude);
+        getAddressFromCoordinates(location?.latitude, location?.longitude);
         // preferences?.label == 'All' || preferences?.label == undefined
         //   ? getData({ lat: location?.latitude, lng: location?.longitude })
         // :
@@ -398,6 +401,8 @@ const HomeScreen = props => {
 
   const onPressAddTrip = async id => {
     const url = `auth/playlists_detail/${id}`;
+    console.log('🚀 ~ fetchNearbyPlaces ~ url:', url);
+    console.log('🚀 ~ fetchNearbyPlaces ~ url:', url);
     const body = {
       wishlist_id: whishlistdata?.id,
     };
@@ -518,7 +523,117 @@ const HomeScreen = props => {
         setIsVisibleModal(true));
     }
   }, [isFocused]);
-  // const milesArray = ['50', '100', '200'];
+
+  // function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  //   const R = 6371; // Radius of earth in km
+  //   const dLat = (lat2 - lat1) * (Math.PI / 180);
+  //   const dLon = (lon2 - lon1) * (Math.PI / 180);
+
+  //   const a =
+  //     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+  //     Math.cos(lat1 * (Math.PI / 180)) *
+  //       Math.cos(lat2 * (Math.PI / 180)) *
+  //       Math.sin(dLon / 2) *
+  //       Math.sin(dLon / 2);
+
+  //   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  //   const d = R * c; // Distance in km
+  //   return d;
+  // }
+
+  // function kmToMiles(km) {
+  //   return km * 0.621371;
+  // }
+
+  // const getPlacesWithLargeRadius = async (
+  //   lat,
+  //   lng,
+  //   bigRadius,
+  //   type = preferences,
+  // ) => {
+  //   console.log(
+  //     '🚀 ~ getPlacesWithLargeRadius ~ preferences================:',
+  //     preferences?.label,
+  //   );
+  //   const MAX_RADIUS = 200000; // Google limit = 50 km
+  //   let results = [];
+
+  //   if (bigRadius <= MAX_RADIUS) {
+  //     // Simple call if radius within limit
+  //     results = await fetchNearbyPlaces(
+  //       lat,
+  //       lng,
+  //       bigRadius,
+  //       preferences?.label,
+  //     );
+  //   } else {
+  //     // Break into multiple 50km circles
+  //     const numShifts = Math.ceil(bigRadius / MAX_RADIUS);
+
+  //     for (let i = 0; i < numShifts; i++) {
+  //       // Thoda sa offset karo lat/lng
+  //       const offsetLat = lat + i * 0.3; // ~30km offset per step
+  //       const offsetLng = lng + i * 0.3;
+
+  //       const partialResults = await fetchNearbyPlaces(
+  //         offsetLat,
+  //         offsetLng,
+  //         MAX_RADIUS,
+  //         preferences?.label,
+  //       );
+  //       results = [...results, ...partialResults];
+  //     }
+
+  //     // Duplicate remove karo (place_id se)
+  //     const unique = {};
+  //     results.forEach(place => {
+  //       unique[place.place_id] = place;
+  //     });
+  //     results = Object.values(unique);
+  //   }
+
+  //   return results;
+  // };
+
+  // const fetchNearbyPlaces = async (
+  //   lat,
+  //   lng,
+  //   radius,
+  //   type = preferences?.label,
+  // ) => {
+  //   try {
+  //     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&keyword=${type}&key=${'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc'}`;
+  //     console.log('============================= > urllllllllllllllllll', url);
+  //     const response = await fetch(url);
+  //     const data = await response.json();
+  //     console.log(
+  //       '🚀 ~ fetchNearbyPlaces ~ data: frommmmmmmmmmm radius apiiii',
+  //       JSON.stringify(data?.results ,null ,2),
+  //     );
+
+  //     return data.results || [];
+  //   } catch (err) {
+  //     console.error('Error fetching places:', err);
+  //     return [];
+  //   }
+  // };
+  // useEffect(() => {
+  //   (async () => {
+  //     const lat = currentLocation?.latitude;
+  //     const lng = -currentLocation?.longitude;
+  //     const radius = 100000; // ya user selected
+
+  //     const data = await getPlacesWithLargeRadius(
+  //       lat,
+  //       lng,
+  //       radius,
+  //       preferences,
+  //     );
+  //     console.log("🚀 ~ HomeScreen ~ data================================:", data)
+  //     setplacesData(data);
+  //   })();
+  // }, []);
+  //   // const milesArray = ['50', '100', '200'];
 
   return (
     <ScreenBoiler
@@ -872,8 +987,6 @@ const HomeScreen = props => {
               Places
             </CustomText>
 
-            
-
             {/* <TouchableOpacity
               style={[
                 styles.menuIcon,
@@ -1032,7 +1145,6 @@ const HomeScreen = props => {
                 marginBottom: moderateScale(20, 0.3),
               }}
               renderItem={({item, index}) => {
-                console.log('------------------====-=-=-=-=-=-=-=- >>> ',item)
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard

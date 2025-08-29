@@ -82,7 +82,7 @@ onPress={
   onPress
     ? onPress
     : () =>
-        navigationService.navigate('CitiesTrips', {
+        navigationService.navigate('StateTrips', {
           data: item,
           countryCode: countryCode,
           image: item?.cities[0]?.places[0]?.image,

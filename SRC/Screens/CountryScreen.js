@@ -1,671 +1,767 @@
-import { ActivityIndicator, Alert, FlatList, I18nManager, Platform, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { ScaledSheet } from 'react-native-size-matters'
-import ScreenBoiler from '../Components/ScreenBoiler'
-import LinearGradient from 'react-native-linear-gradient'
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils'
-import Color from '../Assets/Utilities/Color'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import { moderateScale } from 'react-native-size-matters'
-import { Icon } from 'native-base'
-import CustomButton from '../Components/CustomButton'
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  I18nManager,
+  Platform,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ScaledSheet} from 'react-native-size-matters';
+import ScreenBoiler from '../Components/ScreenBoiler';
+import LinearGradient from 'react-native-linear-gradient';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import Color from '../Assets/Utilities/Color';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {moderateScale} from 'react-native-size-matters';
+import {Icon} from 'native-base';
+import CustomButton from '../Components/CustomButton';
 import Modal from 'react-native-modal';
-import CustomImage from '../Components/CustomImage'
-import CountryPicker from "react-native-country-picker-modal";
-import CustomText from '../Components/CustomText'
-import CountryCard from '../Components/CountryCard'
-import navigationService from '../navigationService'
-import { Get, Post } from '../Axios/AxiosInterceptorFunction'
-import { useSelector } from 'react-redux'
-import { useNavigation, useIsFocused } from '@react-navigation/native'
-import TextInputWithTitle from '../Components/TextInputWithTitle'
-import RBSheet from 'react-native-raw-bottom-sheet'
-import Entypo from 'react-native-vector-icons/Entypo'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import CustomImage from '../Components/CustomImage';
+import CountryPicker from 'react-native-country-picker-modal';
+import CustomText from '../Components/CustomText';
+import CountryCard from '../Components/CountryCard';
+import navigationService from '../navigationService';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
+import TextInputWithTitle from '../Components/TextInputWithTitle';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const CountryScreen = () => {
-    const focused = useIsFocused()
-    const navigation = useNavigation()
-    const [countryModalVisible, setCountryModalVisible] = useState(false)
-    const [country, setCountry] = useState({ "callingCode": ["1"], "cca2": "US", "currency": ["USD"], "flag": "flag-us", "name": "United States", "region": "Americas", "subregion": "North America" });
-    const [visible, setVisible] = useState(false)
-    const [countryCode, setCountryCode] = useState("US");
-    const [withFilter, setFilter] = useState(true);
-    const [countries, setCountries] = useState(countriesList)
-    const [loading, setLoading] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const [countriesList, setCountriesList] = useState([]);
-    const token = useSelector(state => state.authReducer.token);
-    console.log("🚀 ~ CountryScreen ~ token:", token)
-    const [privacyVisible, setprivacyVisible] = useState(null)
-    const [openSelectedTab, setOpenSelectedTab] = useState(false)
-    const [title, setTitle] = useState('')
-    const [description, setDescription] = useState('')
-    const [selectTab, setSelectedTab] = useState()
-    const [selectedCountryIndex, setSelectedCountryIndex] = useState(null);
-    const [updateLoading, setUpdateLoading] = useState(false)
+  const focused = useIsFocused();
+  const navigation = useNavigation();
+  const [countryModalVisible, setCountryModalVisible] = useState(false);
+  const [country, setCountry] = useState({
+    callingCode: ['1'],
+    cca2: 'US',
+    currency: ['USD'],
+    flag: 'flag-us',
+    name: 'United States',
+    region: 'Americas',
+    subregion: 'North America',
+  });
+  const [visible, setVisible] = useState(false);
+  const [countryCode, setCountryCode] = useState('US');
+  const [withFilter, setFilter] = useState(true);
+  const [countries, setCountries] = useState(countriesList);
+  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [countriesList, setCountriesList] = useState([]);
+  const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ CountryScreen ~ token:', token);
+  const [privacyVisible, setprivacyVisible] = useState(null);
+  const [openSelectedTab, setOpenSelectedTab] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [selectTab, setSelectedTab] = useState();
+  const [selectedCountryIndex, setSelectedCountryIndex] = useState(null);
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [isDeleted, setIsDeleted] = useState('');
+  console.log('🚀 ~ CountryScreen ~ isDeleted:', isDeleted);
 
+  const onSelect = country => {
+    setCountryCode(country.cca2);
+    setCountry(country);
+  };
 
-    const onSelect = country => {
-        setCountryCode(country.cca2);
-        setCountry(country);
+  useEffect(() => {
+    setCountries(countriesList);
+  }, [countriesList]);
+
+  const getCountries = async () => {
+    const url = 'auth/countries';
+    setIsLoading(true);
+    const response = await Get(url, token);
+    setIsLoading(false);
+    if (response != undefined) {
+      setCountriesList(response?.data?.data);
+    }
+  };
+
+  const addCountry = async data => {
+    const url = 'auth/countries';
+    setLoading(true);
+    const response = await Post(url, data, apiHeader(token));
+    setLoading(false);
+    if (response != undefined) {
+      getCountries();
+    }
+  };
+
+  useEffect(() => {
+    getCountries();
+  }, [focused]);
+
+  const updatePrivacyStatus = status => {
+    const updatedCountries = [...countries];
+    console.log(
+      '🚀 ~ updatePrivacyStatus ~ updatedCountries:',
+      updatedCountries,
+    );
+    updatedCountries[selectedCountryIndex] = {
+      ...updatedCountries[selectedCountryIndex],
+      type: status,
     };
+    setCountries(updatedCountries);
+    setSelectedTab(updatedCountries[selectedCountryIndex]);
+  };
 
-
-    useEffect(() => {
-        setCountries(countriesList);
-    }, [countriesList]);
-
-    const getCountries = async () => {
-        const url = 'auth/countries'
-        setIsLoading(true)
-        const response = await Get(url, token)
-        setIsLoading(false)
-        if (response != undefined) {
-            setCountriesList(response?.data?.data)
-        }
-    }
-
-    const addCountry = async (data) => {
-        const url = 'auth/countries'
-        setLoading(true)
-        const response = await Post(url, data, apiHeader(token))
-        setLoading(false)
-        if (response != undefined) {
-            getCountries()
-        }
-    }
-
-    useEffect(() => {
-        getCountries()
-    }, [focused])
-
-
-    const updatePrivacyStatus = (status) => {
-        const updatedCountries = [...countries];
-        console.log("🚀 ~ updatePrivacyStatus ~ updatedCountries:", updatedCountries)
-        updatedCountries[selectedCountryIndex] = {
-            ...updatedCountries[selectedCountryIndex],
-            type: status
-        };
-        setCountries(updatedCountries);
-        setSelectedTab(updatedCountries[selectedCountryIndex]);
+  const updateTrip = async () => {
+    const url = `auth/trip_notes_publish/${selectTab?.id}`;
+    const body = {
+      trip_name: title,
+      trip_description: description,
+      type: selectTab?.type,
     };
-
-
-
-    const updateTrip = async () => {
-        const url = `auth/trip_notes_publish/${selectTab?.id}`
-        const body = {
-            trip_name: title,
-            trip_description: description,
-            type: selectTab?.type
-        }
-        setUpdateLoading(true)
-        const response = await Post(url, body, apiHeader(token))
-        console.log("🚀 ~ onPressPublish ~ response:", response?.data)
-        setUpdateLoading(false)
-        if (response?.data != undefined) {
-            setUpdateLoading(false)
-            privacyVisible?.close()
-            Platform?.OS == 'android'
-                ? ToastAndroid.show('Trip Updated Successfully', ToastAndroid.SHORT)
-                : Alert.alert('Trip Updated Successfully')
-
-        }
+    setUpdateLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ onPressPublish ~ response:', response?.data);
+    setUpdateLoading(false);
+    if (response?.data != undefined) {
+      setUpdateLoading(false);
+      privacyVisible?.close();
+      Platform?.OS == 'android'
+        ? ToastAndroid.show('Trip Updated Successfully', ToastAndroid.SHORT)
+        : Alert.alert('Trip Updated Successfully');
     }
+  };
 
+  const tripDelete = async id => {
+    const url = `auth/trip_delete/${id}`;
+    const response = await Post(url, '', apiHeader(token));
+    console.log('🚀 ~ tripDelete ~ response:', response?.data);
+    if (response != undefined) {
+      setCountries(prevData => {
+        const newData = [...prevData];
+        const index = newData.findIndex(item => item.id === id);
+        if (index !== -1) newData.splice(index, 1);
+        return newData;
+      });
+    }
+  };
 
+  return (
+    <ScreenBoiler
+      statusBarBackgroundColor={'white'}
+      statusBarContentStyle={'dark-content'}>
+      <LinearGradient
+        style={{
+          width: windowWidth,
+          height: windowHeight,
+          //   justifyContent:'center'
+        }}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
+        colors={Color.themeBgColor}>
+        <View style={styles.row}>
+          <CustomButton
+            text={'Add Trip'}
+            isBold
+            textColor={Color.themeColor}
+            // width={windowWidth * 0.2}
+            height={windowHeight * 0.03}
+            bgColor={Color.white}
+            fontSize={moderateScale(11, 0.6)}
+            borderRadius={moderateScale(5, 0.3)}
+            //   alignSelf={'flex-end'}
+            marginTop={moderateScale(20, 0.3)}
+            style={{
+              marginRight: moderateScale(10, 0.3),
+            }}
+            onPress={() => {
+              setCountryModalVisible(true);
+            }}
+            // right={moderateScale(5,0.3)}
+          />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.Rounded}
+            onPress={() => {
+              console.log('Toggle drawer');
+              navigation.toggleDrawer();
+            }}>
+            <Icon
+              onPress={() => {
+                navigation.toggleDrawer();
+                //   console.log('Toggle drawer'); navigation.toggleDrawer();
+              }}
+              name="menu"
+              as={Ionicons}
+              size={moderateScale(25, 0.6)}
+              color={Color.black}
+            />
+          </TouchableOpacity>
+        </View>
 
-    return (
-        <ScreenBoiler
-            statusBarBackgroundColor={'white'}
-            statusBarContentStyle={'dark-content'}
-        >
-            <LinearGradient
-                style={{
-                    width: windowWidth,
-                    height: windowHeight,
-                    //   justifyContent:'center'
-                }}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                colors={Color.themeBgColor}>
-                <View style={styles.row}>
-                <CustomButton
-                        text={'Add Trip'}
-                        isBold
-                        textColor={Color.themeColor}
-                        // width={windowWidth * 0.2}
-                        height={windowHeight * 0.03}
-                        bgColor={Color.white}
-                        fontSize={moderateScale(11, 0.6)}
-                        borderRadius={moderateScale(5, 0.3)}
-                        //   alignSelf={'flex-end'}
-                        marginTop={moderateScale(20, 0.3)}
-                        style={{
-                            marginRight: moderateScale(10, 0.3),
-                        }}
-                        onPress={() => {
-
-                            setCountryModalVisible(true)
-                        }}
-                    // right={moderateScale(5,0.3)}
-                    />
-                    <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={styles.Rounded}
-                        onPress={() => {
-                            console.log('Toggle drawer');
-                            navigation.toggleDrawer();
-                        }}>
-                        <Icon
-                            onPress={() => {
-                                navigation.toggleDrawer();
-                                //   console.log('Toggle drawer'); navigation.toggleDrawer();
-                            }}
-                            name="menu"
-                            as={Ionicons}
-                            size={moderateScale(25, 0.6)}
-                            color={Color.black}
-                        />
-                    </TouchableOpacity>
-                  
-
-                </View>
-
-                {isLoading ? (
-                    <View style={{
-                        width: windowWidth,
-                        height: windowHeight * 0.4,
-                        alignItems: 'center',
-                        justifyContent: 'center',
+        {isLoading ? (
+          <View
+            style={{
+              width: windowWidth,
+              height: windowHeight * 0.8,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ActivityIndicator size={'large'} color={Color.themeColor} />
+            <CustomText
+              style={{
+                color: Color.white,
+                fontSize: moderateScale(13, 0.6),
+              }}>
+              Please Wait
+            </CustomText>
+          </View>
+        ) : (
+          <>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              style={{
+                height: windowHeight * 0.8,
+                marginTop: moderateScale(20, 0.3),
+              }}
+              contentContainerStyle={{
+                paddingBottom: moderateScale(50, 0.6),
+              }}
+              data={countries}
+              ListEmptyComponent={() => {
+                return (
+                  <View
+                    style={{
+                      width: windowWidth,
+                      height: windowHeight * 0.5,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      //   backgroundColor :'reds'
                     }}>
+                    <CustomText>No Data Found</CustomText>
+                  </View>
+                );
+              }}
+              renderItem={({item, index}) => {
+                return (
+                  <>
+                    <CountryCard
+                      // citiesCount={`No of cities added = ${item?.city_count}`}
+                      name={item?.name}
+                      uri={item?.uri}
+                      countryType={item?.type}
+                      countryid={item?.id}
+                      issettingOption
+                      isPublicType
+                      isDeleted={isDeleted}
+                      onPressSetting={() => {
+                        setSelectedCountryIndex(index);
+                        privacyVisible?.open();
+                        setSelectedTab(item);
+                      }}
+                      onDelete={() => {
+                        tripDelete(item?.id);
+                      }}
+                      onLongPress={() => {
+                        setIsDeleted(item?.id);
+                        console.log(
+                          'frommmmmmmmmmm longgggggggg presssssssssssssssss',
+                        );
+                      }}
+                      onPress={() =>
+                        navigationService.navigate('StatesScreen', {data: item})
+                      }
+                    />
+                  </>
+                );
+              }}
+            />
+          </>
+        )}
+        <View style={{marginBottom: moderateScale(20, 0.6)}} />
+      </LinearGradient>
+      <Modal
+        isVisible={countryModalVisible}
+        onBackdropPress={() => {
+          setCountryModalVisible(false);
+          //   setImage({});
+          setCountry({});
+        }}>
+        <View
+          style={{
+            // width: windowWidth * 0.82,
+            padding: moderateScale(10, 6),
+            // height: windowHeight * 0.5,
+            backgroundColor: '#fff',
+            alignSelf: 'center',
+            alignItems: 'center',
+            borderRadius: moderateScale(10, 0.3),
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
 
-                        <ActivityIndicator
-                            style={styles.indicatorStyle}
-                            size="small"
-                            color={Color.white}
-                        />
-                    </View>
-                ) : (
-                    <>
-                        <FlatList
-                            showsVerticalScrollIndicator={false}
-                            style={{
-                                height: windowHeight * 0.8,
-                                marginTop: moderateScale(20, 0.3),
-                            }}
-                            contentContainerStyle={{
+            elevation: 5,
+          }}>
+          <View>
+            <View style={[styles.Profile1]}>
+              {country?.cca2 ? (
+                <CustomImage
+                  resizeMode={'cover'}
+                  source={{
+                    uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
+                  }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+              ) : (
+                <CustomImage
+                  source={require('../Assets/Images/profileimage.png')}
+                  resizeMode={'cover'}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+              )}
+            </View>
+          </View>
 
-                                paddingBottom: moderateScale(50, 0.6),
+          <TouchableOpacity
+            onPress={() => {
+              setVisible(true);
+              console.log('first');
+            }}
+            activeOpacity={0.9}
+            style={[
+              styles.birthday,
+              {
+                justifyContent: 'flex-start',
+                // backgroundColor: 'red',
+                borderRadius: moderateScale(25, 0.6),
+              },
+            ]}>
+            <CountryPicker
+              {...{
+                countryCode,
+                // withCallingCode,
+                onSelect,
+                withFilter,
+              }}
+              visible={visible}
+              onClose={() => {
+                setVisible(false);
+              }}
+            />
+            {country && (
+              <CustomText
+                style={{
+                  fontSize: moderateScale(15, 0.6),
+                  color: '#5E5E5E',
+                }}>{`${country?.name}`}</CustomText>
+            )}
 
-                            }}
-                            data={countries}
-                            ListEmptyComponent={() => {
-                                return (
-                                    <View style={{
-                                        width: windowWidth,
-                                        height: windowHeight * 0.5,
-                                        justifyContent: 'center',
-                                        alignItems: 'center'
-                                    }}>
-                                        <CustomText>No Data Found</CustomText>
-                                    </View>
-                                )
-                            }}
-                            renderItem={({ item, index }) => {
-                                console.log(item, '================>itemmmmmmm')
-                                return (
-                                    <>
-                                        <CountryCard
-                                            // citiesCount={`No of cities added = ${item?.city_count}`}
-                                            name={item?.name}
-                                            uri={item?.uri}
-                                            countryType={item?.type}
-                                            issettingOption
-                                            isPublicType
-                                            onPressSetting={() => {
-                                                setSelectedCountryIndex(index);
-                                                privacyVisible?.open()
-                                                setSelectedTab(item)
-                                            }}
-                                            onPress={() => 
-                                                navigationService.navigate('StatesScreen', { data: item })
-                                            }
-                                        />
-                                    </>
-                                )
-                            }}
-
-                        />
-
-                    </>
-                )
-                }
-                < View style={{ marginBottom: moderateScale(20, 0.6) }} />
-            </LinearGradient>
-            <Modal
-                isVisible={countryModalVisible}
-                onBackdropPress={() => {
-                    setCountryModalVisible(false);
-                    //   setImage({});
-                    setCountry({})
+            <Icon
+              name={'angle-down'}
+              as={FontAwesome}
+              size={moderateScale(20, 0.6)}
+              color={Color.themeDarkGray}
+              onPress={() => {
+                setVisible(true);
+              }}
+              style={{
+                position: 'absolute',
+                right: moderateScale(5, 0.3),
+              }}
+            />
+          </TouchableOpacity>
+          <CustomButton
+            text={
+              loading ? (
+                <ActivityIndicator size={'small'} color={'white'} />
+              ) : (
+                'Save'
+              )
+            }
+            isBold
+            textColor={Color.white}
+            width={windowWidth * 0.3}
+            height={windowHeight * 0.05}
+            bgColor={Color.themeColor}
+            fontSize={moderateScale(11, 0.6)}
+            borderRadius={moderateScale(5, 0.3)}
+            // alignSelf={'flex-end'}
+            marginTop={moderateScale(20, 0.3)}
+            onPress={() => {
+              if (
+                countriesList.findIndex(item => item?.name == country?.name) !=
+                -1
+              ) {
+                Platform.OS == 'android'
+                  ? ToastAndroid.show(
+                      'country already added',
+                      ToastAndroid.SHORT,
+                    )
+                  : Alert.alert('country already added');
+              } else {
+                // setCountriesList(prev => [...prev,
+                // {
+                //     name: country?.name, uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
+                //     city_count: 0
+                // }]),
+                setCountryModalVisible(false);
+                // setCountry({ cca2: 'US', name: 'United States'})
+                // setCountryCode('US')
+                addCountry({
+                  name: country?.name,
+                  uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
+                  // city_count: 0
+                });
+              }
+            }}
+          />
+        </View>
+      </Modal>
+      <RBSheet
+        ref={ref => {
+          setprivacyVisible(ref);
+        }}
+        closeOnDragDown={true}
+        dragFromTopOnly={true}
+        openDuration={250}
+        height={windowHeight * 0.53}
+        customStyles={{
+          container: {
+            borderTopEndRadius: moderateScale(30, 0.6),
+            borderTopLeftRadius: moderateScale(30, 0.6),
+            overflow: 'hidden',
+          },
+        }}>
+        <View
+          style={{
+            paddingVertical: moderateScale(10, 0.6),
+            paddingHorizontal: moderateScale(20, 0.6),
+          }}>
+          <CustomText
+            isBold
+            style={{
+              fontSize: moderateScale(14, 0.6),
+              textAlign: 'center',
+            }}>
+            Update Trip
+          </CustomText>
+          <CustomText
+            isBold
+            style={{
+              fontSize: moderateScale(14, 0.6),
+              marginTop: moderateScale(10, 0.6),
+            }}>
+            Select the privacy type
+          </CustomText>
+          <View
+            style={{
+              width: windowWidth * 0.9,
+              backgroundColor: Color.white,
+              shadowColor: Color.themeColor,
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowOpacity: 0.32,
+              shadowRadius: 5.46,
+              elevation: 9,
+              borderRadius: moderateScale(20, 0.6),
+              paddingHorizontal: moderateScale(15, 0.6),
+              paddingVertical: moderateScale(15, 0.6),
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <CustomText
+                isBold
+                style={{
+                  fontSize: moderateScale(14, 0.6),
+                  color: Color.darkGray,
+                  textTransform: 'capitalize',
+                }}>
+                {selectTab?.type === null ? ' Private' : selectTab?.type}
+              </CustomText>
+              <Icon
+                onPress={() => {
+                  setOpenSelectedTab(!openSelectedTab);
+                }}
+                as={Entypo}
+                name={'chevron-down'}
+                size={moderateScale(16, 0.6)}
+                color={Color.darkGray}
+              />
+            </View>
+            {openSelectedTab && (
+              <View
+                style={{
+                  width: windowWidth * 0.8,
+                  height: windowHeight * 0.1,
+                  top: -10,
+                  zIndex: 1,
+                  marginTop: moderateScale(20, 0.6),
                 }}>
                 <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: windowWidth * 0.8,
+                    height: moderateScale(40, 0.6),
+                    borderRadius: moderateScale(10, 0.6),
+                    borderWidth: 1.5,
+                    borderColor: Color.lightGrey,
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      updatePrivacyStatus('private');
+                      setOpenSelectedTab(false);
+                    }}
                     style={{
-                        // width: windowWidth * 0.82,
-                        padding: moderateScale(10., 6),
-                        // height: windowHeight * 0.5,
-                        backgroundColor: '#fff',
-                        alignSelf: 'center',
-                        alignItems: 'center',
-                        borderRadius: moderateScale(10, 0.3),
-                        shadowColor: '#000',
-                        shadowOffset: {
-                            width: 0,
-                            height: 2,
-                        },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 3.84,
-
-                        elevation: 5,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginLeft: moderateScale(10, 0.6),
                     }}>
-                    <View>
-                        <View
-                            style={[
-                                styles.Profile1,
-                            ]}>
-                            {country?.cca2 ?
-                                <CustomImage
-                                    resizeMode={'cover'}
-                                    source={{ uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png` }}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%'
-                                    }}
-                                /> :
-                                <CustomImage
-                                    source={require('../Assets/Images/profileimage.png')}
-                                    resizeMode={'cover'}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%'
-                                    }}
-                                />
-                            }
-                        </View>
-
-                    </View>
-
-                    <TouchableOpacity
-                        onPress={() => {
-                            setVisible(true);
-                            console.log('first');
-                        }}
-                        activeOpacity={0.9}
-                        style={[
-                            styles.birthday,
-                            {
-                                justifyContent: 'flex-start',
-                                // backgroundColor: 'red',
-                                borderRadius: moderateScale(25, 0.6),
-                            },
-                        ]}>
-                        <CountryPicker
-                            {...{
-                                countryCode,
-                                // withCallingCode,
-                                onSelect,
-                                withFilter,
-                            }}
-                            visible={visible}
-                            onClose={() => {
-                                setVisible(false);
-                            }}
-                        />
-                        {country && (
-                            <CustomText
-                                style={{
-                                    fontSize: moderateScale(15, 0.6),
-                                    color: '#5E5E5E',
-                                }}>{`${country?.name}`}</CustomText>
-                        )}
-
-                        <Icon
-                            name={'angle-down'}
-                            as={FontAwesome}
-                            size={moderateScale(20, 0.6)}
-                            color={Color.themeDarkGray}
-                            onPress={() => {
-                                setVisible(true);
-                            }}
-                            style={{
-                                position: 'absolute',
-                                right: moderateScale(5, 0.3),
-                            }}
-                        />
-                    </TouchableOpacity>
-                    <CustomButton
-                        text={
-                            loading ? (
-                                <ActivityIndicator size={'small'} color={'white'} />
-                            ) : (
-                                'Save'
-                            )
-                        }
-                        isBold
-                        textColor={Color.white}
-                        width={windowWidth * 0.3}
-                        height={windowHeight * 0.05}
-                        bgColor={Color.themeColor}
-                        fontSize={moderateScale(11, 0.6)}
-                        borderRadius={moderateScale(5, 0.3)}
-                        // alignSelf={'flex-end'}
-                        marginTop={moderateScale(20, 0.3)}
-                        onPress={() => {
-                            if (countriesList.findIndex(item => item?.name == country?.name) != -1) {
-                                Platform.OS == 'android' ? ToastAndroid.show('country already added', ToastAndroid.SHORT) : alert('country already added')
-                            }
-                            else {
-                                // setCountriesList(prev => [...prev,
-                                // {
-                                //     name: country?.name, uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
-                                //     city_count: 0
-                                // }]),
-                                setCountryModalVisible(false)
-                                // setCountry({ cca2: 'US', name: 'United States'})
-                                // setCountryCode('US')
-                                addCountry({
-                                    name: country?.name,
-                                    uri: `https://flagcdn.com/w320/${country.cca2.toLowerCase()}.png`,
-                                    // city_count: 0
-                                })
-                            }
-                        }
-                        }
+                    <Icon
+                      name={'lock'}
+                      as={Entypo}
+                      size={moderateScale(20, 0.6)}
+                      color={Color.veryLightGray}
                     />
+                    <CustomText
+                      isBold
+                      style={{
+                        fontSize: moderateScale(13, 0.6),
+                        marginLeft: moderateScale(7, 0.6),
+                        color: Color.veryLightGray,
+                      }}>
+                      Private
+                    </CustomText>
+                  </TouchableOpacity>
                 </View>
-            </Modal>
-            <RBSheet
-                ref={ref => {
-                    setprivacyVisible(ref);
-                }}
-                closeOnDragDown={true}
-                dragFromTopOnly={true}
-                openDuration={250}
-                height={windowHeight * 0.53}
-                customStyles={{
-                    container: {
-                        borderTopEndRadius: moderateScale(30, 0.6),
-                        borderTopLeftRadius: moderateScale(30, 0.6),
-                        overflow: 'hidden',
-                    },
-                }}>
-                <View style={{
-                    paddingVertical: moderateScale(10, 0.6),
-                    paddingHorizontal: moderateScale(20, 0.6)
-                }}>
-                    <CustomText isBold style={{
-                        fontSize: moderateScale(14, 0.6),
-                        textAlign: 'center'
-                    }}>Update Trip</CustomText>
-                    <CustomText isBold style={{
-                        fontSize: moderateScale(14, 0.6),
-                        marginTop: moderateScale(10, 0.6)
-                    }}>Select the privacy type</CustomText>
-                    <View style={{
-                        width: windowWidth * 0.9,
-                        backgroundColor: Color.white,
-                        shadowColor: Color.themeColor,
-                        shadowOffset: {
-                            width: 0,
-                            height: 4,
-                        },
-                        shadowOpacity: 0.32,
-                        shadowRadius: 5.46,
-                        elevation: 9,
-                        borderRadius: moderateScale(20, 0.6),
-                        paddingHorizontal: moderateScale(15, 0.6),
-                        paddingVertical: moderateScale(15, 0.6)
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: windowWidth * 0.8,
+                    height: moderateScale(40, 0.6),
+                    borderRadius: moderateScale(10, 0.6),
+                    borderWidth: 1.5,
+                    borderColor: Color.lightGrey,
+                    marginTop: moderateScale(10, 0.6),
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      updatePrivacyStatus('public');
+                      setOpenSelectedTab(false);
+                    }}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginLeft: moderateScale(10, 0.6),
                     }}>
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: "center",
-                            justifyContent: 'space-between',
-                        }}>
-                            <CustomText isBold style={{
-                                fontSize: moderateScale(14, 0.6),
-                                color: Color.darkGray,
-                                textTransform: "capitalize",
-                            }}>{selectTab?.type === null ? ' Private' : selectTab?.type}</CustomText>
-                            <Icon onPress={() => {
-                                setOpenSelectedTab(!openSelectedTab)
-                            }} as={Entypo} name={'chevron-down'} size={moderateScale(16, 0.6)} color={Color.darkGray} />
-                        </View>
-                        {openSelectedTab &&
-                            <View style={{
-                                width: windowWidth * 0.8,
-                                height: windowHeight * 0.1,
-                                top: -10,
-                                zIndex: 1,
-                                marginTop: moderateScale(20, 0.6)
-                            }}>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    alignItems: "center",
-                                    justifyContent: 'space-between',
-                                    width: windowWidth * 0.8,
-                                    height: moderateScale(40, 0.6),
-                                    borderRadius: moderateScale(10, 0.6),
-                                    borderWidth: 1.5,
-                                    borderColor: Color.lightGrey
-                                }}
-                                >
-                                    <TouchableOpacity onPress={() => {
-                                        updatePrivacyStatus('private')
-                                        setOpenSelectedTab(false)
-                                    }} style={{
-                                        flexDirection: 'row',
-                                        alignItems: "center",
-                                        justifyContent: 'space-between',
-                                        marginLeft: moderateScale(10, 0.6)
-                                    }}>
-                                        <Icon name={'lock'} as={Entypo} size={moderateScale(20, 0.6)} color={Color.veryLightGray} />
-                                        <CustomText isBold style={{
-                                            fontSize: moderateScale(13, 0.6),
-                                            marginLeft: moderateScale(7, 0.6),
-                                            color: Color.veryLightGray
-                                        }}>Private</CustomText>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    alignItems: "center",
-                                    justifyContent: 'space-between',
-                                    width: windowWidth * 0.8,
-                                    height: moderateScale(40, 0.6),
-                                    borderRadius: moderateScale(10, 0.6),
-                                    borderWidth: 1.5,
-                                    borderColor: Color.lightGrey,
-                                    marginTop: moderateScale(10, 0.6)
-                                }}
-                                >
-                                    <TouchableOpacity onPress={() => {
-                                        updatePrivacyStatus('public')
-                                        setOpenSelectedTab(false)
-
-                                    }} style={{
-                                        flexDirection: 'row',
-                                        alignItems: "center",
-                                        justifyContent: 'space-between',
-                                        marginLeft: moderateScale(10, 0.6)
-                                    }}>
-                                        <Icon name={'public'} as={MaterialIcons
-                                        } size={moderateScale(20, 0.6)} color={Color.veryLightGray} />
-                                        <CustomText isBold style={{
-                                            fontSize: moderateScale(13, 0.6),
-                                            marginLeft: moderateScale(7, 0.6),
-                                            color: Color.veryLightGray
-                                        }}>Public</CustomText>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        }
-                    </View>
-                    {selectTab?.type != null && (
-                        <>
-                            <CustomText isBold style={{
-                                fontSize: moderateScale(14, 0.6),
-                                marginTop: moderateScale(10, 0.6)
-                            }}>Update Title And Description of Your Trip</CustomText>
-                            <TextInputWithTitle
-                                placeholder={selectTab?.trip_name ? selectTab?.trip_name : 'Title'}
-                                setText={setTitle}
-                                value={title}
-                                viewHeight={0.06}
-                                viewWidth={0.9}
-                                inputWidth={0.9}
-                                marginTop={moderateScale(10, 0.3)}
-                                color={Color.orange}
-                                borderRadius={moderateScale(20, 0.6)}
-                                placeholderColor={Color.mediumGray}
-                                backgroundColor={Color.white}
-                                style={{
-                                    shadowColor: Color.themeColor,
-                                    shadowOffset: {
-                                        width: 0,
-                                        height: 4,
-                                    },
-                                    shadowOpacity: 0.32,
-                                    shadowRadius: 5.46,
-                                    elevation: 9,
-                                    paddingLeft: moderateScale(10, 0.6)
-                                }}
-                            />
-                            <TextInputWithTitle
-                                placeholder={selectTab?.trip_description ? selectTab?.trip_description : 'Description'}
-                                setText={setDescription}
-                                value={description}
-                                viewHeight={0.15}
-                                viewWidth={0.9}
-                                inputWidth={0.9}
-                                marginTop={moderateScale(10, 0.3)}
-                                color={Color.orange}
-                                borderRadius={moderateScale(20, 0.6)}
-                                placeholderColor={Color.mediumGray}
-                                backgroundColor={Color.white}
-                                alignItems={'flex-start'}
-                                multiline
-                                style={{
-                                    shadowColor: Color.themeColor,
-                                    shadowOffset: {
-                                        width: 0,
-                                        height: 4,
-                                    },
-                                    shadowOpacity: 0.32,
-                                    shadowRadius: 5.46,
-                                    elevation: 9,
-                                    paddingLeft: moderateScale(10, 0.6)
-                                }}
-                            />
-                            <View style={{ alignSelf: "center" }}>
-                                <CustomButton
-                                    text={updateLoading ? <ActivityIndicator size="small"
-                                        color={Color.white} style={styles.indicatorStyle} /> :
-                                        'Submit'
-                                    }
-                                    isBold
-                                    textColor={Color.white}
-                                    width={windowWidth * 0.8}
-                                    height={windowHeight * 0.05}
-                                    bgColor={Color.themeColor}
-                                    fontSize={moderateScale(11, 0.6)}
-                                    borderRadius={moderateScale(10, 0.3)}
-                                    alignSelf={'flex-end'}
-                                    marginTop={moderateScale(20, 0.3)}
-                                    onPress={() => {
-                                        updateTrip()
-                                    }}
-                                />
-                            </View>
-
-                        </>
-                    )
-                    }
+                    <Icon
+                      name={'public'}
+                      as={MaterialIcons}
+                      size={moderateScale(20, 0.6)}
+                      color={Color.veryLightGray}
+                    />
+                    <CustomText
+                      isBold
+                      style={{
+                        fontSize: moderateScale(13, 0.6),
+                        marginLeft: moderateScale(7, 0.6),
+                        color: Color.veryLightGray,
+                      }}>
+                      Public
+                    </CustomText>
+                  </TouchableOpacity>
                 </View>
-            </RBSheet>
-        </ScreenBoiler>
-    )
-}
+              </View>
+            )}
+          </View>
+          {selectTab?.type != null && (
+            <>
+              <CustomText
+                isBold
+                style={{
+                  fontSize: moderateScale(14, 0.6),
+                  marginTop: moderateScale(10, 0.6),
+                }}>
+                Update Title And Description of Your Trip
+              </CustomText>
+              <TextInputWithTitle
+                placeholder={
+                  selectTab?.trip_name ? selectTab?.trip_name : 'Title'
+                }
+                setText={setTitle}
+                value={title}
+                viewHeight={0.06}
+                viewWidth={0.9}
+                inputWidth={0.9}
+                marginTop={moderateScale(10, 0.3)}
+                color={Color.orange}
+                borderRadius={moderateScale(20, 0.6)}
+                placeholderColor={Color.mediumGray}
+                backgroundColor={Color.white}
+                style={{
+                  shadowColor: Color.themeColor,
+                  shadowOffset: {
+                    width: 0,
+                    height: 4,
+                  },
+                  shadowOpacity: 0.32,
+                  shadowRadius: 5.46,
+                  elevation: 9,
+                  paddingLeft: moderateScale(10, 0.6),
+                }}
+              />
+              <TextInputWithTitle
+                placeholder={
+                  selectTab?.trip_description
+                    ? selectTab?.trip_description
+                    : 'Description'
+                }
+                setText={setDescription}
+                value={description}
+                viewHeight={0.15}
+                viewWidth={0.9}
+                inputWidth={0.9}
+                marginTop={moderateScale(10, 0.3)}
+                color={Color.orange}
+                borderRadius={moderateScale(20, 0.6)}
+                placeholderColor={Color.mediumGray}
+                backgroundColor={Color.white}
+                alignItems={'flex-start'}
+                multiline
+                style={{
+                  shadowColor: Color.themeColor,
+                  shadowOffset: {
+                    width: 0,
+                    height: 4,
+                  },
+                  shadowOpacity: 0.32,
+                  shadowRadius: 5.46,
+                  elevation: 9,
+                  paddingLeft: moderateScale(10, 0.6),
+                }}
+              />
+              <View style={{alignSelf: 'center'}}>
+                <CustomButton
+                  text={
+                    updateLoading ? (
+                      <ActivityIndicator
+                        size="small"
+                        color={Color.white}
+                        style={styles.indicatorStyle}
+                      />
+                    ) : (
+                      'Submit'
+                    )
+                  }
+                  isBold
+                  textColor={Color.white}
+                  width={windowWidth * 0.8}
+                  height={windowHeight * 0.05}
+                  bgColor={Color.themeColor}
+                  fontSize={moderateScale(11, 0.6)}
+                  borderRadius={moderateScale(10, 0.3)}
+                  alignSelf={'flex-end'}
+                  marginTop={moderateScale(20, 0.3)}
+                  onPress={() => {
+                    updateTrip();
+                  }}
+                />
+              </View>
+            </>
+          )}
+        </View>
+      </RBSheet>
+    </ScreenBoiler>
+  );
+};
 
-
-
-
-export default CountryScreen
+export default CountryScreen;
 
 const styles = ScaledSheet.create({
-    Rounded: {
-        width: windowWidth * 0.1,
-        height: windowHeight * 0.05,
-        borderRadius: moderateScale(30, 0.3),
-        backgroundColor: Color.white,
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1,
-        elevation: 5,
-        //    position: 'absolute',
-        //    top: 10,
-        //    right: 10,
-    }, indicatorStyle: {
-        paddingRight: 5,
-        paddingLeft: I18nManager.isRTL ? 5 : 0,
-    },
+  Rounded: {
+    width: windowWidth * 0.1,
+    height: windowHeight * 0.05,
+    borderRadius: moderateScale(30, 0.3),
+    backgroundColor: Color.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+    elevation: 5,
+    //    position: 'absolute',
+    //    top: 10,
+    //    right: 10,
+  },
+  indicatorStyle: {
+    paddingRight: 5,
+    paddingLeft: I18nManager.isRTL ? 5 : 0,
+  },
 
-    row: {
-        flexDirection: 'row',
-        marginTop: 10,
-        paddingHorizontal: 10,
-        width: windowWidth,
-        justifyContent: 'space-between'
+  row: {
+    flexDirection: 'row',
+    marginTop: 10,
+    paddingHorizontal: 10,
+    width: windowWidth,
+    justifyContent: 'space-between',
+  },
+  Profile1: {
+    width: windowWidth * 0.3,
+    height: windowWidth * 0.3,
+    borderRadius: (windowWidth * 0.3) / 2,
+    borderWidth: 1,
+    borderColor: Color.white,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    backgroundColor: '#EEEEEE',
+    marginTop: moderateScale(20, 0.3),
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // borderColor : 'black'
+  },
+  birthday: {
+    width: windowWidth * 0.75,
+    height: windowHeight * 0.06,
+    marginTop: moderateScale(10, 0.3),
+    borderRadius: moderateScale(10, 0.6),
+    borderWidth: 1,
+    backgroundColor: 'white',
+    borderColor: Color.lightGrey,
+    flexDirection: 'row',
+    paddingHorizontal: moderateScale(10, 0.6),
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: Color.themeColor,
+    shadowOffset: {
+      width: 0,
+      height: 4,
     },
-    Profile1: {
-        width: windowWidth * 0.3,
-        height: windowWidth * 0.3,
-        borderRadius: (windowWidth * 0.3) / 2,
-        borderWidth: 1,
-        borderColor: Color.white,
-        overflow: 'hidden',
-        alignSelf: 'center',
-        backgroundColor: '#EEEEEE',
-        marginTop: moderateScale(20, 0.3),
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // borderColor : 'black'
-    },
-    birthday: {
-        width: windowWidth * 0.75,
-        height: windowHeight * 0.06,
-        marginTop: moderateScale(10, 0.3),
-        borderRadius: moderateScale(10, 0.6),
-        borderWidth: 1,
-        backgroundColor: 'white',
-        borderColor: Color.lightGrey,
-        flexDirection: 'row',
-        paddingHorizontal: moderateScale(10, 0.6),
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        shadowColor: Color.themeColor,
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.32,
-        shadowRadius: 5.46,
-        elevation: 9,
-    },
-    indicatorStyle: {
-        marginTop: moderateScale(20, 0.6)
-    }
-})
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 9,
+  },
+  indicatorStyle: {
+    marginTop: moderateScale(20, 0.6),
+  },
+});

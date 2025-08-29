@@ -39,6 +39,7 @@ const StatesScreen = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [citiesList, setCitiesList] = useState([]);
   const [cityData, setCityData] = useState({});
+  console.log("🚀 ~ StatesScreen ~ cityData:", cityData)
   const [countryCode, setCountryCode] = useState(null);
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
@@ -52,6 +53,8 @@ const StatesScreen = props => {
           country: data?.name,
         },
       );
+      // console.log('first= =========================== >',response.data.data?.states)
+
       setCities(response.data.data?.states);
     } catch (error) {
       console.log('Error fetching cities', error);
@@ -78,29 +81,31 @@ const StatesScreen = props => {
   //     getCityDetails();
   // }, [selectedCities])
 
-  useEffect(() => {
-    getStates();
-  }, [isFocused]);
+
 
   const getStates = async () => {
     const url = `auth/states?country_id=${data?.id}`;
-    const response = await Get(url, token);
     setIsLoading(true);
+    const response = await Get(url, token);
     if (response != undefined) {
+      setIsLoading(false);
       //  return   console.log("🚀 ~ getStates ~ response ================== >>>>>>:", response?.data)
-      setIsLoading(false);
       setCitiesList(response?.data?.data);
-    } else {
-      setIsLoading(false);
-    }
+    } 
   };
+    useEffect(() => {
+    getStates();
+  }, [isFocused]);
 
   const getCityDetails = async item => {
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
     let fetchedData = [];
     try {
-      const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=famous+landmarks+in+${item}&key=${apiKey}`;
+      const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=famous+landmarks+in+${item?.name}+${item?.state_code}+USA&key=${apiKey}`;
+;
+      console.log("🚀 ~ getCityDetails ~ placesUrl frommmmmmmmmmmmm state :", placesUrl)
       const response = await axios.get(placesUrl);
+      console.log("🚀 ~ getCityDetails ~ response  frommmmmmmmmmmmm state :", response?.data)
 
       if (response.data.results.length > 0) {
         const photoReference =
@@ -200,7 +205,22 @@ const StatesScreen = props => {
           />
         </View>
         {isLoading ? (
-          <ActivityIndicator size={'small'} color={Color.white} />
+            <View
+            style={{
+              width: windowWidth,
+              height: windowHeight * 0.8,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ActivityIndicator size={'large'} color={Color.themeColor} />
+            <CustomText
+              style={{
+                color: Color.white,
+                fontSize: moderateScale(13, 0.6),
+              }}>
+              Please Wait
+            </CustomText>
+          </View>
         ) : (
           <FlatList
             showsVerticalScrollIndicator={false}
@@ -289,6 +309,7 @@ const StatesScreen = props => {
           <FlatList
             data={searchQuery != '' ? filteredCities : cities}
             renderItem={({item, index}) => {
+              console.log("🚀 ~ item:========================== ..", item)
               return (
                 <TouchableOpacity
                   style={[
@@ -308,10 +329,10 @@ const StatesScreen = props => {
                     ) {
                       Platform.OS == 'android'
                         ? ToastAndroid.show(
-                            'City already added',
+                            'State already added',
                             ToastAndroid.SHORT,
                           )
-                        : alert('City already added');
+                        : alert('State already added');
                     } else {
                       getCityDetails(item);
                       setSearchQuery('');

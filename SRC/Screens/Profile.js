@@ -83,7 +83,7 @@ const Profile = props => {
         ? ToastAndroid.show('profile updated Successfully', ToastAndroid.SHORT)
         : alert('profile updated Successfully');
       console.log('🚀 ~ profileUpdate ~ response:', response?.data?.user_info);
-      navigationN.navigate('HomeScreen');
+      // navigationN.navigate('HomeScreen');
     }
     dispatch(setUserData(response?.data?.user_info));
   };
