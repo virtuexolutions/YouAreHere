@@ -446,6 +446,7 @@ const AddTripScreen = props => {
                 {' Select Country'}
               </CustomText>
               <TouchableOpacity
+              disabled={true}
                 onPress={() => {
                   setVisible(true);
                   console.log('first');
@@ -501,6 +502,7 @@ const AddTripScreen = props => {
                 Select State
               </CustomText>
               <TouchableOpacity
+              disabled={true}
                 onPress={() => setcityModalVisible(!cityModalVisible)}
                 style={[
                   styles.birthday,
@@ -537,6 +539,7 @@ const AddTripScreen = props => {
                 Select City
               </CustomText>
               <TouchableOpacity
+              disabled={true}
                 onPress={() => setcityModalVisible(!cityModalVisible)}
                 style={[
                   styles.birthday,
