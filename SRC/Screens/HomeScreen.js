@@ -1,7 +1,7 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import {FlatList, Icon, ScrollView} from 'native-base';
-import React, {useEffect, useState} from 'react';
+import { FlatList, Icon, ScrollView } from 'native-base';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -18,17 +18,17 @@ import OptionsMenu from 'react-native-options-menu';
 
 import GetLocation from 'react-native-get-location';
 import LinearGradient from 'react-native-linear-gradient';
-import {check, PERMISSIONS, request} from 'react-native-permissions';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { check, PERMISSIONS, request } from 'react-native-permissions';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import CustomText from '../Components/CustomText';
 import NearPlacesCard from '../Components/NearPlacesCard';
 import PlacesCard from '../Components/PlacesCard';
@@ -40,7 +40,7 @@ import {
   windowHeight,
   windowWidth,
 } from '../Utillity/utils';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import AddPlacesModal from '../Components/AddPlacesModal';
 import SelectFilterModal from '../Components/FilterModal';
 import WelcomeModal from '../Components/WelcomeModal';
@@ -49,7 +49,7 @@ import CustomButton from '../Components/CustomButton';
 import navigationService from '../navigationService';
 import TripCards from '../Components/TripCards';
 import AddTripsModal from '../Components/AddTripsModal';
-import {setCustomLocation} from '../Store/slices/common';
+import { setCustomLocation } from '../Store/slices/common';
 import LottieView from 'lottie-react-native';
 import CustomListEmptyComponent from '../Components/ListEmptyComponent';
 
@@ -167,21 +167,18 @@ const HomeScreen = props => {
     const latitude = 24.871941;
     const longitude = 66.98806;
     const keyword = 'mc donald';
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${
-      Object.keys(customLocation).length > 0
-        ? customLocation?.location?.lat
-        : selectedmiles
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${apiKey}&location=${Object.keys(customLocation).length > 0
+      ? customLocation?.location?.lat
+      : selectedmiles
         ? location?.latitude
         : location?.lat
-    },${
-      Object.keys(customLocation).length > 0
+      },${Object.keys(customLocation).length > 0
         ? customLocation?.location?.lng
         : selectedmiles
-        ? location?.longitude
-        : location?.lng
-    }&radius=${radius}&keyword=${
-      preferences?.name ? preferences?.name : 'all'
-    }`;
+          ? location?.longitude
+          : location?.lng
+      }&radius=${radius}&keyword=${preferences?.name ? preferences?.name : 'all'
+      }`;
     console.log('urllllllll ------ >', url);
     // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&rankby=distance&keyword=${keyword}&key=${apiKey}`;
     //  return  console.log('my data --->',url , customLocation)
@@ -233,6 +230,15 @@ const HomeScreen = props => {
       });
   };
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getLocation();
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const requestLocationPermissionIOS = async () => {
     try {
       const permissionStatus = await check(
@@ -277,21 +283,21 @@ const HomeScreen = props => {
     if (permissionResult == false) {
       return Platform.OS == 'android'
         ? ToastAndroid.show(
-            'Location Permission denied by user',
-            ToastAndroid.SHORT,
-          )
+          'Location Permission denied by user',
+          ToastAndroid.SHORT,
+        )
         : Alert.alert(
-            'Location blocked',
-            'Location is blocked as denied by user , enable in settings and try again',
-            [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              {text: 'Settings', onPress: () => Linking.openSettings()},
-            ],
-          );
+          'Location blocked',
+          'Location is blocked as denied by user , enable in settings and try again',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'Settings', onPress: () => Linking.openSettings() },
+          ],
+        );
     }
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
@@ -313,7 +319,7 @@ const HomeScreen = props => {
       })
       .catch(error => {
         setIsLoading(false);
-        const {code, message} = error;
+        const { code, message } = error;
         console.warn(code, message);
       });
   };
@@ -432,9 +438,8 @@ const HomeScreen = props => {
       openNow: item?.open_now?.openNow || item?.opening_hours?.openNow,
       image:
         item?.photos != undefined
-          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${
-              item?.photos[0]?.photo_reference
-            }&key=${apiKey}`
+          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${400}&photoreference=${item?.photos[0]?.photo_reference
+          }&key=${apiKey}`
           : null,
       latitude: item?.location?.lat || item?.geometry?.location?.lat,
       longitude: item?.location?.lng || item?.geometry?.location?.lat,
@@ -458,6 +463,7 @@ const HomeScreen = props => {
   useEffect(() => {
     Platform.OS == 'android' ? handleEnableLocation() : getLocation();
   }, [preferences, isFocused, customLocation]);
+
   useEffect(() => {
     if (
       Object.keys(currentLocation).length > 0 ||
@@ -506,7 +512,7 @@ const HomeScreen = props => {
               item?.lng == customLocation?.location?.lng,
           ),
         ),
-        setIsVisibleModal(true));
+          setIsVisibleModal(true));
     } else {
       favouriteplaces?.some(
         (item, index) =>
@@ -520,7 +526,7 @@ const HomeScreen = props => {
               item?.lng == currentLocation?.longitude,
           ),
         ),
-        setIsVisibleModal(true));
+          setIsVisibleModal(true));
     }
   }, [isFocused]);
 
@@ -644,13 +650,13 @@ const HomeScreen = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         colors={Color.themeBgColor}>
         <ScrollView
           // scrollEnabled={false}
           showsVerticalScrollIndicator={false}
-          style={{minHeight: windowHeight}}
+          style={{ minHeight: windowHeight }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
@@ -686,7 +692,7 @@ const HomeScreen = props => {
             <View style={styles.placesContainer}>
               {filteredUserPreference?.map((item, index) => {
                 return (
-                  <TouchableOpacity key={item.id} onPress={() => {}}>
+                  <TouchableOpacity key={item.id} onPress={() => { }}>
                     <OptionsMenu
                       customButton={
                         <View
@@ -750,23 +756,6 @@ const HomeScreen = props => {
             <TouchableOpacity
               style={styles.menuIcon}
               onPress={() => setPreferencesModalVisible(true)}>
-              {/* {preferences != null &&
-                <View style={{
-                  position: 'absolute',
-                  right: 1,
-                  top: -7,
-                  width: moderateScale(15, 0.6),
-                  height: moderateScale(15, 0.6),
-                  borderRadius: moderateScale(7.5, 0.6),
-                  backgroundColor: 'red',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                  <CustomText style={{
-                    color: 'white'
-                  }}>1</CustomText>
-                </View>
-              } */}
               <Icon
                 name="filter"
                 as={Ionicons}
@@ -774,7 +763,6 @@ const HomeScreen = props => {
                 size={moderateScale(28, 0.6)}
               />
             </TouchableOpacity>
-
             {/* <GooglePlacesAutocomplete
               placeholder="Search"
               textInputProps={{
@@ -889,6 +877,7 @@ const HomeScreen = props => {
                 }}
               />
             </TouchableOpacity>
+
           </View>
           {/* {preferences != null && ( 
              <View
@@ -939,7 +928,7 @@ const HomeScreen = props => {
           </View> */}
           <View style={styles.textContainer}>
             <CustomText
-              style={{fontSize: moderateScale(15, 0.6), color: Color.black}}
+              style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
               isBold>
               As per your location we have following recommendations for you.
             </CustomText>
@@ -964,7 +953,7 @@ const HomeScreen = props => {
               }}
               horizontal
               data={trips}
-              renderItem={({item}) => {
+              renderItem={({ item }) => {
                 return (
                   <TripCards
                     width={windowWidth * 0.7}
@@ -982,7 +971,7 @@ const HomeScreen = props => {
           )}
           <View style={styles.textContainer}>
             <CustomText
-              style={{fontSize: moderateScale(15, 0.6), color: Color.black}}
+              style={{ fontSize: moderateScale(15, 0.6), color: Color.black }}
               isBold>
               Places
             </CustomText>
@@ -1130,7 +1119,7 @@ const HomeScreen = props => {
               }}>
               <ActivityIndicator size={'large'} color={Color.white} />
               <CustomText
-                style={{color: 'white', fontSize: moderateScale(14, 0.6)}}>
+                style={{ color: 'white', fontSize: moderateScale(14, 0.6) }}>
                 Please Wait
               </CustomText>
             </View>
@@ -1144,12 +1133,12 @@ const HomeScreen = props => {
                 marginTop: moderateScale(10, 0.3),
                 marginBottom: moderateScale(20, 0.3),
               }}
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 return preferences?.label == 'All' ||
                   preferences?.label == undefined ? (
                   <PlacesCard
                     onPressSave={() =>
-                      navigationService.navigate('AddTripScreen', {data: item})
+                      navigationService.navigate('AddTripScreen', { data: item })
                     }
                     item={item}
                     fromHome={true}
@@ -1160,7 +1149,7 @@ const HomeScreen = props => {
                     item={item}
                     fromHome={true}
                     onPressSave={() =>
-                      navigationService.navigate('AddTripScreen', {data: item})
+                      navigationService.navigate('AddTripScreen', { data: item })
                     }
                   />
                 );
@@ -1194,7 +1183,7 @@ const HomeScreen = props => {
                 : currentLocation?.longitude
             }
             locationName={locationName}
-            // countryCode={countryCode}
+          // countryCode={countryCode}
           />
           <SelectFilterModal
             show={preferencesModalVisible}
@@ -1324,7 +1313,7 @@ const HomeScreen = props => {
                           <LottieView
                             resizeMode="cover"
                             source={require('../Assets/Images/animation.json')}
-                            style={{height: '100%'}}
+                            style={{ height: '100%' }}
                             autoPlay
                             loop
                           />
@@ -1337,7 +1326,7 @@ const HomeScreen = props => {
                         </View>;
                       }}
                       showsVerticalScrollIndicator={false}
-                      renderItem={({item}) => {
+                      renderItem={({ item }) => {
                         return (
                           <TouchableOpacity
                             onPress={() => {

@@ -7,35 +7,35 @@ import {
   ToastAndroid,
   Alert,
 } from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import LinearGradient from 'react-native-linear-gradient';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import Color from '../Assets/Utilities/Color';
-import {windowWidth, windowHeight, apiHeader} from '../Utillity/utils';
-import {moderateScale} from 'react-native-size-matters';
+import { windowWidth, windowHeight, apiHeader } from '../Utillity/utils';
+import { moderateScale } from 'react-native-size-matters';
 import StoriesComponent from '../Components/StoriesComponent';
-import {FlatList, Icon} from 'native-base';
+import { FlatList, Icon } from 'native-base';
 import NotesComponent from '../Components/NotesComponent';
 import CustomButton from '../Components/CustomButton';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {useDispatch, useSelector} from 'react-redux';
-import {setFiles, setNotePadData} from '../Store/slices/common';
-import {ActivityIndicator} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFiles, setNotePadData } from '../Store/slices/common';
+import { ActivityIndicator } from 'react-native';
 import moment from 'moment';
 import Modal from 'react-native-modal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import ImagePickerModal from '../Components/ImagePickerModal';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import RNFetchBlob from 'rn-fetch-blob';
 import axios from 'axios';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import NotePad from './NotePad';
 
 const Stories = [
@@ -303,7 +303,8 @@ const Stories = [
 const NotepadDesign = props => {
   let Notedata = props?.route?.params?.data;
   let Country = props?.route?.params?.country;
-  console.log("🚀 ~ NotepadDesign ~ Country:", Country)
+  let State = props?.route?.params?.state;
+  console.log("🚀 ~ NotepadDesign ~ State:", State)
   let privacyType = props?.route?.params?.type;
   const token = useSelector(state => state.authReducer.token);
   console.log(token, 'tokeeeeeeeeeeeeeeen');
@@ -331,12 +332,14 @@ const NotepadDesign = props => {
   const [imagePicker, setImagePicker] = useState(false);
   const [currentLocation, setCurrentLocation] = useState({});
   const [countryCode, setcountryCode] = useState('');
+  console.log(countryCode, 'asdas')
   const user = useSelector(state => state.commonReducer.userData);
   const [publishTitle, setPublishTitle] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [ref, setRef] = useState(null);
   const [publish_loading, setPublishLoading] = useState(false);
+
   const saveTripFromDetails = async () => {
     //  return console.log('here from details')
     const url = 'auth/trip';
@@ -522,17 +525,23 @@ const NotepadDesign = props => {
     getLatLngFromCity(Notedata?.name);
   }, []);
 
-  const getLatLngFromCity = async city => {
+  const getLatLngFromCity = async (city, state, country) => {
     const apiKey = 'AIzaSyCHuiMaFjSnFTQfRmAfTp9nZ9VpTICgNrc';
+    const query = `${Notedata?.name}, ${State}, ${Country}`;
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-      Notedata?.name,
+      query,
     )}&key=${apiKey}`;
+
+    console.log(url, '🔍 Generated URL');
+
     try {
       const response = await fetch(url);
       const data = await response.json();
+
       if (data.status === 'OK') {
         const result = data.results[0];
         const location = result.geometry.location;
+
         const countryComponent = result.address_components.find(component =>
           component.types.includes('country'),
         );
@@ -541,21 +550,27 @@ const NotepadDesign = props => {
           ? countryComponent.short_name
           : 'Unknown';
 
+        setCurrentLocation({
+          latitude: location.lat,
+          longitude: location.lng,
+        });
+        setcountryCode(countryCode);
+
         console.log(
           `Latitude: ${location.lat}, Longitude: ${location.lng}, Country Code: ${countryCode}`,
         );
-        setCurrentLocation({
-          latitude: location.lat,
-          longitude: location?.lng,
-        });
-        setcountryCode(countryCode);
-        return {lat: location.lat, lng: location.lng, countryCode};
+
+        return { lat: location.lat, lng: location.lng, countryCode };
+      } else {
+        console.warn('Geocoding failed:', data.status);
+        return null;
       }
     } catch (error) {
       console.error('Error fetching location:', error);
       return null;
     }
   };
+
 
   const onPressPublish = async () => {
     const url = `auth/trip_notes_publish?country=${Country}`;
@@ -592,8 +607,8 @@ const NotepadDesign = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         colors={Color.themeBgColor}>
         <TouchableOpacity
           activeOpacity={0.8}
@@ -621,9 +636,9 @@ const NotepadDesign = props => {
             alignItems: 'center',
             paddingHorizontal: moderateScale(10, 0.6),
           }}>
-          <View style={{marginLeft: moderateScale(10, 0.3)}}>
+          <View style={{ marginLeft: moderateScale(10, 0.3) }}>
             <CustomText
-              style={{fontSize: moderateScale(9, 0.6), color: Color.black}}
+              style={{ fontSize: moderateScale(9, 0.6), color: Color.black }}
               isBold>
               Good Morning
             </CustomText>
@@ -639,7 +654,6 @@ const NotepadDesign = props => {
             </CustomText>
           </View>
         </View>
-
         <CustomButton
           text={'Add Locations'}
           isBold
@@ -658,11 +672,11 @@ const NotepadDesign = props => {
             setType('trip');
             setTripModalVisibe(true);
           }}
-          // right={moderateScale(5,0.3)}
+        // right={moderateScale(5,0.3)}
         />
 
         {tripLoading ? (
-          <View style={{paddingVertical: moderateScale(40, 0.6)}}>
+          <View style={{ paddingVertical: moderateScale(40, 0.6) }}>
             <ActivityIndicator size={moderateScale(40, 0.6)} color={'white'} />
           </View>
         ) : (
@@ -694,20 +708,20 @@ const NotepadDesign = props => {
                       // left:0,
                     }}>
                     <CustomImage
-                      style={{width: '100%', height: '100%'}}
+                      style={{ width: '100%', height: '100%' }}
                       source={require('../Assets/Images/no-data.png')}
                       resizeMode={'cover'}
                     />
                   </View>
                   <CustomText
-                    style={{color: 'black', fontSize: moderateScale(12, 0.6)}}
+                    style={{ color: 'black', fontSize: moderateScale(12, 0.6) }}
                     isBold>
                     Data Not Found
                   </CustomText>
                 </View>
               );
             }}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <StoriesComponent
                   item={item}
@@ -797,20 +811,20 @@ const NotepadDesign = props => {
                         // left:0,
                       }}>
                       <CustomImage
-                        style={{width: '100%', height: '100%'}}
+                        style={{ width: '100%', height: '100%' }}
                         source={require('../Assets/Images/no-data.png')}
                         resizeMode={'cover'}
                       />
                     </View>
                     <CustomText
-                      style={{color: 'black', fontSize: moderateScale(15, 0.6)}}
+                      style={{ color: 'black', fontSize: moderateScale(15, 0.6) }}
                       isBold>
                       Data Not Found
                     </CustomText>
                   </View>
                 );
               }}
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 // console.log('Notes item==========>', item);
                 return (
                   <NotesComponent
@@ -863,7 +877,7 @@ const NotepadDesign = props => {
                     resizeMode={'cover'}
                     source={
                       Object.keys(image).length > 0
-                        ? {uri: image?.uri}
+                        ? { uri: image?.uri }
                         : require('../Assets/Images/profileimage.png')
                     }
                     style={{
@@ -1047,7 +1061,7 @@ const NotepadDesign = props => {
                     resizeMode={'cover'}
                     source={
                       image?.uri
-                        ? {uri: image?.uri}
+                        ? { uri: image?.uri }
                         : require('../Assets/Images/profileimage.png')
                     }
                     style={{
@@ -1186,7 +1200,7 @@ const NotepadDesign = props => {
           type == 'trip' ? setTripModalVisibe : setNoteModalVisible
         }
         fromNotePad={true}
-        // type={type}
+      // type={type}
       />
       <RBSheet
         ref={ref => {
@@ -1273,7 +1287,7 @@ const NotepadDesign = props => {
               paddingLeft: moderateScale(10, 0.6),
             }}
           />
-          <View style={{alignSelf: 'center'}}>
+          <View style={{ alignSelf: 'center' }}>
             <CustomButton
               text={
                 publish_loading ? (

@@ -8,17 +8,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {ScaledSheet} from 'react-native-size-matters';
+import React, { useEffect, useState } from 'react';
+import { ScaledSheet } from 'react-native-size-matters';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import LinearGradient from 'react-native-linear-gradient';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {moderateScale} from 'react-native-size-matters';
-import {Icon} from 'native-base';
+import { moderateScale } from 'react-native-size-matters';
+import { Icon } from 'native-base';
 import CustomButton from '../Components/CustomButton';
 import Modal from 'react-native-modal';
 import CustomImage from '../Components/CustomImage';
@@ -27,12 +27,12 @@ import CustomText from '../Components/CustomText';
 import CountryCard from '../Components/CountryCard';
 import axios from 'axios';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
-import {imageUrl} from '../Config';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
+import { imageUrl } from '../Config';
 
 const CitiesScreen = props => {
-  const {data} = props?.route?.params;
+  const { data } = props?.route?.params;
   console.log("🚀 ~ CitiesScreen ~ data:", data)
   const countryid = props?.route?.params?.country_id;
   // console.log("🚀 ~ CitiesScreen ~ countryid:", countryid)
@@ -46,7 +46,7 @@ const CitiesScreen = props => {
   const [citiesList, setCitiesList] = useState([]);
   console.log("🚀 ~ CitiesScreen ~ citiesList:", citiesList)
   const [cityData, setCityData] = useState({});
- 
+
   const [countryCode, setCountryCode] = useState(null);
   const token = useSelector(state => state.authReducer.token);
   const user = useSelector(state => state.commonReducer.userData);
@@ -119,19 +119,19 @@ const CitiesScreen = props => {
 
         if (photoReference) {
           const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
-          fetchedData.push({name: item, uri: photoUrl});
+          fetchedData.push({ name: item, uri: photoUrl });
         } else {
-          fetchedData.push({name: item, uri: null});
+          fetchedData.push({ name: item, uri: null });
         }
       } else {
-        fetchedData.push({name: item, uri: null});
+        fetchedData.push({ name: item, uri: null });
       }
     } catch (error) {
       console.error(`Error fetching image for ${item}:`, error);
-      fetchedData.push({name: item, uri: null});
+      fetchedData.push({ name: item, uri: null });
     }
     const firstUri = fetchedData.length > 0 ? fetchedData[0].uri : null;
-    setCityData({name: item, image: firstUri, id: countryid});
+    setCityData({ name: item, image: firstUri, id: countryid });
   };
 
   const onPressSave = async () => {
@@ -168,8 +168,8 @@ const CitiesScreen = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         colors={Color.themeBgColor}>
         <View style={styles.row}>
           <TouchableOpacity
@@ -234,7 +234,7 @@ const CitiesScreen = props => {
               paddingBottom: moderateScale(50, 0.6),
             }}
             data={citiesList}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               console.log("🚀 ~ item ========================== >>>>>>>>>>> :", item)
               return (
                 <CountryCard
@@ -245,6 +245,7 @@ const CitiesScreen = props => {
                       data: item,
                       country: data?.country?.name,
                       type: data?.type,
+                      state: data?.name
                     })
                   }
                 />
@@ -310,7 +311,7 @@ const CitiesScreen = props => {
           />
           <FlatList
             data={searchQuery != '' ? filteredCities : cities}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <TouchableOpacity
                   style={[
@@ -326,9 +327,9 @@ const CitiesScreen = props => {
                     ) {
                       Platform.OS == 'android'
                         ? ToastAndroid.show(
-                            'City already added',
-                            ToastAndroid.SHORT,
-                          )
+                          'City already added',
+                          ToastAndroid.SHORT,
+                        )
                         : alert('City already added');
                     } else {
                       getCityDetails(item);

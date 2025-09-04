@@ -3,12 +3,12 @@ import axios from 'axios';
 import { Icon } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    FlatList,
-    Platform,
-    ToastAndroid,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  FlatList,
+  Platform,
+  ToastAndroid,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
@@ -26,13 +26,14 @@ import TextInputWithTitle from '../Components/TextInputWithTitle';
 import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const StatesScreen = props => {
-  const {data} = props?.route?.params;
+  const { data } = props?.route?.params;
   // const  stateData  = props?.route?.params?.stateData
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
   const [cities, setCities] = useState([]);
+  console.log('===================>', cities)
   const [citiesmodalVisible, setCitiesModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredCities, setFilteredCities] = useState([]);
@@ -91,9 +92,9 @@ const StatesScreen = props => {
       setIsLoading(false);
       //  return   console.log("🚀 ~ getStates ~ response ================== >>>>>>:", response?.data)
       setCitiesList(response?.data?.data);
-    } 
+    }
   };
-    useEffect(() => {
+  useEffect(() => {
     getStates();
   }, [isFocused]);
 
@@ -102,7 +103,7 @@ const StatesScreen = props => {
     let fetchedData = [];
     try {
       const placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=famous+landmarks+in+${item?.name}+${item?.state_code}+USA&key=${apiKey}`;
-;
+      ;
       console.log("🚀 ~ getCityDetails ~ placesUrl frommmmmmmmmmmmm state :", placesUrl)
       const response = await axios.get(placesUrl);
       console.log("🚀 ~ getCityDetails ~ response  frommmmmmmmmmmmm state :", response?.data)
@@ -114,20 +115,20 @@ const StatesScreen = props => {
 
         if (photoReference) {
           const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
-          fetchedData.push({name: item, uri: photoUrl});
+          fetchedData.push({ name: item, uri: photoUrl });
           console.log('🚀 ~ getCityDetails ~ photoUrl:', photoUrl);
         } else {
-          fetchedData.push({name: item, uri: null});
+          fetchedData.push({ name: item, uri: null });
         }
       } else {
-        fetchedData.push({name: item, uri: null});
+        fetchedData.push({ name: item, uri: null });
       }
     } catch (error) {
       console.error(`Error fetching image for ${item}:`, error);
-      fetchedData.push({name: item, uri: null});
+      fetchedData.push({ name: item, uri: null });
     }
     const firstUri = fetchedData.length > 0 ? fetchedData[0].uri : null;
-    setCityData({name: item, image: firstUri, id: data?.id});
+    setCityData({ name: item, image: firstUri, id: data?.id });
   };
 
   const onPressSave = async () => {
@@ -167,8 +168,8 @@ const StatesScreen = props => {
           width: windowWidth,
           height: windowHeight,
         }}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         colors={Color.themeBgColor}>
         <View style={styles.row}>
           <TouchableOpacity
@@ -205,7 +206,7 @@ const StatesScreen = props => {
           />
         </View>
         {isLoading ? (
-            <View
+          <View
             style={{
               width: windowWidth,
               height: windowHeight * 0.8,
@@ -245,7 +246,7 @@ const StatesScreen = props => {
                 </View>
               );
             }}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <CountryCard
                   name={item?.name}
@@ -255,7 +256,7 @@ const StatesScreen = props => {
                       data: item,
                       country: data?.name,
                       type: data?.type,
-                      country_id : data?.id
+                      country_id: data?.id
                     })
                   }
                 />
@@ -308,7 +309,7 @@ const StatesScreen = props => {
           />
           <FlatList
             data={searchQuery != '' ? filteredCities : cities}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               console.log("🚀 ~ item:========================== ..", item)
               return (
                 <TouchableOpacity
@@ -329,9 +330,9 @@ const StatesScreen = props => {
                     ) {
                       Platform.OS == 'android'
                         ? ToastAndroid.show(
-                            'State already added',
-                            ToastAndroid.SHORT,
-                          )
+                          'State already added',
+                          ToastAndroid.SHORT,
+                        )
                         : alert('State already added');
                     } else {
                       getCityDetails(item);
